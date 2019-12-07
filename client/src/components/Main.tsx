@@ -2,10 +2,13 @@
 import React from 'react';
 import { css, jsx } from '@emotion/core';
 import { BrowserRouter } from 'react-router-dom';
+import Header from './Header';
 
 const Main: React.SFC = () => (
   <BrowserRouter>
-    <header>header</header>
+    <header>
+      <Header />
+    </header>
     <div
       id="main-container"
       css={css`

@@ -7,7 +7,7 @@ const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 module.exports = env => {
   return {
     mode: env || 'development',
-    name: 'ReduxTest',
+    name: 'StoryEditor',
     context: path.resolve(__dirname, 'src'),
     target: 'web',
     entry: './index.tsx',
@@ -24,7 +24,11 @@ module.exports = env => {
           loader: 'raw-loader',
         },
         {
-          test: /\.(png|gif|jpg|svg)$/,
+          test: /\.svg$/,
+          loader: 'svg-inline-loader',
+        },
+        {
+          test: /\.(png|gif|jpg)$/,
           exclude: [/(node_modules)/],
           use: [
             {
