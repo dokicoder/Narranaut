@@ -1,10 +1,11 @@
 /** @jsx jsx */
 import React from 'react';
 import { css, jsx } from '@emotion/core';
-import { BrowserRouter } from 'react-router-dom';
-import Header from './Header';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { Header, Sidebar } from '.';
+import { Stories, Places, Events, Characters, Timelines } from './Screens';
 
-const Main: React.SFC = () => (
+const Main: React.FunctionComponent = () => (
   <BrowserRouter>
     <header>
       <Header />
@@ -26,7 +27,7 @@ const Main: React.SFC = () => (
           width: 200px;
         `}
       >
-        sidebar
+        <Sidebar />
       </div>
       <main
         id="viewContainer"
@@ -36,7 +37,26 @@ const Main: React.SFC = () => (
           min-height: 480px;
         `}
       >
-        viewContainer
+        <Switch>
+          <Route path="/stories">
+            <Stories />
+          </Route>
+          <Route path="/characters">
+            <Characters />
+          </Route>
+          <Route path="/events">
+            <Events />
+          </Route>
+          <Route path="/places">
+            <Places />
+          </Route>
+          <Route path="/timelines">
+            <Timelines />
+          </Route>
+          <Route path="*">
+            <Redirect to="/" />
+          </Route>
+        </Switch>
       </main>
     </div>
     <footer

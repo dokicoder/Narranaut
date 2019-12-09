@@ -6,7 +6,7 @@
     "class-name": true,
     "comment-format": [true],
     "curly": [true, "ignore-same-line"],
-    "eofline": false,
+    "eofline": true,
     "forin": true,
     "indent": [true, "spaces", 2],
     "interface-name": [true, "never-prefix"],

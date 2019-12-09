@@ -2,12 +2,12 @@
 import React from 'react';
 import { jsx, css } from '@emotion/core';
 import { Navbar, NavbarBrand } from 'reactstrap';
-import StoryIcon from '../assets/story.svg';
 import SVG from 'react-inlinesvg';
+import StoryIcon from '../../assets/story.svg';
 
 interface Props {}
 
-const Header: React.SFC<Props> = () => (
+const Header: React.FunctionComponent<Props> = () => (
   <Navbar color="dark" expand="xs">
     <NavbarBrand href="/">
       <SVG
