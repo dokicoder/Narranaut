@@ -33,6 +33,16 @@ const Sidebar: React.FunctionComponent<Props> = () => (
         Timelines
       </NavLink>
     </NavItem>
+    <NavItem>
+      <NavLink tag={Link} to="/relationships">
+        Relationships
+      </NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink tag={Link} to="/objects">
+        Objects
+      </NavLink>
+    </NavItem>
   </Nav>
 );
 

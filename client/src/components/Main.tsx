@@ -3,7 +3,7 @@ import React from 'react';
 import { css, jsx } from '@emotion/core';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { Header, Sidebar } from '.';
-import { Stories, Places, Events, Characters, Timelines } from './Screens';
+import { Stories, Places, Events, Characters, Timelines, Relationships, Objects } from './Screens';
 
 const Main: React.FunctionComponent = () => (
   <BrowserRouter>
@@ -52,6 +52,12 @@ const Main: React.FunctionComponent = () => (
           </Route>
           <Route path="/timelines">
             <Timelines />
+          </Route>
+          <Route path="/relationships">
+            <Relationships />
+          </Route>
+          <Route path="/objects">
+            <Objects />
           </Route>
           <Route path="*">
             <Redirect to="/" />
