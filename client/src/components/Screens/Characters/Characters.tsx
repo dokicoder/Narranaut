@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React from 'react';
 import { css, jsx } from '@emotion/core';
-import { Form, FormGroup, Label, Input, Button, Row, Col } from 'reactstrap';
+import { Form, FormGroup, Label, Input, Row, Col } from 'reactstrap';
 
 const Characters: React.FunctionComponent = () => {
   return (
@@ -24,7 +24,7 @@ const Characters: React.FunctionComponent = () => {
             <Col md={6}>
               <FormGroup>
                 <Label for="char-age">Age</Label>
-                <Input type="number" name="char-age" id="char-age" placeholder="Enter character's age" />
+                <Input type="text" name="char-age" id="char-age" placeholder="Enter character's age" />
               </FormGroup>
             </Col>
             <Col md={6}>

@@ -16,6 +16,7 @@ const Main: React.FunctionComponent = () => (
         display: flex;
         flex-direction: row;
         align-items: stretch;
+        height: 100%;
       `}
     >
       <div
@@ -34,6 +35,7 @@ const Main: React.FunctionComponent = () => (
         className="p-2"
         css={css`
           flex: 1 1 auto;
+          overflow: hidden;
           min-height: 480px;
         `}
       >
@@ -69,6 +71,7 @@ const Main: React.FunctionComponent = () => (
       css={css`
         background-color: #333;
         color: white;
+        align-self: flex-end;
       `}
     >
       footer
