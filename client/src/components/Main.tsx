@@ -2,7 +2,7 @@
 import React from 'react';
 import { css, jsx } from '@emotion/core';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { Header, Sidebar } from '.';
+import { Header } from '.';
 import { Stories, Places, Events, Characters, Timelines, Relationships, Objects } from './Screens';
 
 const Main: React.FunctionComponent = () => (
@@ -19,17 +19,6 @@ const Main: React.FunctionComponent = () => (
         height: 100%;
       `}
     >
-      <div
-        id="sidebar"
-        className="p-2"
-        css={css`
-          background-color: #aaa;
-          flex: 0 1 auto;
-          width: 200px;
-        `}
-      >
-        <Sidebar />
-      </div>
       <main
         id="viewContainer"
         className="p-2"
@@ -67,15 +56,6 @@ const Main: React.FunctionComponent = () => (
         </Switch>
       </main>
     </div>
-    <footer
-      css={css`
-        background-color: #333;
-        color: white;
-        align-self: flex-end;
-      `}
-    >
-      footer
-    </footer>
   </BrowserRouter>
 );
 

@@ -1,49 +1,34 @@
 /** @jsx jsx */
 import React from 'react';
 import { jsx, css } from '@emotion/core';
-import { Nav, NavItem, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 interface Props {}
 
 const Sidebar: React.FunctionComponent<Props> = () => (
-  <Nav vertical>
-    <NavItem>
-      <NavLink tag={Link} to="/stories">
-        Stories
-      </NavLink>
-    </NavItem>
-    <NavItem>
-      <NavLink tag={Link} to="/characters">
-        Characters
-      </NavLink>
-    </NavItem>
-    <NavItem>
-      <NavLink tag={Link} to="/places">
-        Places
-      </NavLink>
-    </NavItem>
-    <NavItem>
-      <NavLink tag={Link} to="/events">
-        Events
-      </NavLink>
-    </NavItem>
-    <NavItem>
-      <NavLink tag={Link} to="/timelines">
-        Timelines
-      </NavLink>
-    </NavItem>
-    <NavItem>
-      <NavLink tag={Link} to="/relationships">
-        Relationships
-      </NavLink>
-    </NavItem>
-    <NavItem>
-      <NavLink tag={Link} to="/objects">
-        Objects
-      </NavLink>
-    </NavItem>
-  </Nav>
+  <nav>
+    <div>
+      <NavLink to="/stories">Stories</NavLink>
+    </div>
+    <div>
+      <NavLink to="/characters">Characters</NavLink>
+    </div>
+    <div>
+      <NavLink to="/places">Places</NavLink>
+    </div>
+    <div>
+      <NavLink to="/events">Events</NavLink>
+    </div>
+    <div>
+      <NavLink to="/timelines">Timelines</NavLink>
+    </div>
+    <div>
+      <NavLink to="/relationships">Relationships</NavLink>
+    </div>
+    <div>
+      <NavLink to="/objects">Objects</NavLink>
+    </div>
+  </nav>
 );
 
 export default Sidebar;

@@ -1,27 +1,34 @@
 /** @jsx jsx */
 import React from 'react';
 import { jsx, css } from '@emotion/core';
-import { Navbar, NavbarBrand } from 'reactstrap';
 import SVG from 'react-inlinesvg';
 import StoryIcon from '../../assets/story.svg';
 
 interface Props {}
 
 const Header: React.FunctionComponent<Props> = () => (
-  <Navbar color="dark" expand="xs">
-    <NavbarBrand href="/">
+  <nav className="demo">
+    <a href="#" className="brand">
       <SVG
         css={css`
-          fill: white;
-          width: 35px;
-          height: 35px;
+          width: 25px;
+          height: 25px;
+          margin: 0 6px 4px 0;
         `}
-        className="mr-2 pb-1"
         src={StoryIcon}
       />
       Narranaut
-    </NavbarBrand>
-  </Navbar>
+    </a>
+
+    <div className="menu">
+      <a href="#" className="pseudo button icon-picture">
+        Menu 1
+      </a>
+      <a href="#" className="button icon-puzzle">
+        Menu 2
+      </a>
+    </div>
+  </nav>
 );
 
 export default Header;
