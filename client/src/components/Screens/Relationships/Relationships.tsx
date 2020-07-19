@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React from 'react';
-import { css, jsx } from '@emotion/core';
+import { jsx } from '@emotion/core';
 
-const Relationships: React.FunctionComponent = () => <div>Relationships</div>;
+const Relationships: React.FC = () => <div>Relationships</div>;
 
 export default Relationships;

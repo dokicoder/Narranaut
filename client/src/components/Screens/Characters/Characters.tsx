@@ -2,7 +2,7 @@
 import React from 'react';
 import { css, jsx } from '@emotion/core';
 
-const Characters: React.FunctionComponent = () => {
+const Characters: React.FC = () => {
   return (
     <div>
       <img

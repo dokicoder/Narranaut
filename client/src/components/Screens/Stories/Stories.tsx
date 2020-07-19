@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React from 'react';
-import { css, jsx } from '@emotion/core';
+import { jsx } from '@emotion/core';
 
-const Stories: React.FunctionComponent = () => <div>Stories</div>;
+const Stories: React.FC = () => <div>Stories</div>;
 
 export default Stories;

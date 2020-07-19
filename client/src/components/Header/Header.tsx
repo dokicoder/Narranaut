@@ -4,9 +4,7 @@ import { jsx, css } from '@emotion/core';
 import SVG from 'react-inlinesvg';
 import StoryIcon from '../../assets/story.svg';
 
-interface Props {}
-
-const Header: React.FunctionComponent<Props> = () => (
+const Header: React.FC<{}> = () => (
   <nav className="demo">
     <a href="#" className="brand">
       <SVG

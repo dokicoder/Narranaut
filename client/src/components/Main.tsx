@@ -5,7 +5,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { Header } from '.';
 import { Stories, Places, Events, Characters, Timelines, Relationships, Objects } from './Screens';
 
-const Main: React.FunctionComponent = () => (
+const Main: React.FC = () => (
   <BrowserRouter>
     <header>
       <Header />

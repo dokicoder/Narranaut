@@ -1,11 +1,9 @@
 /** @jsx jsx */
 import React from 'react';
-import { jsx, css } from '@emotion/core';
+import { jsx } from '@emotion/core';
 import { NavLink } from 'react-router-dom';
 
-interface Props {}
-
-const Sidebar: React.FunctionComponent<Props> = () => (
+const Sidebar: React.FC<{}> = () => (
   <nav>
     <div>
       <NavLink to="/stories">Stories</NavLink>

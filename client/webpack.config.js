@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const TSLintPlugin = require('tslint-webpack-plugin');
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 
 module.exports = env => {
@@ -16,16 +15,11 @@ module.exports = env => {
         {
           test: /\.tsx?$/,
           exclude: [/node_modules/],
-          loader: 'awesome-typescript-loader',
-        },
-        {
-          test: /\.(frag|vert)$/,
-          exclude: [/node_modules/],
-          loader: 'raw-loader',
+          use: ['awesome-typescript-loader', 'eslint-loader'],
         },
         {
           test: /\.svg$/,
-          loader: 'svg-inline-loader',
+          use: 'svg-inline-loader',
         },
         {
           test: /\.(png|gif|jpg)$/,
@@ -68,11 +62,6 @@ module.exports = env => {
       minimize: env === 'production',
     },
     plugins: [
-      new TSLintPlugin({
-        files: ['./src/**/*.ts{,x}'],
-        project: 'tsconfig.json',
-        typeCheck: true,
-      }),
       new CleanWebpackPlugin(['dist']),
       new HtmlWebpackPlugin({
         template: './assets/template.html',
