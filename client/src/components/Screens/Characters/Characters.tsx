@@ -1,50 +1,29 @@
 /** @jsx jsx */
 import React from 'react';
-import { css, jsx } from '@emotion/core';
+import { EntityView } from '../../EntityView';
+import { jsx } from '@emotion/core';
+import { ObjectEntity } from '../../../models';
 
 const Characters: React.FC = () => {
+  const dummyEntity: ObjectEntity = {
+    id: '34tdfg',
+    name: 'Mike Mock',
+    description:
+      'A nice guy Lorem Ipsum is the single greatest threat. We are not - we are not keeping up with other websites. Lorem Ipsum best not make any more threats to your website. It will be met with fire and fury like the world has never seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',
+    type: {
+      id: 'characterTypeId',
+      name: 'Character',
+      icon: 'WEAPON',
+    },
+    properties: {},
+    relationships: [],
+    tags: ['Hunter', 'Gangster'],
+  };
+
   return (
     <div>
-      <img
-        src="https://images.curiator.com/images/t_x/art/ejecnuuqrgnuzwc6hlvq/andrew-wyeth-airborne-1996.jpg"
-        css={css`
-          width: 30%;
-        `}
-      />
-
-      <form>
-        <fieldset>
-          <label htmlFor="char-name">Name</label>
-          <input type="text" name="char-name" id="char-name" placeholder="Enter a name" />
-        </fieldset>
-        <fieldset>
-          <label htmlFor="char-age">Age</label>
-          <input type="text" name="char-age" id="char-age" placeholder="Enter character's age" />
-        </fieldset>
-
-        <fieldset>
-          <label htmlFor="char-gender">Gender</label>
-          <select name="char-gender" id="char-gender">
-            <option>male</option>
-            <option>female</option>
-            <option>transgender</option>
-            <option>amender</option>
-            <option>other</option>
-          </select>
-        </fieldset>
-        <fieldset>
-          <label htmlFor="char-description">Character Description</label>
-          <input
-            type="textarea"
-            css={css`
-              min-height: 100px;
-              height: 200px;
-            `}
-            name="char-description"
-            id="char-description"
-          />
-        </fieldset>
-      </form>
+      <h1>Characters</h1>
+      <EntityView {...dummyEntity} />
     </div>
   );
 };

@@ -1,3 +1,5 @@
-export { Place } from './place';
-export { Gender, Character } from './character';
-export { Event } from './event';
+export * from './Entity';
+export * from './Relationship';
+export * from './WithImage';
+export * from './WithRelationships';
+export * from './Property';

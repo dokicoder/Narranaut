@@ -7,55 +7,47 @@ import { Stories, Places, Events, Characters, Timelines, Relationships, Objects 
 
 const Main: React.FC = () => (
   <BrowserRouter>
-    <header>
-      <Header />
-    </header>
-    <div
-      id="main-container"
+    <header
       css={css`
-        display: flex;
-        flex-direction: row;
-        align-items: stretch;
-        height: 100%;
+        position: sticky;
+        top: 0;
       `}
     >
-      <main
-        id="viewContainer"
-        className="p-2"
-        css={css`
-          flex: 1 1 auto;
-          overflow: hidden;
-          min-height: 480px;
-        `}
-      >
-        <Switch>
-          <Route path="/stories">
-            <Stories />
-          </Route>
-          <Route path="/characters">
-            <Characters />
-          </Route>
-          <Route path="/events">
-            <Events />
-          </Route>
-          <Route path="/places">
-            <Places />
-          </Route>
-          <Route path="/timelines">
-            <Timelines />
-          </Route>
-          <Route path="/relationships">
-            <Relationships />
-          </Route>
-          <Route path="/objects">
-            <Objects />
-          </Route>
-          <Route path="*">
-            <Redirect to="/" />
-          </Route>
-        </Switch>
-      </main>
-    </div>
+      <Header />
+    </header>
+    <main
+      id="main-container"
+      css={css`
+        padding: 10px;
+      `}
+    >
+      <Switch>
+        <Route path="/stories">
+          <Stories />
+        </Route>
+        <Route path="/characters">
+          <Characters />
+        </Route>
+        <Route path="/events">
+          <Events />
+        </Route>
+        <Route path="/places">
+          <Places />
+        </Route>
+        <Route path="/timelines">
+          <Timelines />
+        </Route>
+        <Route path="/relationships">
+          <Relationships />
+        </Route>
+        <Route path="/objects">
+          <Objects />
+        </Route>
+        <Route path="*">
+          <Redirect to="/" />
+        </Route>
+      </Switch>
+    </main>
   </BrowserRouter>
 );
 

@@ -4,8 +4,12 @@ import { jsx, css } from '@emotion/core';
 import SVG from 'react-inlinesvg';
 import StoryIcon from '../../assets/story.svg';
 
-const Header: React.FC<{}> = () => (
-  <nav className="demo">
+const Header: React.FC = () => (
+  <nav
+    css={css`
+      position: static;
+    `}
+  >
     <a href="#" className="brand">
       <SVG
         css={css`
