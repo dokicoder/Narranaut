@@ -10,6 +10,7 @@ export interface EntityType {
   id: string;
 
   icon?: Icon;
+  color?: string;
   name: string;
 }
 
