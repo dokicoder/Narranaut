@@ -13,11 +13,9 @@ const Characters: React.FC = () => {
       <h1>Characters</h1>
       <div
         css={css`
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          margin: -15px !important;
+          display: grid;
+          grid-gap: 30px;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         `}
       >
         {characters.map(entity => (
@@ -25,8 +23,6 @@ const Characters: React.FC = () => {
             key={entity.id}
             {...entity}
             cCss={css`
-              margin: 15px 11px 15px 11px !important;
-              flex-grow: 1;
               transition: 0.25s ease-in-out transform;
               :hover {
                 transform: scale(1.1);
