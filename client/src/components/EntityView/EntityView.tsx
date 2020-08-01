@@ -16,7 +16,7 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
         [
           css`
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
-            width: 350px;
+            min-width: 300px;
             height: 300px;
             display: flex;
             flex-direction: column;
