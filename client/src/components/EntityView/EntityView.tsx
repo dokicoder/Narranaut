@@ -16,7 +16,7 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
         [
           css`
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
-            height: 300px;
+            height: 350px;
             display: flex;
             flex-direction: column;
             padding: 14px;
@@ -26,40 +26,45 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
       }
     >
       <header>
-        <h1
-          css={css`
-            margin: 0;
-            padding: 26px 0 !important;
-            line-height: 1;
-            font-size: 36px;
-          `}
-        >
-          {name}
-        </h1>
         <div
           css={css`
-            display: inline-block;
-            background-color: ${type.color || '#eeeeee'};
-            border-radius: 5px;
-            padding: 7px;
-            font-size: 10px;
-            position: absolute;
-            right: 10px;
-            top: 10px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
           `}
         >
-          {type.icon ? (
-            <img
-              css={css`
-                width: 28px;
-                height: 28px;
-                display: block;
-                margin: auto;
-              `}
-              src={Icons[type.icon]}
-            />
-          ) : null}
-          <div>{type.name}</div>
+          <h1
+            css={css`
+              margin: 0;
+              line-height: 1;
+              font-size: 36px;
+              flex-grow: 1;
+              min-width: 0;
+            `}
+          >
+            {name}
+          </h1>
+          <div
+            css={css`
+              background-color: ${type.color || '#eeeeee'};
+              border-radius: 5px;
+              padding: 7px;
+              font-size: 10px;
+            `}
+          >
+            {type.icon ? (
+              <img
+                css={css`
+                  width: 28px;
+                  height: 28px;
+                  display: block;
+                  margin: auto;
+                `}
+                src={Icons[type.icon]}
+              />
+            ) : null}
+            <div>{type.name}</div>
+          </div>
         </div>
         <div>
           {tags.map(tag => (
@@ -70,6 +75,7 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
                 border-radius: 10px;
                 padding-left: 10px;
                 padding-right: 10px;
+                margin-top: 20px;
 
                 :first-of-type {
                   margin-left: 0;
