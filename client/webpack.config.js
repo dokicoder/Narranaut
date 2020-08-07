@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
+const envVariables = require('dotenv').config({ path: __dirname + '/.env' });
+const { DefinePlugin } = require('webpack');
 
 module.exports = env => {
   return {
@@ -65,6 +67,10 @@ module.exports = env => {
       new CleanWebpackPlugin(['dist']),
       new HtmlWebpackPlugin({
         template: './assets/template.html',
+      }),
+      new DefinePlugin({
+        // for some reason define lpugin requires the env object to be a string?!
+        'process.env': JSON.stringify(envVariables.parsed),
       }),
     ],
     output: {

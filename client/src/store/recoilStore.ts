@@ -58,20 +58,6 @@ const mockDefaults = [
     tags: ['Hunter', 'Gangster'],
   },
   {
-    id: 'mock_3',
-    name: 'Mike Mock',
-    description:
-      'A nice guy eeping up with  seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',
-    type: {
-      id: 'characterTypeId',
-      name: 'Character',
-      icon: 'WEAPON',
-    },
-    properties: {},
-    relationships: [],
-    tags: ['Hunter', 'Gangster'],
-  },
-  {
     id: 'mock_4',
     name: 'Mike Mock',
     description:
@@ -127,11 +113,39 @@ const mockDefaults = [
     relationships: [],
     tags: ['Hunter', 'Gangster'],
   },
+  {
+    id: 'mock_8',
+    name: 'Mike Mock',
+    description:
+      'A nice guy eeping up with  seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',
+    type: {
+      id: 'characterTypeId',
+      name: 'Character',
+      icon: 'WEAPON',
+    },
+    properties: {},
+    relationships: [],
+    tags: ['Hunter', 'Gangster'],
+  },
+  {
+    id: 'mock_9',
+    name: 'Mike Mock',
+    description:
+      'A nice guy eeping up with  seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',
+    type: {
+      id: 'characterTypeId',
+      name: 'Character',
+      icon: 'WEAPON',
+    },
+    properties: {},
+    relationships: [],
+    tags: ['Hunter', 'Gangster'],
+  },
 ] as ObjectEntity[];
 
-export const CHARACTERS_STATE_ID = 'CHARACTERS_STATE_ID';
+export const CHARACTERS_STATE = 'CHARACTERS_STATE';
 
 export const charactersState = atom<ObjectEntity[]>({
-  key: 'CHARACTERS_STATE_ID',
+  key: CHARACTERS_STATE,
   default: mockDefaults, //[],
 });
