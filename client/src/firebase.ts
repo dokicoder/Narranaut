@@ -1,5 +1,6 @@
 import app from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/firestore';
 import React from 'react';
 
 export type User = app.User;
@@ -13,6 +14,12 @@ const firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_FIREBASE_WEB_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_FIREBASE_WEB_ID,
 };
+
+if (!firebaseConfig.apiKey) {
+  console.warn(
+    'it seems your auth configuration is missing. Go to https://console.firebase.google.com/, select your project and copy the secrets into a .env file in root directory (local) or inject environment variables (production)'
+  );
+}
 
 class Firebase {
   constructor() {

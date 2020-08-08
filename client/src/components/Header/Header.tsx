@@ -6,7 +6,7 @@ import StoryIcon from '../../assets/story.svg';
 import { centeredContainer } from '../../styles';
 import { FirebaseContext, User } from '../../firebase';
 import { Icons } from '../../utils';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory, NavLink } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const { auth, signOut } = useContext(FirebaseContext);
@@ -32,7 +32,7 @@ const Header: React.FC = () => {
       `}
     >
       <div css={centeredContainer}>
-        <a href="javascript:void(0)" className="brand">
+        <NavLink to="/" className="brand">
           <SVG
             css={css`
               width: 25px;
@@ -42,12 +42,13 @@ const Header: React.FC = () => {
             src={StoryIcon}
           />
           Narranaut
-        </a>
+        </NavLink>
 
         {currentUser && (
           <div className="menu">
-            <a
-              href="javascript:void(0)"
+            <NavLink
+              to="#"
+              onClick={e => e.preventDefault()}
               className="button"
               css={css`
                 position: relative;
@@ -74,17 +75,18 @@ const Header: React.FC = () => {
               >
                 {currentUser.email}
               </span>
-            </a>
-            <a
-              href="javascript:void(0)"
+            </NavLink>
+            <NavLink
+              to="#"
               className="button"
               css={css`
                 position: relative;
                 border-radius: 30px;
               `}
-              onClick={() => {
+              onClick={e => {
+                e.preventDefault();
                 signOut();
-                history.push('/login');
+                history.push('/');
               }}
             >
               <img
@@ -106,7 +108,7 @@ const Header: React.FC = () => {
               >
                 Logout
               </span>
-            </a>
+            </NavLink>
           </div>
         )}
       </div>

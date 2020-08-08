@@ -5,7 +5,7 @@ import { css, jsx } from '@emotion/core';
 import { Redirect } from 'react-router-dom';
 
 export const SignIn: React.FC = () => {
-  const { registerUser, signIn, signOut, auth } = useContext(FirebaseContext);
+  const { registerUser, signIn, auth } = useContext(FirebaseContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -58,18 +58,6 @@ export const SignIn: React.FC = () => {
     setSubmitted(true);
   };
 
-  const onSignOut = () => {
-    signOut()
-      .then(() => {
-        setSignInError(undefined);
-      })
-      .catch(error => {
-        setSignInError(error);
-      });
-    setLoading(true);
-    setSubmitted(true);
-  };
-
   const validator = () => {
     if (password.length < 8) return 'the password should have a length of at least 8';
     if (!/^.*@.*\..*$/.test(email)) return 'the email seems to be malformed';
@@ -94,6 +82,7 @@ export const SignIn: React.FC = () => {
       {loading ? (
         <div
           css={css`
+            opacity: 0;
             animation: 0.3s ease-in 0.3s fadein;
 
             @keyframes fadein {
@@ -132,7 +121,7 @@ export const SignIn: React.FC = () => {
                   display: block;
                   width: 100%;
                 }
-                button:first-child {
+                button::first-of-type {
                   margin-top: 20px;
                 }
               `}
