@@ -1,16 +1,16 @@
 /** @jsx jsx */
-import React, { useContext, useState, useEffect } from 'react';
-import { FirebaseContext, User } from '../../../firebase';
+import React, { useContext, useState } from 'react';
+import { FirebaseContext } from '../../../firebase';
 import { css, jsx } from '@emotion/core';
 import { Redirect } from 'react-router-dom';
+import { useFirebaseUser } from 'src/hooks';
 
 export const SignIn: React.FC = () => {
-  const { registerUser, signIn, auth } = useContext(FirebaseContext);
+  const { registerUser, signIn } = useContext(FirebaseContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
-  const [user, setCurrentUser] = useState<User>();
   const [signInError, setSignInError] = useState<Error>();
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,16 +18,7 @@ export const SignIn: React.FC = () => {
 
   const [formMode, setFormMode] = useState<'sign-in' | 'sign-up'>('sign-in');
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(currentUser => {
-      setCurrentUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  });
+  const user = useFirebaseUser(() => setLoading(false));
 
   const onChangeWrapper = (handler: (value: string) => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setSubmitted(false);

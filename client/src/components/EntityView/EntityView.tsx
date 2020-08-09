@@ -67,7 +67,7 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
           </div>
         </div>
         <div>
-          {tags.map(tag => (
+          {tags?.map(tag => (
             <span
               key={`${id}-tag-${tag}`}
               className="label success"
@@ -122,14 +122,14 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
         ) : null}
 
         <form>
-          {Object.values(properties).map(({ name, value }, idx) => (
+          {Object.entries(properties).map(([name, value], idx) => (
             <fieldset key={idx}>
               <label htmlFor="char-name">{name}</label>
               <input
                 type="text"
                 name="char-name"
                 id="char-name"
-                placeholder={`Enter a value for {name}`}
+                placeholder={`Enter a value for ${name}`}
                 value={value}
               />
             </fieldset>

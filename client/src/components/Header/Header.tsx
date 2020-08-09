@@ -75,8 +75,7 @@ const Header: React.FC = () => {
               `}
               onClick={e => {
                 e.preventDefault();
-                signOut();
-                history.push('/');
+                signOut().then(() => history.push('/'));
               }}
             >
               <img

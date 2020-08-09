@@ -1,3 +1,3 @@
 export interface WithTags {
-  tags: string[];
+  tags?: string[];
 }
