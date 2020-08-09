@@ -4,6 +4,7 @@ import { FirebaseContext } from '../../../firebase';
 import { css, jsx } from '@emotion/core';
 import { Redirect } from 'react-router-dom';
 import { useFirebaseUser } from 'src/hooks';
+import { LoadingIndicator } from 'src/components/LoadingIndicator';
 
 export const SignIn: React.FC = () => {
   const { registerUser, signIn } = useContext(FirebaseContext);
@@ -18,7 +19,9 @@ export const SignIn: React.FC = () => {
 
   const [formMode, setFormMode] = useState<'sign-in' | 'sign-up'>('sign-in');
 
-  const user = useFirebaseUser(() => setLoading(false));
+  const user = useFirebaseUser(() => {
+    setLoading(false);
+  });
 
   const onChangeWrapper = (handler: (value: string) => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setSubmitted(false);
@@ -62,7 +65,9 @@ export const SignIn: React.FC = () => {
     return <Redirect to="/" />;
   }
 
-  return (
+  return loading ? (
+    <LoadingIndicator />
+  ) : (
     <div
       css={css`
         height: 80vh;
@@ -70,111 +75,91 @@ export const SignIn: React.FC = () => {
         place-items: center;
       `}
     >
-      {loading ? (
-        <div
-          css={css`
-            opacity: 0;
-            animation: 0.3s ease-in 0.3s fadein forwards;
-
-            @keyframes fadein {
-              from {
-                opacity: 0;
+      <div
+        className="card"
+        css={css`
+          width: 400px;
+          padding: 14px;
+          box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
+        `}
+      >
+        <header>
+          <h3>{formMode === 'sign-in' ? 'Login' : 'Register'}</h3>
+        </header>
+        <footer>
+          <fieldset
+            name={`${formMode}-form`}
+            css={css`
+              input,
+              button {
+                margin-top: 8px;
               }
-              to {
-                opacity: 1;
+              button {
+                display: block;
+                width: 100%;
               }
-            }
-          `}
-        >
-          loading...
-        </div>
-      ) : (
-        <div
-          className="card"
-          css={css`
-            width: 400px;
-            padding: 14px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
-          `}
-        >
-          <header>
-            <h3>{formMode === 'sign-in' ? 'Login' : 'Register'}</h3>
-          </header>
-          <footer>
-            <fieldset
-              name={`${formMode}-form`}
-              css={css`
-                input,
-                button {
-                  margin-top: 8px;
-                }
-                button {
-                  display: block;
-                  width: 100%;
-                }
-                button::first-of-type {
-                  margin-top: 20px;
-                }
-              `}
-            >
+              button::first-of-type {
+                margin-top: 20px;
+              }
+            `}
+          >
+            <label>
+              <input
+                name="username"
+                value={email}
+                onChange={onChangeWrapper(setEmail)}
+                type="email"
+                placeholder="Email"
+              />
+            </label>
+            <label>
+              <input
+                name="password"
+                value={password}
+                onChange={onChangeWrapper(setPassword)}
+                type="password"
+                placeholder="Password"
+              />
+            </label>
+            {formMode === 'sign-up' && (
               <label>
                 <input
-                  name="username"
-                  value={email}
-                  onChange={onChangeWrapper(setEmail)}
-                  type="email"
-                  placeholder="Email"
-                />
-              </label>
-              <label>
-                <input
-                  name="password"
-                  value={password}
-                  onChange={onChangeWrapper(setPassword)}
+                  name="password-repeat"
+                  value={passwordRepeat}
+                  onChange={onChangeWrapper(setPasswordRepeat)}
                   type="password"
-                  placeholder="Password"
+                  placeholder="Repeat Password"
                 />
               </label>
-              {formMode === 'sign-up' && (
-                <label>
-                  <input
-                    name="password-repeat"
-                    value={passwordRepeat}
-                    onChange={onChangeWrapper(setPasswordRepeat)}
-                    type="password"
-                    placeholder="Repeat Password"
-                  />
-                </label>
-              )}
-              {formMode === 'sign-in' && <button onClick={onSignIn}>Login</button>}
-              {formMode === 'sign-in' && (
-                <button onClick={() => setFormMode('sign-up')} className="pseudo">
-                  Sign Up
-                </button>
-              )}
+            )}
+            {formMode === 'sign-in' && <button onClick={onSignIn}>Login</button>}
+            {formMode === 'sign-in' && (
+              <button onClick={() => setFormMode('sign-up')} className="pseudo">
+                Sign Up
+              </button>
+            )}
 
-              {formMode === 'sign-up' && <button onClick={onRegister}>Submit Registration</button>}
-              {formMode === 'sign-up' && (
-                <button onClick={() => setFormMode('sign-in')} className="pseudo">
-                  Login
-                </button>
-              )}
+            {formMode === 'sign-up' && <button onClick={onRegister}>Submit Registration</button>}
+            {formMode === 'sign-up' && (
+              <button onClick={() => setFormMode('sign-in')} className="pseudo">
+                Login
+              </button>
+            )}
 
-              {signInError && (
-                <label
-                  css={css`
-                    color: #dd2200;
-                  `}
-                  className="error"
-                  htmlFor="sign-in"
-                >
-                  {error}
-                </label>
-              )}
-            </fieldset>
-          </footer>
-        </div>
-      )}
+            {signInError && (
+              <label
+                css={css`
+                  color: #dd2200;
+                `}
+                className="error"
+                htmlFor="sign-in"
+              >
+                {error}
+              </label>
+            )}
+          </fieldset>
+        </footer>
+      </div>
     </div>
   );
 };

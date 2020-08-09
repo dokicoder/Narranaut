@@ -1,3 +1,4 @@
+export { LoadingIndicator } from './LoadingIndicator';
 export { ContextWrapper } from './ContextWrapper';
 export { Header } from './Header';
 export { Sidebar } from './Sidebar';

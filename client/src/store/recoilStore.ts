@@ -5,5 +5,5 @@ export const CHARACTERS_STATE = 'CHARACTERS_STATE';
 
 export const charactersState = atom<ObjectEntity[]>({
   key: CHARACTERS_STATE,
-  default: [],
+  default: undefined,
 });

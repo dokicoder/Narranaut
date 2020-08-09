@@ -7,6 +7,7 @@ import { charactersState } from '../../../store';
 import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
 import { FirebaseContext } from 'src/firebase';
+import { LoadingIndicator } from 'src/components/LoadingIndicator';
 
 const Characters: React.FC = () => {
   const [characters, updateCharacters] = useRecoilState(charactersState);
@@ -18,16 +19,8 @@ const Characters: React.FC = () => {
     let unsubscribe: () => void;
     const getEntities = async () => {
       if (user) {
-        /*
-        const entities = await db.collection('entities').get();
-
-        console.log(entities.docs[0].data());
-
-        console.log('logged in, going forward', user.uid);
-        
-        console.log('alternative', (await entitiesRef.where('uid', '==', user.uid).get()).docs[0].data());
-        */
         const entitiesRef = db.collection('entities');
+
         unsubscribe = entitiesRef.where('uid', '==', user.uid).onSnapshot(({ docs }) => {
           const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
 
@@ -42,13 +35,16 @@ const Characters: React.FC = () => {
 
     return () => {
       if (unsubscribe) {
-        console.log('unsubscribe');
         unsubscribe();
       }
     };
   }, [user, db, updateCharacters]);
 
-  return (
+  const loading = !characters;
+
+  return loading ? (
+    <LoadingIndicator />
+  ) : (
     <React.Fragment>
       <h1>Characters</h1>
       <div
