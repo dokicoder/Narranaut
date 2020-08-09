@@ -10,7 +10,7 @@ export const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
-  const [currentUser, setCurrentUser] = useState<User>();
+  const [user, setCurrentUser] = useState<User>();
   const [signInError, setSignInError] = useState<Error>();
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -67,7 +67,7 @@ export const SignIn: React.FC = () => {
 
   const error = signInError?.message || submitted ? validator() : undefined;
 
-  if (currentUser) {
+  if (user) {
     return <Redirect to="/" />;
   }
 
@@ -83,7 +83,7 @@ export const SignIn: React.FC = () => {
         <div
           css={css`
             opacity: 0;
-            animation: 0.3s ease-in 0.3s fadein;
+            animation: 0.3s ease-in 0.3s fadein forwards;
 
             @keyframes fadein {
               from {
@@ -155,15 +155,15 @@ export const SignIn: React.FC = () => {
                   />
                 </label>
               )}
-              {formMode === 'sign-in' && !currentUser && <button onClick={onSignIn}>Login</button>}
-              {formMode === 'sign-in' && !currentUser && (
+              {formMode === 'sign-in' && <button onClick={onSignIn}>Login</button>}
+              {formMode === 'sign-in' && (
                 <button onClick={() => setFormMode('sign-up')} className="pseudo">
                   Sign Up
                 </button>
               )}
 
-              {formMode === 'sign-up' && !currentUser && <button onClick={onRegister}>Submit Registration</button>}
-              {formMode === 'sign-up' && !currentUser && (
+              {formMode === 'sign-up' && <button onClick={onRegister}>Submit Registration</button>}
+              {formMode === 'sign-up' && (
                 <button onClick={() => setFormMode('sign-in')} className="pseudo">
                   Login
                 </button>

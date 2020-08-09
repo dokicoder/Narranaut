@@ -1,29 +1,19 @@
 /** @jsx jsx */
-import React, { useContext, useState, useEffect } from 'react';
-import { jsx, css } from '@emotion/core';
+import React, { useContext } from 'react';
 import SVG from 'react-inlinesvg';
+import { useHistory, NavLink } from 'react-router-dom';
+import { jsx, css } from '@emotion/core';
 import StoryIcon from '../../assets/story.svg';
 import { centeredContainer } from '../../styles';
-import { FirebaseContext, User } from '../../firebase';
+import { FirebaseContext } from '../../firebase';
+import { useFirebaseUser } from '../../hooks';
 import { Icons } from '../../utils';
-import { useHistory, NavLink } from 'react-router-dom';
 
 const Header: React.FC = () => {
-  const { auth, signOut } = useContext(FirebaseContext);
+  const { signOut } = useContext(FirebaseContext);
 
-  const [currentUser, setCurrentUser] = useState<User>();
-
+  const user = useFirebaseUser();
   const history = useHistory();
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(currentUser => {
-      setCurrentUser(currentUser);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  });
 
   return (
     <nav
@@ -44,7 +34,7 @@ const Header: React.FC = () => {
           Narranaut
         </NavLink>
 
-        {currentUser && (
+        {user && (
           <div className="menu">
             <NavLink
               to="#"
@@ -73,7 +63,7 @@ const Header: React.FC = () => {
                   color: black;
                 `}
               >
-                {currentUser.email}
+                {user.email}
               </span>
             </NavLink>
             <NavLink

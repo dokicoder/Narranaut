@@ -1,9 +1,9 @@
-import app from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import React from 'react';
 
-export type User = app.User;
+export type User = firebase.User;
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_WEB_API_KEY,
@@ -23,11 +23,17 @@ if (!firebaseConfig.apiKey) {
 
 class Firebase {
   constructor() {
-    app.initializeApp(firebaseConfig);
+    this.app = firebase.initializeApp(firebaseConfig);
   }
 
+  private app: firebase.app.App;
+
   get auth() {
-    return app.auth();
+    return this.app.auth();
+  }
+
+  get db() {
+    return this.app.firestore();
   }
 
   // *** Auth API ***
