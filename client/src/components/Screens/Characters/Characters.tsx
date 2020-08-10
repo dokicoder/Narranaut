@@ -1,44 +1,12 @@
 /** @jsx jsx */
-import React, { useEffect, useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import React from 'react';
 import { jsx, css } from '@emotion/core';
 import { EntityView } from '../../EntityView';
-import { charactersState } from '../../../store';
-import { ObjectEntity } from 'src/models';
-import { useFirebaseUser } from 'src/hooks';
-import { FirebaseContext } from 'src/firebase';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
+import { useEntityStore } from 'src/hooks';
 
 const Characters: React.FC = () => {
-  const [characters, updateCharacters] = useRecoilState(charactersState);
-  const { db } = useContext(FirebaseContext);
-
-  const user = useFirebaseUser();
-
-  useEffect(() => {
-    let unsubscribe: () => void;
-    const getEntities = async () => {
-      if (user) {
-        const entitiesRef = db.collection('entities');
-
-        unsubscribe = entitiesRef.where('uid', '==', user.uid).onSnapshot(({ docs }) => {
-          const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
-
-          console.log(entities);
-
-          updateCharacters(entities);
-        });
-      }
-    };
-
-    getEntities();
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user, db, updateCharacters]);
+  const { entities: characters } = useEntityStore('character');
 
   const loading = !characters;
 

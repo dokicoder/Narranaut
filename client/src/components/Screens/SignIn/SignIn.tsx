@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import { FirebaseContext } from '../../../firebase';
 import { css, jsx } from '@emotion/core';
 import { Redirect } from 'react-router-dom';
-import { useFirebaseUser } from 'src/hooks';
+import { useFirebaseUser, useMountedState } from 'src/hooks';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 
 export const SignIn: React.FC = () => {
@@ -17,10 +17,12 @@ export const SignIn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [submitted, setSubmitted] = useState<boolean>(false);
 
+  const isMounted = useMountedState();
+
   const [formMode, setFormMode] = useState<'sign-in' | 'sign-up'>('sign-in');
 
   const user = useFirebaseUser(() => {
-    setLoading(false);
+    isMounted() && setLoading(false);
   });
 
   const onChangeWrapper = (handler: (value: string) => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
