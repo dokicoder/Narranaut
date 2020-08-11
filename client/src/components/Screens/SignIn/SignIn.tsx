@@ -45,10 +45,10 @@ export const SignIn: React.FC = () => {
   const onSignIn = () => {
     signIn(email, password)
       .then(() => {
-        setSignInError(undefined);
+        isMounted() && setSignInError(undefined);
       })
       .catch(error => {
-        setSignInError(error);
+        isMounted() && setSignInError(error);
       });
     setLoading(true);
     setSubmitted(true);

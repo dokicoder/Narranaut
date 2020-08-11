@@ -16,12 +16,17 @@ export interface EntityType {
 
 export interface Entity extends WithImage {
   id: EntityId;
+  // corresponding user id
+  uid: string;
+
   type: EntityType;
 
   name: string;
   description?: string;
 
   properties: PropertyMap<string>;
+
+  deleted: boolean;
 }
 
 export interface ObjectEntity extends Entity, WithRelationships, WithTags {}
