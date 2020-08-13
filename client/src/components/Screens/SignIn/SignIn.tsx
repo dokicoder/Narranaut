@@ -5,6 +5,7 @@ import { css, jsx } from '@emotion/core';
 import { Redirect, useLocation } from 'react-router-dom';
 import { useFirebaseUser, useMountedState } from 'src/hooks';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
+import { onChangeWrapper } from 'src/utils';
 
 export const SignIn: React.FC = () => {
   const { registerUser, signIn } = useContext(FirebaseContext);
@@ -27,9 +28,9 @@ export const SignIn: React.FC = () => {
     isMounted() && setLoading(false);
   });
 
-  const onChangeWrapper = (handler: (value: string) => void) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const invalidateWrapper = (handler: (value: string) => void) => {
     setSubmitted(false);
-    handler(event.target.value);
+    return handler;
   };
 
   const onRegister = () => {
@@ -111,7 +112,7 @@ export const SignIn: React.FC = () => {
               <input
                 name="username"
                 value={email}
-                onChange={onChangeWrapper(setEmail)}
+                onChange={onChangeWrapper(invalidateWrapper(setEmail))}
                 type="email"
                 placeholder="Email"
               />
@@ -120,7 +121,7 @@ export const SignIn: React.FC = () => {
               <input
                 name="password"
                 value={password}
-                onChange={onChangeWrapper(setPassword)}
+                onChange={onChangeWrapper(invalidateWrapper(setPassword))}
                 type="password"
                 placeholder="Password"
               />
@@ -130,7 +131,7 @@ export const SignIn: React.FC = () => {
                 <input
                   name="password-repeat"
                   value={passwordRepeat}
-                  onChange={onChangeWrapper(setPasswordRepeat)}
+                  onChange={onChangeWrapper(invalidateWrapper(setPasswordRepeat))}
                   type="password"
                   placeholder="Repeat Password"
                 />

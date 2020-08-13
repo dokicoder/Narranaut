@@ -57,7 +57,6 @@ module.exports = env => {
     },
     devtool: 'inline-source-map',
     devServer: {
-      proxy: { '/api/**': { target: 'http://localhost:3000', secure: false } },
       historyApiFallback: true,
     },
     optimization: {
@@ -76,6 +75,7 @@ module.exports = env => {
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
+      publicPath: '/',
     },
   };
 };

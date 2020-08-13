@@ -47,7 +47,7 @@ export const Main: React.FC = () => {
           <Route path="/stories">
             <Stories />
           </Route>
-          <Route path="/characters">
+          <Route path="/characters/:entityId?">
             <Characters />
           </Route>
           <Route path="/events">

@@ -4,11 +4,15 @@ import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { ObjectEntity } from '../../models';
 import { Icons } from '../../utils';
 
-interface Props extends ObjectEntity {
+interface Props {
+  entity: ObjectEntity;
   cCss?: InterpolationWithTheme<any>;
+  onSelect?: () => void;
 }
 
-export const EntityCompactView: React.FC<Props> = ({ cCss, id, image, properties, name, description, type, tags }) => {
+export const EntityCompactView: React.FC<Props> = ({ cCss, onSelect, entity }) => {
+  const { id, image, properties, name, description, type, tags } = entity;
+
   return (
     <div
       className="card"
@@ -19,13 +23,32 @@ export const EntityCompactView: React.FC<Props> = ({ cCss, id, image, properties
             height: 350px;
             display: flex;
             flex-direction: column;
-            padding: 14px;
+            padding: 35px;
+
+            header,
+            footer {
+              padding: 0 !important;
+            }
+
+            header {
+              padding-bottom: 20px !important;
+              cursor: pointer;
+            }
+
+            footer {
+              padding-top: 20px !important;
+            }
+
+            table {
+              margin-top: 10px;
+              width: 100%;
+            }
           `,
           cCss,
         ] as InterpolationWithTheme<string>
       }
     >
-      <header>
+      <header onClick={onSelect}>
         <div
           css={css`
             display: flex;
@@ -50,6 +73,7 @@ export const EntityCompactView: React.FC<Props> = ({ cCss, id, image, properties
               border-radius: 5px;
               padding: 7px;
               font-size: 10px;
+              margin: 0 !important;
             `}
           >
             {type.icon ? (
@@ -121,13 +145,7 @@ export const EntityCompactView: React.FC<Props> = ({ cCss, id, image, properties
           />
         ) : null}
 
-        <table
-          className="primary"
-          css={css`
-            margin-top: 10px;
-            width: 100%;
-          `}
-        >
+        <table className="primary">
           <tbody>
             {Object.entries(properties).map(([name, value]) => (
               <tr key={name}>

@@ -47,6 +47,7 @@ export function useEntityStore(storeKey: string) {
   }, [user, db, storeKey, unsubscribe, updateEntities]);
 
   const updateEntity = async (entity: ObjectEntity) => {
+    console.log('update', entity);
     return db.collection('entities').doc(entity.id).update(entity);
   };
 
