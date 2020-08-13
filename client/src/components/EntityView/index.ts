@@ -1,1 +1,2 @@
-export * from './EntityView';
+export * from './EntityCompactView';
+export * from './EntityDetailView';

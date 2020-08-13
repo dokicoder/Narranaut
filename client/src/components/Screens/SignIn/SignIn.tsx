@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { FirebaseContext } from '../../../firebase';
 import { css, jsx } from '@emotion/core';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 import { useFirebaseUser, useMountedState } from 'src/hooks';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 
@@ -20,6 +20,8 @@ export const SignIn: React.FC = () => {
   const isMounted = useMountedState();
 
   const [formMode, setFormMode] = useState<'sign-in' | 'sign-up'>('sign-in');
+
+  const { state: locationState } = useLocation<{ referrer: string }>();
 
   const user = useFirebaseUser(() => {
     isMounted() && setLoading(false);
@@ -64,7 +66,7 @@ export const SignIn: React.FC = () => {
   const error = signInError?.message || submitted ? validator() : undefined;
 
   if (user) {
-    return <Redirect to="/" />;
+    return <Redirect to={locationState?.referrer || '/'} />;
   }
 
   return loading ? (

@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React from 'react';
 import { jsx, css } from '@emotion/core';
-import { EntityView } from '../../EntityView';
+import { EntityCompactView } from '../../EntityView';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 import { useEntityStore } from 'src/hooks';
 
@@ -23,7 +23,7 @@ const Characters: React.FC = () => {
         `}
       >
         {characters.map(entity => (
-          <EntityView
+          <EntityCompactView
             key={entity.id}
             {...entity}
             cCss={css`

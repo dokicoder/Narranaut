@@ -1,11 +1,24 @@
 /** @jsx jsx */
 import React from 'react';
 import { css, jsx } from '@emotion/core';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Stories, Places, Events, Characters, Timelines, Relationships, Objects, SignIn } from './Screens';
 import { centeredContainer } from '../styles';
 import { useFirebaseUser } from 'src/hooks';
+
+const ToSignInWithReferrer: React.FC = () => {
+  const location = useLocation();
+
+  return (
+    <Redirect
+      to={{
+        pathname: '/sign-in',
+        state: { referrer: location },
+      }}
+    />
+  );
+};
 
 export const Main: React.FC = () => {
   const user = useFirebaseUser();
@@ -26,11 +39,11 @@ export const Main: React.FC = () => {
           <Route path="/sign-in">
             <SignIn />
           </Route>
-          {user ? null : (
+          {user === null ? (
             <Route path="*">
-              <Redirect to="/sign-in" />
+              <ToSignInWithReferrer />
             </Route>
-          )}
+          ) : null}
           <Route path="/stories">
             <Stories />
           </Route>
@@ -52,7 +65,9 @@ export const Main: React.FC = () => {
           <Route path="/objects">
             <Objects />
           </Route>
-          <Route path="/">{user ? <Redirect to="/characters" /> : <Redirect to="/sign-in" />}</Route>
+          <Route path="/" exact>
+            <div>TODO: LANDING PAGE</div>
+          </Route>
           <Route path="*">
             <Redirect to="/" />
           </Route>

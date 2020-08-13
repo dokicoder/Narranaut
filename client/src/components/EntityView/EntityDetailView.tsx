@@ -8,7 +8,7 @@ interface Props extends ObjectEntity {
   cCss?: InterpolationWithTheme<any>;
 }
 
-export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name, description, type, tags }) => {
+export const EntityDetailView: React.FC<Props> = ({ cCss, id, image, properties, name, description, type, tags }) => {
   return (
     <div
       className="card"
@@ -37,7 +37,7 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
             css={css`
               margin: 0;
               line-height: 1;
-              font-size: 23px;
+              font-size: 36px;
               flex-grow: 1;
               min-width: 0;
             `}
@@ -120,23 +120,20 @@ export const EntityView: React.FC<Props> = ({ cCss, id, image, properties, name,
             `}
           />
         ) : null}
-
-        <table
-          className="primary"
-          css={css`
-            margin-top: 10px;
-            width: 100%;
-          `}
-        >
-          <tbody>
-            {Object.entries(properties).map(([name, value]) => (
-              <tr key={name}>
-                <td>{name}</td>
-                <td>{value}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <form>
+          {Object.entries(properties).map(([name, value], idx) => (
+            <fieldset key={idx}>
+              <label htmlFor="char-name">{name}</label>
+              <input
+                type="text"
+                name="char-name"
+                id="char-name"
+                placeholder={`Enter a value for ${name}`}
+                value={value}
+              />
+            </fieldset>
+          ))}
+        </form>
       </footer>
     </div>
   );

@@ -24,7 +24,7 @@ export function useEntityStore(storeKey: string) {
   const [entities, updateEntities] = useRecoilState(createEntityStore(storeKey));
 
   useEffect(() => {
-    if (user) {
+    if (user && !unsubscribeCallback.current) {
       console.log(`fetch entities of type "${storeKey}"`);
       unsubscribeCallback.current = db
         .collection('entities')
