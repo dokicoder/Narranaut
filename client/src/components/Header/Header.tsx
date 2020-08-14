@@ -1,108 +1,112 @@
 /** @jsx jsx */
 import React, { useContext } from 'react';
+import { css, jsx } from '@emotion/core';
 import SVG from 'react-inlinesvg';
-import { useHistory, NavLink } from 'react-router-dom';
-import { jsx, css } from '@emotion/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { AppBar, Toolbar, Chip, IconButton } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Mail from '@material-ui/icons/AlternateEmail';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { FirebaseContext } from 'src/firebase';
+import { useFirebaseUser } from 'src/hooks';
+import { useHistory } from 'react-router-dom';
 import StoryIcon from '../../assets/story.svg';
-import { centeredContainer } from '../../styles';
-import { FirebaseContext } from '../../firebase';
-import { useFirebaseUser } from '../../hooks';
-import { Icons } from '../../utils';
 
-const Header: React.FC = () => {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    mailChip: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+    },
+  })
+);
+
+export const Header: React.FC = () => {
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const isOpen = !!anchorEl;
+
   const { signOut } = useContext(FirebaseContext);
 
   const user = useFirebaseUser();
   const history = useHistory();
 
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <nav
-      css={css`
-        position: static;
-      `}
-    >
-      <div css={centeredContainer}>
-        <NavLink to="/" className="brand">
+    <div className={classes.root}>
+      <AppBar position="static" color="primary">
+        <Toolbar>
           <SVG
             css={css`
-              width: 25px;
-              height: 25px;
-              margin: 0 6px 4px 0;
+              width: 35px;
+              height: 35px;
+              margin: 0 12px 4px 0;
+              color: white;
+              fill: white;
             `}
             src={StoryIcon}
           />
-          Narranaut
-        </NavLink>
+          <Typography variant="h5" className={classes.title}>
+            Narranaut
+          </Typography>
+          {user && (
+            <React.Fragment>
+              <Chip icon={<Mail />} label={user.email} clickable className={classes.mailChip} color="secondary" />
 
-        {user && (
-          <div className="menu">
-            <NavLink
-              to="#"
-              onClick={e => e.preventDefault()}
-              className="button"
-              css={css`
-                position: relative;
-                background-color: #88ff66;
-                border-radius: 30px;
-              `}
-            >
-              <img
-                css={css`
-                  width: 24px;
-                  height: 24px;
-                  left: 10px;
-                  top: 6px;
-
-                  position: absolute;
-                `}
-                src={Icons.USER}
-              />
-              <span
-                css={css`
-                  margin-left: 24px;
-                  color: black;
-                `}
+              <IconButton
+                aria-label="logged in user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
               >
-                {user.email}
-              </span>
-            </NavLink>
-            <NavLink
-              to="#"
-              className="button"
-              css={css`
-                position: relative;
-                border-radius: 30px;
-              `}
-              onClick={e => {
-                e.preventDefault();
-                signOut().then(() => history.push('/'));
-              }}
-            >
-              <img
-                css={css`
-                  width: 32px;
-                  height: 32px;
-                  left: 8px;
-                  top: 2px;
-                  filter: invert(100);
-
-                  position: absolute;
-                `}
-                src={Icons.LEAVE}
-              />
-              <span
-                css={css`
-                  margin-left: 27px;
-                `}
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={isOpen}
+                onClose={handleClose}
               >
-                Logout
-              </span>
-            </NavLink>
-          </div>
-        )}
-      </div>
-    </nav>
+                <MenuItem
+                  onClick={() => {
+                    signOut().then(() => {
+                      handleClose();
+                      history.push('/');
+                    });
+                  }}
+                >
+                  Logout
+                </MenuItem>
+                <MenuItem onClick={handleClose}>My account</MenuItem>
+              </Menu>
+            </React.Fragment>
+          )}
+        </Toolbar>
+      </AppBar>
+    </div>
   );
 };
-
-export default Header;

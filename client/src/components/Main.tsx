@@ -2,6 +2,7 @@
 import React from 'react';
 import { css, jsx } from '@emotion/core';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
+import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 import { Header } from './Header';
 import { Stories, Places, Events, Characters, Timelines, Relationships, Objects, SignIn } from './Screens';
 import { centeredContainer } from '../styles';
@@ -20,11 +21,28 @@ const ToSignInWithReferrer: React.FC = () => {
   );
 };
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#2ecc7',
+      main: '#27ae60',
+      dark: '#002884',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#ff7961',
+      main: '#16a045',
+      dark: '#ba000d',
+      contrastText: '#fff',
+    },
+  },
+});
+
 export const Main: React.FC = () => {
   const user = useFirebaseUser();
 
   return (
-    <React.Fragment>
+    <ThemeProvider theme={theme}>
       <header
         css={css`
           position: sticky;
@@ -73,6 +91,6 @@ export const Main: React.FC = () => {
           </Route>
         </Switch>
       </main>
-    </React.Fragment>
+    </ThemeProvider>
   );
 };

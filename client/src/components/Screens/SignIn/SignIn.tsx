@@ -5,7 +5,6 @@ import { css, jsx } from '@emotion/core';
 import { Redirect, useLocation } from 'react-router-dom';
 import { useFirebaseUser, useMountedState } from 'src/hooks';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
-import { onChangeWrapper } from 'src/utils';
 
 export const SignIn: React.FC = () => {
   const { registerUser, signIn } = useContext(FirebaseContext);
