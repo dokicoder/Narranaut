@@ -28,9 +28,11 @@ export const SignIn: React.FC = () => {
     isMounted() && setLoading(false);
   });
 
-  const invalidateWrapper = (handler: (value: string) => void) => {
+  const customOnChangeWrapper = <T extends HTMLInputElement | HTMLTextAreaElement>(
+    handler: (value: string) => void
+  ) => (event: React.ChangeEvent<T>) => {
     setSubmitted(false);
-    return handler;
+    handler(event.target.value);
   };
 
   const onRegister = () => {
@@ -112,7 +114,7 @@ export const SignIn: React.FC = () => {
               <input
                 name="username"
                 value={email}
-                onChange={onChangeWrapper(invalidateWrapper(setEmail))}
+                onChange={customOnChangeWrapper(setEmail)}
                 type="email"
                 placeholder="Email"
               />
@@ -121,7 +123,7 @@ export const SignIn: React.FC = () => {
               <input
                 name="password"
                 value={password}
-                onChange={onChangeWrapper(invalidateWrapper(setPassword))}
+                onChange={customOnChangeWrapper(setPassword)}
                 type="password"
                 placeholder="Password"
               />
@@ -131,7 +133,7 @@ export const SignIn: React.FC = () => {
                 <input
                   name="password-repeat"
                   value={passwordRepeat}
-                  onChange={onChangeWrapper(invalidateWrapper(setPasswordRepeat))}
+                  onChange={customOnChangeWrapper(setPasswordRepeat)}
                   type="password"
                   placeholder="Repeat Password"
                 />
