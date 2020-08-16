@@ -5,6 +5,7 @@ import { EntityCompactView, EntityDetailView } from '../../EntityView';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 import { useEntityStore } from 'src/hooks';
 import { useParams, useHistory } from 'react-router-dom';
+import { Breadcrumbs } from 'src/components';
 
 const Characters: React.FC = () => {
   const { entities, updateEntity } = useEntityStore('character');
@@ -25,31 +26,19 @@ const Characters: React.FC = () => {
     history.push(`/characters`);
   };
 
+  const breadcrumbItems: any = [{ label: 'Characters', handler: onViewEntityList, active: !selectedEntity }];
+
+  if (selectedEntity) {
+    breadcrumbItems.push({ label: selectedEntity.name, active: true });
+  }
+
+  console.log(breadcrumbItems);
+
   return loading ? (
     <LoadingIndicator />
   ) : (
     <React.Fragment>
-      <div
-        css={css`
-          display: flex;
-          flex-direction: row;
-        `}
-      >
-        <h1 onClick={selectedEntity ? onViewEntityList : undefined}>Characters</h1>
-        {selectedEntity && (
-          <React.Fragment>
-            <h1
-              css={css`
-                padding: 20px;
-              `}
-            >
-              {'>'}
-            </h1>
-            <h1>{selectedEntity.name}</h1>
-          </React.Fragment>
-        )}
-      </div>
-
+      <Breadcrumbs items={breadcrumbItems} />
       {selectedEntity ? (
         <EntityDetailView entity={selectedEntity} onSave={updateEntity} />
       ) : (

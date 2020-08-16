@@ -6,3 +6,4 @@ export { Timelines } from './Timelines';
 export { Relationships } from './Relationships';
 export { Objects } from './Objects';
 export { SignIn } from './SignIn';
+export { LandingPage } from './LandingPage';

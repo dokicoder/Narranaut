@@ -4,7 +4,7 @@ import { css, jsx } from '@emotion/core';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 import { Header } from './Header';
-import { Stories, Places, Events, Characters, Timelines, Relationships, Objects, SignIn } from './Screens';
+import { Stories, Places, Events, Characters, Timelines, Relationships, Objects, SignIn, LandingPage } from './Screens';
 import { centeredContainer } from '../styles';
 import { useFirebaseUser } from 'src/hooks';
 
@@ -84,7 +84,7 @@ export const Main: React.FC = () => {
             <Objects />
           </Route>
           <Route path="/" exact>
-            <div>TODO: LANDING PAGE</div>
+            <LandingPage />
           </Route>
           <Route path="*">
             <Redirect to="/" />
