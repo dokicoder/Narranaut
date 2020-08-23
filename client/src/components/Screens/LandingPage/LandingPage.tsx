@@ -7,6 +7,7 @@ export const LandingPage: React.FC = () => {
   return (
     <React.Fragment>
       <Breadcrumbs />
+      <div>TODO: LANDING PAGE</div>
     </React.Fragment>
   );
 };

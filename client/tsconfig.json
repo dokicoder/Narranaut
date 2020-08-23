@@ -9,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "es6",
     "jsx": "react",
-    "lib": ["ESNext", "dom"],
+    "lib": ["ES2020", "dom"],
     "allowJs": true,
     "baseUrl": "./",
     "paths": {

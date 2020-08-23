@@ -32,7 +32,7 @@ export const Breadcrumbs: React.FC<Props> = ({ withHome = true, items = [] }) =>
   const history = useHistory();
 
   return (
-    <MUIBreadcrumbs separator="&bull;" aria-label="breadcrumb" className={classes.main}>
+    <MUIBreadcrumbs aria-label="breadcrumb" className={classes.main}>
       Breadcrumbs
       {withHome ? (
         items?.length ? (
