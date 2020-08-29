@@ -57,11 +57,11 @@ export const Breadcrumbs: React.FC<Props> = ({ withHome = true, items = [] }) =>
       ) : null}
       {items.map(({ label, active, handler }) =>
         active ? (
-          <Typography color="textPrimary" className={classes.link}>
+          <Typography key={label} color="textPrimary" className={classes.link}>
             {label}
           </Typography>
         ) : (
-          <Link color="inherit" href="#" onClick={handler} className={classes.link}>
+          <Link key={label} color="inherit" href="#" onClick={handler} className={classes.link}>
             {label}
           </Link>
         )

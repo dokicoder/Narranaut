@@ -1,8 +1,10 @@
 /** @jsx jsx */
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { ObjectEntity } from '../../models';
 import { Icons, onChangeWrapper } from '../../utils';
+import { TextField, Button } from '@material-ui/core';
+import { TagArea } from './TagArea';
 
 interface Props {
   entity: ObjectEntity;
@@ -11,52 +13,40 @@ interface Props {
   onDiscard?: () => void;
 }
 
+function propsStateUpdateReducer(state: Record<string, string>, updated: Record<string, string>) {
+  return { ...state, ...updated };
+}
+
 export const EntityDetailView: React.FC<Props> = props => {
   const { cCss, entity, onSave, onDiscard } = props;
-  const { id, image, properties, type, tags } = entity;
+  const { id, image, type, tags } = entity;
 
-  const [description, updateDescription] = useState(entity.description);
   const [name, updateName] = useState(entity.name);
+  const [description, updateDescription] = useState(entity.description);
+  const [entityProps, updateEntityProps] = useReducer(propsStateUpdateReducer, entity.properties);
+
+  const nameInvalidated = entity.name !== name;
+  const descriptionInvalidated = entity.description && entity.description !== description;
+  const propsInvalidated = Object.entries(entity.properties).some(([key, value]) => entityProps[key] !== value);
+
+  const invalidated = nameInvalidated || descriptionInvalidated || propsInvalidated;
 
   const updatedEntity = (): ObjectEntity => ({
     ...entity,
     name,
     description,
+    properties: entityProps,
   });
 
+  const discardChanges = () => {
+    updateName(entity.name);
+    updateDescription(entity.description);
+    updateEntityProps(entity.properties);
+    onDiscard();
+  };
+
   return (
-    <div
-      className="card"
-      css={
-        [
-          css`
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
-            display: flex;
-            flex-direction: column;
-            padding: 35px;
-
-            header,
-            footer {
-              padding: 0 !important;
-            }
-
-            header {
-              padding-bottom: 20px !important;
-              cursor: pointer;
-            }
-
-            footer {
-              padding-top: 20px !important;
-            }
-
-            textarea {
-              resize: vertical;
-            }
-          `,
-          cCss,
-        ] as InterpolationWithTheme<string>
-      }
-    >
+    <div css={cCss}>
       <header>
         <div
           css={css`
@@ -65,13 +55,13 @@ export const EntityDetailView: React.FC<Props> = props => {
             align-items: flex-start;
           `}
         >
-          <input
-            type="text"
-            name="entity-name"
+          <TextField
             id="entity-name"
-            placeholder="Enter a name"
+            name="entity-name"
             value={name}
             onChange={onChangeWrapper(updateName)}
+            label="Enter a name"
+            variant="outlined"
           />
           <div
             css={css`
@@ -94,26 +84,6 @@ export const EntityDetailView: React.FC<Props> = props => {
             ) : null}
             <div>{type.name}</div>
           </div>
-        </div>
-        <div>
-          {tags?.map(tag => (
-            <span
-              key={`${id}-tag-${tag}`}
-              className="label success"
-              css={css`
-                border-radius: 10px;
-                padding-left: 10px;
-                padding-right: 10px;
-                margin-top: 20px;
-
-                :first-of-type {
-                  margin-left: 0;
-                }
-              `}
-            >
-              {tag}
-            </span>
-          ))}
         </div>
       </header>
 
@@ -140,13 +110,23 @@ export const EntityDetailView: React.FC<Props> = props => {
           }
         `}
       >
-        <textarea
+        <TextField
+          css={css`
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            margin-bottom: 15px;
+          `}
           name="entity-description"
           id="entity-description"
-          placeholder="Enter a name"
+          label="Description"
+          multiline
+          rows={4}
           value={description}
           onChange={onChangeWrapper(updateDescription)}
+          variant="outlined"
         />
+        {tags && <TagArea id={id} tags={tags} />}
         {image ? (
           <img
             src={image}
@@ -155,18 +135,25 @@ export const EntityDetailView: React.FC<Props> = props => {
             `}
           />
         ) : null}
-        {Object.entries(properties).map(([name, value], idx) => (
-          <fieldset key={idx}>
-            <label htmlFor={`entity-prop-${name}`}>{name}</label>
-            <input
-              type="text"
-              name={`entity-prop-${name}`}
+        {Object.entries(entityProps)
+          .sort(([key1], [key2]) => key1.localeCompare(key2))
+          .map(([name, value], idx) => (
+            <TextField
+              css={css`
+                display: block;
+                width: 100%;
+                margin-top: 15px;
+                margin-bottom: 15px;
+              `}
+              key={idx}
               id={`entity-prop-${name}`}
-              placeholder={`Enter a value for ${name}`}
+              name={`entity-prop-${name}`}
               value={value}
+              onChange={onChangeWrapper((val: string) => updateEntityProps({ [name]: val }))}
+              label={`${name}`}
+              variant="outlined"
             />
-          </fieldset>
-        ))}
+          ))}
         <div
           css={css`
             margin-top: 20px;
@@ -175,10 +162,14 @@ export const EntityDetailView: React.FC<Props> = props => {
             }
           `}
         >
-          <button onClick={() => onSave(updatedEntity())}>Save</button>
-          <button onClick={onDiscard} className="pseudo">
-            Discard
-          </button>
+          {invalidated && (
+            <React.Fragment>
+              <Button variant="contained" color="primary" onClick={() => onSave(updatedEntity())}>
+                Save
+              </Button>
+              <Button onClick={discardChanges}>Discard</Button>
+            </React.Fragment>
+          )}
         </div>
       </footer>
     </div>

@@ -32,8 +32,6 @@ const Characters: React.FC = () => {
     breadcrumbItems.push({ label: selectedEntity.name, active: true });
   }
 
-  console.log(breadcrumbItems);
-
   return loading ? (
     <LoadingIndicator />
   ) : (
