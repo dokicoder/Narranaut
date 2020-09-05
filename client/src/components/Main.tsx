@@ -7,6 +7,7 @@ import { Header } from './Header';
 import { Stories, Places, Events, Characters, Timelines, Relationships, Objects, SignIn, LandingPage } from './Screens';
 import { centeredContainer } from '../styles';
 import { useFirebaseUser } from 'src/hooks';
+import { MainTheme } from './../utils/themes';
 
 const ToSignInWithReferrer: React.FC = () => {
   const location = useLocation();
@@ -21,22 +22,7 @@ const ToSignInWithReferrer: React.FC = () => {
   );
 };
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      light: '#2ecc7',
-      main: '#27ae60',
-      dark: '#002884',
-      contrastText: '#fff',
-    },
-    secondary: {
-      light: '#ff7961',
-      main: '#16a045',
-      dark: '#ba000d',
-      contrastText: '#fff',
-    },
-  },
-});
+const theme = createMuiTheme(MainTheme);
 
 export const Main: React.FC = () => {
   const user = useFirebaseUser();

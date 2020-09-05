@@ -57,12 +57,26 @@ export const Header: React.FC = () => {
               margin: 0 12px 4px 0;
               color: white;
               fill: white;
+              cursor: pointer;
             `}
             src={StoryIcon}
+            onClick={() => {
+              history.push('/');
+            }}
           />
-          <Typography variant="h5" className={classes.title}>
+          <Typography
+            css={css`
+              cursor: pointer;
+            `}
+            variant="h5"
+            className={classes.title}
+            onClick={() => {
+              history.push('/');
+            }}
+          >
             Narranaut
           </Typography>
+
           {user && (
             <React.Fragment>
               <Chip icon={<Mail />} label={user.email} clickable className={classes.mailChip} color="secondary" />

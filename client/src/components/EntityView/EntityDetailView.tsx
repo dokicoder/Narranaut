@@ -2,8 +2,8 @@
 import React, { useState, useReducer } from 'react';
 import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { ObjectEntity } from '../../models';
-import { Icons, onChangeWrapper } from '../../utils';
-import { TextField, Button } from '@material-ui/core';
+import { Icons, onChangeWrapper, MainTheme } from '../../utils';
+import { TextField, Button, Fade } from '@material-ui/core';
 import { TagArea } from './TagArea';
 
 interface Props {
@@ -27,9 +27,18 @@ export const EntityDetailView: React.FC<Props> = props => {
 
   const nameInvalidated = entity.name !== name;
   const descriptionInvalidated = entity.description && entity.description !== description;
-  const propsInvalidated = Object.entries(entity.properties).some(([key, value]) => entityProps[key] !== value);
+
+  const isPropInvalidated = (name: string, value: string) => entity.properties[name] !== value;
+  const propsInvalidated = Object.entries(entityProps).some(([key, value]) => isPropInvalidated(key, value));
 
   const invalidated = nameInvalidated || descriptionInvalidated || propsInvalidated;
+
+  const invalidatedStyle = (invalidated: boolean) =>
+    invalidated
+      ? `input {
+        color: ${MainTheme.palette.primary.main} !important;
+      }`
+      : '';
 
   const updatedEntity = (): ObjectEntity => ({
     ...entity,
@@ -46,132 +55,137 @@ export const EntityDetailView: React.FC<Props> = props => {
   };
 
   return (
-    <div css={cCss}>
-      <header>
-        <div
-          css={css`
+    <div
+      css={
+        [
+          css`
             display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-          `}
-        >
-          <TextField
-            id="entity-name"
-            name="entity-name"
-            value={name}
-            onChange={onChangeWrapper(updateName)}
-            label="Enter a name"
-            variant="outlined"
-          />
-          <div
-            css={css`
-              background-color: ${type.color || '#eeeeee'};
-              border-radius: 5px;
-              padding: 7px;
-              font-size: 12px;
-            `}
-          >
-            {type.icon ? (
-              <img
-                css={css`
-                  width: 28px;
-                  height: 28px;
-                  display: block;
-                  margin: auto;
-                `}
-                src={Icons[type.icon]}
-              />
-            ) : null}
-            <div>{type.name}</div>
-          </div>
-        </div>
-      </header>
-
-      <footer
+            flex-direction: column;
+            align-items: stretch;
+          `,
+          cCss,
+        ] as any
+      }
+    >
+      <div
         css={css`
-          overflow-y: auto;
-          font-size: 14px;
-          scrollbar-width: thin;
-
-          ::-webkit-scrollbar {
-            width: 7px;
-          }
-
-          scrollbar-width: thin;
-          scrollbar-color: #bbbbdd transparent;
-
-          ::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          ::-webkit-scrollbar-thumb {
-            background-color: #bbbbbb;
-            border-radius: 6px;
-            border: 3px solid transparent;
-          }
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
         `}
       >
         <TextField
           css={css`
-            display: block;
-            width: 100%;
-            margin-top: 15px;
-            margin-bottom: 15px;
-          `}
-          name="entity-description"
-          id="entity-description"
-          label="Description"
-          multiline
-          rows={4}
-          value={description}
-          onChange={onChangeWrapper(updateDescription)}
+              label {
+                font-size: 30px !important;
+              }
+
+              label.MuiInputLabel-outlined.MuiInputLabel-shrink {
+                transform: translate(14px, -12px) scale(0.75); !important;
+              }
+              div {
+                font-size: 30px !important;
+              }
+
+              ${invalidatedStyle(nameInvalidated)}
+            `}
+          id="entity-name"
+          name="entity-name"
+          value={name}
+          color={nameInvalidated ? 'secondary' : undefined}
+          onChange={onChangeWrapper(updateName)}
+          label="Name"
           variant="outlined"
         />
-        {tags && <TagArea id={id} tags={tags} />}
-        {image ? (
-          <img
-            src={image}
-            css={css`
-              width: 30%;
-            `}
-          />
-        ) : null}
-        {Object.entries(entityProps)
-          .sort(([key1], [key2]) => key1.localeCompare(key2))
-          .map(([name, value], idx) => (
-            <TextField
-              css={css`
-                display: block;
-                width: 100%;
-                margin-top: 15px;
-                margin-bottom: 15px;
-              `}
-              key={idx}
-              id={`entity-prop-${name}`}
-              name={`entity-prop-${name}`}
-              value={value}
-              onChange={onChangeWrapper((val: string) => updateEntityProps({ [name]: val }))}
-              label={`${name}`}
-              variant="outlined"
-            />
-          ))}
         <div
           css={css`
-            margin-top: 20px;
-            button {
-              margin-right: 10px;
-            }
+            background-color: ${type.color || '#eeeeee'};
+            border-radius: 5px;
+            padding: 7px;
+            font-size: 12px;
           `}
         >
-          {invalidated && (
-            <React.Fragment>
-              <Button variant="contained" color="primary" onClick={() => onSave(updatedEntity())}>
-                Save
-              </Button>
-              <Button onClick={discardChanges}>Discard</Button>
-            </React.Fragment>
-          )}
+          {type.icon ? (
+            <img
+              css={css`
+                width: 28px;
+                height: 28px;
+                display: block;
+                margin: auto;
+              `}
+              src={Icons[type.icon]}
+            />
+          ) : null}
+          <div>{type.name}</div>
         </div>
-      </footer>
+      </div>
+
+      <TextField
+        css={css`
+          display: flex;
+          margin-top: 15px;
+          margin-bottom: 15px;
+        `}
+        name="entity-description"
+        id="entity-description"
+        label="Description"
+        multiline
+        rows={4}
+        value={description}
+        onChange={onChangeWrapper(updateDescription)}
+        variant="outlined"
+      />
+      {tags && <TagArea id={id} tags={tags} />}
+      {image ? (
+        <img
+          src={image}
+          css={css`
+            width: 30%;
+          `}
+        />
+      ) : null}
+      {Object.entries(entityProps)
+        .sort(([key1], [key2]) => key1.localeCompare(key2))
+        .map(([name, value], idx) => (
+          <TextField
+            css={css`
+              display: block !important;
+
+              div {
+                display: block !important;
+              }
+
+              margin-top: 15px;
+              margin-bottom: 15px;
+
+              ${invalidatedStyle(isPropInvalidated(name, value))}
+            `}
+            key={idx}
+            id={`entity-prop-${name}`}
+            name={`entity-prop-${name}`}
+            value={value}
+            onChange={onChangeWrapper((val: string) => updateEntityProps({ [name]: val }))}
+            label={`${name}`}
+            variant="outlined"
+          />
+        ))}
+      <div
+        css={css`
+          margin-top: 20px;
+          button {
+            margin-right: 10px;
+          }
+        `}
+      >
+        <Fade in={invalidated}>
+          <div>
+            <Button variant="contained" color="primary" onClick={() => onSave(updatedEntity())}>
+              Save
+            </Button>
+            <Button onClick={discardChanges}>Discard</Button>
+          </div>
+        </Fade>
+      </div>
     </div>
   );
 };
