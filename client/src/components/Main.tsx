@@ -8,6 +8,7 @@ import { Stories, Places, Events, Characters, Timelines, Relationships, Objects,
 import { centeredContainer } from '../styles';
 import { useFirebaseUser } from 'src/hooks';
 import { MainTheme } from './../utils/themes';
+import { Paper } from '@material-ui/core';
 
 const ToSignInWithReferrer: React.FC = () => {
   const location = useLocation();
@@ -39,43 +40,49 @@ export const Main: React.FC = () => {
         <Header />
       </header>
       <main id="main-container" css={centeredContainer}>
-        <Switch>
-          <Route path="/sign-in">
-            <SignIn />
-          </Route>
-          {user === null ? (
-            <Route path="*">
-              <ToSignInWithReferrer />
+        <Paper
+          css={css`
+            padding: 50px;
+          `}
+        >
+          <Switch>
+            <Route path="/sign-in">
+              <SignIn />
             </Route>
-          ) : null}
-          <Route path="/stories">
-            <Stories />
-          </Route>
-          <Route path="/characters/:entityId?">
-            <Characters />
-          </Route>
-          <Route path="/events">
-            <Events />
-          </Route>
-          <Route path="/places">
-            <Places />
-          </Route>
-          <Route path="/timelines">
-            <Timelines />
-          </Route>
-          <Route path="/relationships">
-            <Relationships />
-          </Route>
-          <Route path="/objects">
-            <Objects />
-          </Route>
-          <Route path="/" exact>
-            <LandingPage />
-          </Route>
-          <Route path="*">
-            <Redirect to="/" />
-          </Route>
-        </Switch>
+            {user === null ? (
+              <Route path="*">
+                <ToSignInWithReferrer />
+              </Route>
+            ) : null}
+            <Route path="/stories">
+              <Stories />
+            </Route>
+            <Route path="/characters/:entityId?">
+              <Characters />
+            </Route>
+            <Route path="/events">
+              <Events />
+            </Route>
+            <Route path="/places">
+              <Places />
+            </Route>
+            <Route path="/timelines">
+              <Timelines />
+            </Route>
+            <Route path="/relationships">
+              <Relationships />
+            </Route>
+            <Route path="/objects">
+              <Objects />
+            </Route>
+            <Route path="/" exact>
+              <LandingPage />
+            </Route>
+            <Route path="*">
+              <Redirect to="/" />
+            </Route>
+          </Switch>
+        </Paper>
       </main>
     </ThemeProvider>
   );

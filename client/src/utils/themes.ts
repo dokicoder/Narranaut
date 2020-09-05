@@ -12,5 +12,11 @@ export const MainTheme = {
       dark: '#ba000d',
       contrastText: '#fff',
     },
+    error: {
+      light: '#ff2211',
+      main: '#ff2211',
+      dark: '#ba000d',
+      contrastText: '#fff',
+    },
   },
 };

@@ -1,9 +1,11 @@
 /** @jsx jsx */
-import React, { useState, useReducer } from 'react';
+import produce from 'immer';
+import React, { useState, useReducer, useMemo, useCallback } from 'react';
 import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { ObjectEntity } from '../../models';
+import { Add as AddIcon, Clear as ClearIcon } from '@material-ui/icons';
 import { Icons, onChangeWrapper, MainTheme } from '../../utils';
-import { TextField, Button, Fade } from '@material-ui/core';
+import { TextField, Button, Fade, Fab } from '@material-ui/core';
 import { TagArea } from './TagArea';
 
 interface Props {
@@ -13,7 +15,22 @@ interface Props {
   onDiscard?: () => void;
 }
 
-function propsStateUpdateReducer(state: Record<string, string>, updated: Record<string, string>) {
+interface IPropsUpdaterAction {
+  updated: Record<string, string>;
+  mode?: 'extend' | 'replace' | 'remove';
+}
+
+function propsStateUpdateReducer(state: Record<string, string>, { updated, mode }: IPropsUpdaterAction) {
+  if (mode === 'replace') {
+    return { ...updated };
+  }
+  if (mode === 'remove') {
+    const result = { ...state };
+    for (const key in updated) delete result[key];
+
+    return result;
+  }
+  // no mode is handled same as "extend"
   return { ...state, ...updated };
 }
 
@@ -28,14 +45,36 @@ export const EntityDetailView: React.FC<Props> = props => {
   const nameInvalidated = entity.name !== name;
   const descriptionInvalidated = entity.description && entity.description !== description;
 
-  const isPropInvalidated = (name: string, value: string) => entity.properties[name] !== value;
-  const propsInvalidated = Object.entries(entityProps).some(([key, value]) => isPropInvalidated(key, value));
+  const isPropInvalidated = useCallback((name: string, value: string) => entity.properties[name] !== value, [
+    entity.properties,
+  ]);
+  const propsInvalidated = useMemo(
+    () =>
+      Object.keys(entityProps).length !== Object.keys(entity.properties).length ||
+      Object.entries(entityProps).some(([key, value]) => isPropInvalidated(key, value)),
+    [entityProps, entity.properties, isPropInvalidated]
+  );
 
   const invalidated = nameInvalidated || descriptionInvalidated || propsInvalidated;
 
-  const invalidatedStyle = (invalidated: boolean) =>
+  const addProperty = () => {
+    updateEntityProps({
+      updated: produce(entityProps, props => {
+        props['neasdasdw'] = '';
+      }),
+    });
+  };
+
+  const removeProperty = (name: string) => {
+    updateEntityProps({
+      updated: { [name]: undefined },
+      mode: 'remove',
+    });
+  };
+
+  const invalidatedStyle = (invalidated: boolean, forTextArea = false) =>
     invalidated
-      ? `input {
+      ? `${forTextArea ? 'textarea' : 'input'} {
         color: ${MainTheme.palette.primary.main} !important;
       }`
       : '';
@@ -50,7 +89,7 @@ export const EntityDetailView: React.FC<Props> = props => {
   const discardChanges = () => {
     updateName(entity.name);
     updateDescription(entity.description);
-    updateEntityProps(entity.properties);
+    updateEntityProps({ updated: entity.properties, mode: 'replace' });
     onDiscard();
   };
 
@@ -125,12 +164,17 @@ export const EntityDetailView: React.FC<Props> = props => {
           display: flex;
           margin-top: 15px;
           margin-bottom: 15px;
+          textarea {
+            resize: vertical !important;
+          }
+
+          ${invalidatedStyle(descriptionInvalidated, true)}
         `}
         name="entity-description"
         id="entity-description"
         label="Description"
         multiline
-        rows={4}
+        rows={8}
         value={description}
         onChange={onChangeWrapper(updateDescription)}
         variant="outlined"
@@ -147,28 +191,52 @@ export const EntityDetailView: React.FC<Props> = props => {
       {Object.entries(entityProps)
         .sort(([key1], [key2]) => key1.localeCompare(key2))
         .map(([name, value], idx) => (
-          <TextField
+          <div
+            key={idx}
             css={css`
-              display: block !important;
-
-              div {
-                display: block !important;
-              }
+              display: flex;
+              flex-direction: row;
+              align-items: center;
 
               margin-top: 15px;
               margin-bottom: 15px;
-
-              ${invalidatedStyle(isPropInvalidated(name, value))}
             `}
-            key={idx}
-            id={`entity-prop-${name}`}
-            name={`entity-prop-${name}`}
-            value={value}
-            onChange={onChangeWrapper((val: string) => updateEntityProps({ [name]: val }))}
-            label={`${name}`}
-            variant="outlined"
-          />
+          >
+            <TextField
+              css={css`
+                flex-grow: 1;
+                ${invalidatedStyle(isPropInvalidated(name, value))}
+              `}
+              id={`entity-prop-${name}`}
+              name={`entity-prop-${name}`}
+              value={value}
+              onChange={onChangeWrapper((val: string) => updateEntityProps({ updated: { [name]: val } }))}
+              label={`${name}`}
+              variant="outlined"
+            />
+            <Fab
+              css={css`
+                margin-left: 10px;
+                background-color: ${MainTheme.palette.error.main};
+              `}
+              size="small"
+              color="primary"
+              onClick={() => removeProperty(name)}
+            >
+              <ClearIcon />
+            </Fab>
+          </div>
         ))}
+      <Fab
+        css={css`
+          align-self: center;
+        `}
+        size="small"
+        color="primary"
+        onClick={addProperty}
+      >
+        <AddIcon />
+      </Fab>
       <div
         css={css`
           margin-top: 20px;

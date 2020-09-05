@@ -14,7 +14,6 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     main: {
-      marginTop: theme.spacing(2),
       marginBottom: theme.spacing(5),
     },
     link: {
