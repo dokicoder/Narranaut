@@ -10,7 +10,7 @@ import { EditablePropertiesList } from './EditablePropertiesList';
 interface Props {
   entity: ObjectEntity;
   cCss?: InterpolationWithTheme<any>;
-  onSave?: (updatedEntity: ObjectEntity) => void;
+  onSave?: (updatedEntity: ObjectEntity) => Promise<void>;
   onDiscard?: () => void;
 }
 
@@ -37,12 +37,29 @@ export const EntityDetailView: React.FC<Props> = props => {
       }`
       : '';
 
-  const updatedEntity = (): ObjectEntity => ({
-    ...entity,
-    name,
-    description,
-    properties: propertyMapCache.current,
-  });
+  const updatedEntity = (): ObjectEntity => {
+    const properties = { ...propertyMapCache.current };
+
+    // delete keys with undefined values in properties map
+    for (const key in properties) {
+      if (properties[key] === undefined) {
+        delete properties[key];
+      }
+    }
+
+    return {
+      ...entity,
+      name,
+      description,
+      properties,
+    };
+  };
+
+  const saveChanges = () => {
+    onSave(updatedEntity()).then(() => {
+      updatePropertiesListReset(!propertiesListReset);
+    });
+  };
 
   const discardChanges = () => {
     updateName(entity.name);
@@ -152,7 +169,6 @@ export const EntityDetailView: React.FC<Props> = props => {
         propertyMap={entity.properties}
         onChangeInvalidationState={updatePropsInvalidated}
         onChangePropertyMap={updatedMap => {
-          console.log('updated');
           propertyMapCache.current = updatedMap;
         }}
       />
@@ -166,7 +182,7 @@ export const EntityDetailView: React.FC<Props> = props => {
       >
         <Fade in={invalidated}>
           <div>
-            <Button variant="contained" color="primary" onClick={() => onSave(updatedEntity())}>
+            <Button variant="contained" color="primary" onClick={saveChanges}>
               Save
             </Button>
             <Button onClick={discardChanges}>Discard</Button>

@@ -1,11 +1,11 @@
 /** @jsx jsx */
 import produce from 'immer';
-import React, { useReducer, useMemo, useCallback, useRef } from 'react';
+import React, { useReducer, useState, useMemo, useCallback, useRef } from 'react';
 import { css, jsx } from '@emotion/core';
 
-import { Add as AddIcon, Clear as ClearIcon } from '@material-ui/icons';
+import { Add as AddIcon, Clear as ClearIcon, Delete as DeleteIcon, Check as CheckIcon } from '@material-ui/icons';
 import { onChangeWrapper, MainTheme } from '../../utils';
-import { TextField, Fab } from '@material-ui/core';
+import { TextField, Fab, Collapse, IconButton } from '@material-ui/core';
 
 interface Props {
   // properties to display as key/value pair map
@@ -27,7 +27,7 @@ function propsStateUpdateReducer(state: Record<string, string>, { updated, mode 
   }
   if (mode === 'remove') {
     const result = { ...state };
-    for (const key in updated) delete result[key];
+    for (const key in updated) result[key] = undefined;
 
     return result;
   }
@@ -51,6 +51,8 @@ export const EditablePropertiesList: React.FC<Props> = ({
     [entityProps, propertyMap, isPropInvalidated]
   );
 
+  const [newPropertyName, setNewPropertyName] = useState<string>();
+
   onChangePropertyMap(entityProps);
 
   if (propsInvalidated !== invalidationState.current) {
@@ -61,7 +63,7 @@ export const EditablePropertiesList: React.FC<Props> = ({
   const addProperty = () => {
     updateEntityProps({
       updated: produce(entityProps, props => {
-        props['neasdasdw'] = '';
+        props[newPropertyName] = '';
       }),
     });
   };
@@ -85,53 +87,92 @@ export const EditablePropertiesList: React.FC<Props> = ({
       {Object.entries(entityProps)
         .sort(([key1], [key2]) => key1.localeCompare(key2))
         .map(([name, value], idx) => (
+          <Collapse key={idx} in={value !== undefined}>
+            <div
+              css={css`
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                margin-top: 15px;
+                margin-bottom: 15px;
+              `}
+            >
+              <TextField
+                css={css`
+                  flex-grow: 1;
+                  ${invalidatedStyle(isPropInvalidated(name, value))}
+                `}
+                id={`entity-prop-${name}`}
+                name={`entity-prop-${name}`}
+                value={value}
+                onChange={onChangeWrapper((val: string) => updateEntityProps({ updated: { [name]: val } }))}
+                label={`${name}`}
+                variant="outlined"
+              />
+              <Fab
+                css={css`
+                  margin-left: 10px;
+                  background-color: ${MainTheme.palette.error.main};
+                `}
+                size="small"
+                color="primary"
+                onClick={() => removeProperty(name)}
+              >
+                <ClearIcon />
+              </Fab>
+            </div>
+          </Collapse>
+        ))}
+      <div
+        css={css`
+          margin-top: 15px;
+          display: flex;
+          flex-direction: column;
+          align-self: center;
+          align-items: center;
+        `}
+      >
+        <Collapse in={newPropertyName == undefined}>
+          <Fab size="small" color="primary" onClick={() => setNewPropertyName('')}>
+            <AddIcon />
+          </Fab>
+        </Collapse>
+        <Collapse in={newPropertyName !== undefined}>
           <div
-            key={idx}
             css={css`
               display: flex;
               flex-direction: row;
               align-items: center;
-
-              margin-top: 15px;
-              margin-bottom: 15px;
             `}
           >
             <TextField
               css={css`
                 flex-grow: 1;
-                ${invalidatedStyle(isPropInvalidated(name, value))}
               `}
-              id={`entity-prop-${name}`}
-              name={`entity-prop-${name}`}
-              value={value}
-              onChange={onChangeWrapper((val: string) => updateEntityProps({ updated: { [name]: val } }))}
-              label={`${name}`}
+              id={`add-entity-prop`}
+              name={`add-entity-prop`}
+              value={newPropertyName}
+              onChange={onChangeWrapper(setNewPropertyName)}
+              label="New Property Name"
               variant="outlined"
             />
-            <Fab
-              css={css`
-                margin-left: 10px;
-                background-color: ${MainTheme.palette.error.main};
-              `}
-              size="small"
-              color="primary"
-              onClick={() => removeProperty(name)}
+
+            <IconButton
+              aria-label="add property"
+              disabled={!newPropertyName}
+              onClick={() => {
+                addProperty();
+                setNewPropertyName(undefined);
+              }}
             >
-              <ClearIcon />
-            </Fab>
+              <CheckIcon />
+            </IconButton>
+            <IconButton aria-label="discard property" onClick={() => setNewPropertyName(undefined)}>
+              <DeleteIcon />
+            </IconButton>
           </div>
-        ))}
-      <div
-        css={css`
-          display: flex;
-          flex-direction: row;
-          align-self: center;
-          align-items: center;
-        `}
-      >
-        <Fab size="small" color="primary" onClick={addProperty}>
-          <AddIcon />
-        </Fab>
+        </Collapse>
       </div>
     </React.Fragment>
   );
