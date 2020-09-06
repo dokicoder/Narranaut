@@ -151,7 +151,7 @@ export const EntityDetailView: React.FC<Props> = props => {
         label="Description"
         multiline
         rows={8}
-        value={description}
+        value={description || ''}
         onChange={onChangeWrapper(updateDescription)}
         variant="outlined"
       />

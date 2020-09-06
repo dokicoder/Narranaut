@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import produce from 'immer';
-import React, { useReducer, useState, useMemo, useCallback, useRef } from 'react';
+import React, { useReducer, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { css, jsx } from '@emotion/core';
 
 import { Add as AddIcon, Clear as ClearIcon, Delete as DeleteIcon, Check as CheckIcon } from '@material-ui/icons';
@@ -43,6 +43,10 @@ export const EditablePropertiesList: React.FC<Props> = ({
   const [entityProps, updateEntityProps] = useReducer(propsStateUpdateReducer, propertyMap);
   const invalidationState = useRef(true);
 
+  useEffect(() => {
+    onChangePropertyMap(entityProps);
+  }, [onChangePropertyMap, entityProps]);
+
   const isPropInvalidated = useCallback((name: string, value: string) => propertyMap[name] !== value, [propertyMap]);
   const propsInvalidated = useMemo(
     () =>
@@ -52,8 +56,6 @@ export const EditablePropertiesList: React.FC<Props> = ({
   );
 
   const [newPropertyName, setNewPropertyName] = useState<string>();
-
-  onChangePropertyMap(entityProps);
 
   if (propsInvalidated !== invalidationState.current) {
     invalidationState.current = propsInvalidated;
@@ -105,7 +107,7 @@ export const EditablePropertiesList: React.FC<Props> = ({
                 `}
                 id={`entity-prop-${name}`}
                 name={`entity-prop-${name}`}
-                value={value}
+                value={value || ''}
                 onChange={onChangeWrapper((val: string) => updateEntityProps({ updated: { [name]: val } }))}
                 label={`${name}`}
                 variant="outlined"
@@ -144,6 +146,9 @@ export const EditablePropertiesList: React.FC<Props> = ({
               display: flex;
               flex-direction: row;
               align-items: center;
+              button {
+                margin-left: 5px;
+              }
             `}
           >
             <TextField
@@ -152,7 +157,7 @@ export const EditablePropertiesList: React.FC<Props> = ({
               `}
               id={`add-entity-prop`}
               name={`add-entity-prop`}
-              value={newPropertyName}
+              value={newPropertyName || ''}
               onChange={onChangeWrapper(setNewPropertyName)}
               label="New Property Name"
               variant="outlined"
