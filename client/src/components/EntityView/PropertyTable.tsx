@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -33,14 +33,25 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const PropertyTable: React.FC<{ properties: Record<string, string> }> = ({ properties }) => {
+export const PropertyTable: React.FC<{ properties: Record<string, string>; sorted?: boolean }> = ({
+  properties,
+  sorted = true,
+}) => {
   const classes = useStyles();
+
+  const propertyList = useMemo(
+    () =>
+      sorted
+        ? Object.entries(properties).sort(([key1], [key2]) => key1.localeCompare(key2))
+        : Object.entries(properties),
+    [properties, sorted]
+  );
 
   return (
     <TableContainer component={Paper} className={classes.table}>
       <Table size="small" aria-label="customized table">
         <TableBody>
-          {Object.entries(properties).map(([name, value]) => (
+          {propertyList.map(([name, value]) => (
             <StyledTableRow key={name}>
               <StyledTableCell align="left">{name}</StyledTableCell>
               <StyledTableCell align="right">{value}</StyledTableCell>

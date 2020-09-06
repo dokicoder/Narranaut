@@ -21,7 +21,11 @@ interface IPropsUpdateAction {
   mode?: 'extend' | 'replace' | 'remove';
 }
 
-function propsStateUpdateReducer(state: Record<string, string>, { updated, mode }: IPropsUpdateAction) {
+function propsStateUpdateReducer(state: Record<string, string>, { updated, mode = 'extend' }: IPropsUpdateAction) {
+  // default - no value gets overridden to 'extend'
+  if (mode === 'extend') {
+    return { ...state, ...updated };
+  }
   if (mode === 'replace') {
     return { ...updated };
   }
@@ -31,11 +35,9 @@ function propsStateUpdateReducer(state: Record<string, string>, { updated, mode 
 
     return result;
   }
-  // no mode is handled same as "extend"
-  return { ...state, ...updated };
 }
 
-export const EditablePropertiesList: React.FC<Props> = ({
+export const EditablePropertyList: React.FC<Props> = ({
   propertyMap,
   onChangeInvalidationState,
   onChangePropertyMap,
@@ -84,48 +86,51 @@ export const EditablePropertiesList: React.FC<Props> = ({
       }`
       : '';
 
+  const sortedPropertyList = useMemo(
+    () => Object.entries(entityProps).sort(([key1], [key2]) => key1.localeCompare(key2)),
+    [entityProps]
+  );
+
   return (
     <React.Fragment>
-      {Object.entries(entityProps)
-        .sort(([key1], [key2]) => key1.localeCompare(key2))
-        .map(([name, value], idx) => (
-          <Collapse key={idx} in={value !== undefined}>
-            <div
-              css={css`
-                display: flex;
-                flex-direction: row;
-                align-items: center;
+      {sortedPropertyList.map(([name, value], idx) => (
+        <Collapse key={idx} in={value !== undefined}>
+          <div
+            css={css`
+              display: flex;
+              flex-direction: row;
+              align-items: center;
 
-                margin-top: 15px;
-                margin-bottom: 15px;
+              margin-top: 15px;
+              margin-bottom: 15px;
+            `}
+          >
+            <TextField
+              css={css`
+                flex-grow: 1;
+                ${invalidatedStyle(isPropInvalidated(name, value))}
               `}
+              id={`entity-prop-${name}`}
+              name={`entity-prop-${name}`}
+              value={value || ''}
+              onChange={onChangeWrapper((val: string) => updateEntityProps({ updated: { [name]: val } }))}
+              label={`${name}`}
+              variant="outlined"
+            />
+            <Fab
+              css={css`
+                margin-left: 10px;
+                background-color: ${MainTheme.palette.error.main};
+              `}
+              size="small"
+              color="primary"
+              onClick={() => removeProperty(name)}
             >
-              <TextField
-                css={css`
-                  flex-grow: 1;
-                  ${invalidatedStyle(isPropInvalidated(name, value))}
-                `}
-                id={`entity-prop-${name}`}
-                name={`entity-prop-${name}`}
-                value={value || ''}
-                onChange={onChangeWrapper((val: string) => updateEntityProps({ updated: { [name]: val } }))}
-                label={`${name}`}
-                variant="outlined"
-              />
-              <Fab
-                css={css`
-                  margin-left: 10px;
-                  background-color: ${MainTheme.palette.error.main};
-                `}
-                size="small"
-                color="primary"
-                onClick={() => removeProperty(name)}
-              >
-                <ClearIcon />
-              </Fab>
-            </div>
-          </Collapse>
-        ))}
+              <ClearIcon />
+            </Fab>
+          </div>
+        </Collapse>
+      ))}
       <div
         css={css`
           margin-top: 15px;

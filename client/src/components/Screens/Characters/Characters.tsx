@@ -22,7 +22,8 @@ const Characters: React.FC = () => {
     history.push(`/characters/${id}`);
   };
 
-  const onViewEntityList = () => {
+  const onViewEntityList = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
     history.push(`/characters`);
   };
 

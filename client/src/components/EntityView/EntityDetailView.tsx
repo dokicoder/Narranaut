@@ -1,11 +1,11 @@
 /** @jsx jsx */
 import React, { useState, useRef } from 'react';
 import { css, jsx, InterpolationWithTheme } from '@emotion/core';
+import { TextField, Button, Fade } from '@material-ui/core';
 import { ObjectEntity } from '../../models';
 import { Icons, onChangeWrapper, MainTheme } from '../../utils';
-import { TextField, Button, Fade } from '@material-ui/core';
 import { TagArea } from './TagArea';
-import { EditablePropertiesList } from './EditablePropertiesList';
+import { EditablePropertyList } from './EditablePropertyList';
 
 interface Props {
   entity: ObjectEntity;
@@ -164,7 +164,7 @@ export const EntityDetailView: React.FC<Props> = props => {
           `}
         />
       ) : null}
-      <EditablePropertiesList
+      <EditablePropertyList
         key={String(propertiesListReset)}
         propertyMap={entity.properties}
         onChangeInvalidationState={updatePropsInvalidated}
