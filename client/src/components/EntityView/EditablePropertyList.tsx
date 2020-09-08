@@ -2,7 +2,6 @@
 import produce from 'immer';
 import React, { useReducer, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { css, jsx } from '@emotion/core';
-
 import { Add as AddIcon, Clear as ClearIcon, Delete as DeleteIcon, Check as CheckIcon } from '@material-ui/icons';
 import { onChangeWrapper, MainTheme } from '../../utils';
 import { TextField, Fab, Collapse, IconButton } from '@material-ui/core';
@@ -117,17 +116,15 @@ export const EditablePropertyList: React.FC<Props> = ({
               label={`${name}`}
               variant="outlined"
             />
-            <Fab
+            <IconButton
               css={css`
                 margin-left: 10px;
-                background-color: ${MainTheme.palette.error.main};
               `}
-              size="small"
-              color="primary"
+              aria-label="remove property"
               onClick={() => removeProperty(name)}
             >
-              <ClearIcon />
-            </Fab>
+              <DeleteIcon />
+            </IconButton>
           </div>
         </Collapse>
       ))}
@@ -179,7 +176,7 @@ export const EditablePropertyList: React.FC<Props> = ({
               <CheckIcon />
             </IconButton>
             <IconButton aria-label="discard property" onClick={() => setNewPropertyName(undefined)}>
-              <DeleteIcon />
+              <ClearIcon />
             </IconButton>
           </div>
         </Collapse>

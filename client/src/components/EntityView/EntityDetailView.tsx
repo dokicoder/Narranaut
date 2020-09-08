@@ -6,6 +6,7 @@ import { ObjectEntity } from '../../models';
 import { Icons, onChangeWrapper, MainTheme } from '../../utils';
 import { TagArea } from './TagArea';
 import { EditablePropertyList } from './EditablePropertyList';
+import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 
 interface Props {
   entity: ObjectEntity;
@@ -141,8 +142,8 @@ export const EntityDetailView: React.FC<Props> = props => {
           margin-bottom: 15px;
           textarea {
             resize: vertical !important;
+            min-height: 60px !important;
           }import { useRef } from 'react';
-
 
           ${invalidatedStyle(descriptionInvalidated, true)}
         `}
@@ -182,10 +183,12 @@ export const EntityDetailView: React.FC<Props> = props => {
       >
         <Fade in={invalidated}>
           <div>
-            <Button variant="contained" color="primary" onClick={saveChanges}>
+            <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
               Save
             </Button>
-            <Button onClick={discardChanges}>Discard</Button>
+            <Button startIcon={<UndoIcon />} onClick={discardChanges}>
+              Discard
+            </Button>
           </div>
         </Fade>
       </div>
