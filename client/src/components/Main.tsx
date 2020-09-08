@@ -4,11 +4,12 @@ import { css, jsx } from '@emotion/core';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 import { Header } from './Header';
-import { Stories, Places, Events, Characters, Timelines, Relationships, Objects, SignIn, LandingPage } from './Screens';
+import { Stories, DefaultEntityOverview, Timelines, Relationships, Objects, SignIn, LandingPage } from './Screens';
 import { centeredContainer } from '../styles';
 import { useFirebaseUser } from 'src/hooks';
 import { MainTheme } from './../utils/themes';
 import { Paper } from '@material-ui/core';
+import Events from './Screens/Events/Events';
 
 const ToSignInWithReferrer: React.FC = () => {
   const location = useLocation();
@@ -57,20 +58,17 @@ export const Main: React.FC = () => {
             <Route path="/stories">
               <Stories />
             </Route>
-            <Route path="/characters/:entityId?">
-              <Characters />
+            <Route path="/timelines">
+              <Timelines />
             </Route>
             <Route path="/events">
               <Events />
             </Route>
-            <Route path="/places">
-              <Places />
-            </Route>
-            <Route path="/timelines">
-              <Timelines />
-            </Route>
             <Route path="/relationships">
               <Relationships />
+            </Route>
+            <Route path="/:entityType/:entityId?">
+              <DefaultEntityOverview />
             </Route>
             <Route path="/objects">
               <Objects />

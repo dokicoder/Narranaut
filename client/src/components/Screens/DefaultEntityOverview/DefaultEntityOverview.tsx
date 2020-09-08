@@ -6,28 +6,34 @@ import { LoadingIndicator } from 'src/components/LoadingIndicator';
 import { useEntityStore } from 'src/hooks';
 import { useParams, useHistory } from 'react-router-dom';
 import { Breadcrumbs } from 'src/components';
+import { singularize } from 'src/utils';
 
-const Characters: React.FC = () => {
-  const { entities, updateEntity } = useEntityStore('character');
-
-  const loading = !entities;
-
-  const { entityId } = useParams<{ entityId: string }>();
+export const DefaultEntityOverview: React.FC = () => {
+  const { entityType: entityTypePlural, entityId } = useParams<{ entityType: string; entityId: string }>();
+  const entityType = singularize(entityTypePlural);
+  const { entities, updateEntity } = useEntityStore(entityType);
 
   const history = useHistory();
 
+  // TODO: error component
+  if (!entityTypePlural) {
+    return <div>Error: entity type was undefined</div>;
+  }
+
   const selectedEntity = entityId && entities?.find(({ id }) => id === entityId);
 
+  const loading = !entities;
+
   const onSelectEntity = (id: string) => () => {
-    history.push(`/characters/${id}`);
+    history.push(`/${entityTypePlural}/${id}`);
   };
 
   const onViewEntityList = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    history.push(`/characters`);
+    history.push(`/${entityTypePlural}`);
   };
 
-  const breadcrumbItems: any = [{ label: 'Characters', handler: onViewEntityList, active: !selectedEntity }];
+  const breadcrumbItems: any = [{ label: `${entityTypePlural}`, handler: onViewEntityList, active: !selectedEntity }];
 
   if (selectedEntity) {
     breadcrumbItems.push({ label: selectedEntity.name, active: true });
@@ -67,5 +73,3 @@ const Characters: React.FC = () => {
     </React.Fragment>
   );
 };
-
-export default Characters;

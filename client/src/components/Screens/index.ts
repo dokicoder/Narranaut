@@ -1,5 +1,5 @@
 export { Stories } from './Stories';
-export { Characters } from './Characters';
+export { DefaultEntityOverview } from './DefaultEntityOverview';
 export { Events } from './Events';
 export { Places } from './Places';
 export { Timelines } from './Timelines';
