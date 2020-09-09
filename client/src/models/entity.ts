@@ -7,7 +7,7 @@ import { WithImage } from './WithImage';
 export type EntityId = string;
 
 export interface EntityType {
-  id: string;
+  readonly id: string;
 
   icon?: Icon;
   color?: string;
@@ -15,7 +15,7 @@ export interface EntityType {
 }
 
 export interface Entity extends WithImage {
-  id: EntityId;
+  readonly id: EntityId;
   // corresponding user id
   uid: string;
 

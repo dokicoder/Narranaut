@@ -11,7 +11,7 @@ import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 interface Props {
   entity: ObjectEntity;
   cCss?: InterpolationWithTheme<any>;
-  onSave?: (updatedEntity: ObjectEntity) => Promise<void>;
+  onSave: (updatedEntity: ObjectEntity) => Promise<void>;
   onDiscard?: () => void;
 }
 
@@ -107,7 +107,6 @@ export const EntityDetailView: React.FC<Props> = props => {
           id="entity-name"
           name="entity-name"
           value={name}
-          color={nameInvalidated ? 'secondary' : undefined}
           onChange={onChangeWrapper(updateName)}
           label="Name"
           variant="outlined"
@@ -173,25 +172,23 @@ export const EntityDetailView: React.FC<Props> = props => {
           propertyMapCache.current = updatedMap;
         }}
       />
-      <div
-        css={css`
-          margin-top: 20px;
-          button {
-            margin-right: 10px;
-          }
-        `}
-      >
-        <Fade in={invalidated}>
-          <div>
-            <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
-              Save
-            </Button>
-            <Button startIcon={<UndoIcon />} onClick={discardChanges}>
-              Discard
-            </Button>
-          </div>
-        </Fade>
-      </div>
+      <Fade in={invalidated}>
+        <div
+          css={css`
+            margin-top: 20px;
+            button {
+              margin-right: 10px;
+            }
+          `}
+        >
+          <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
+            Save
+          </Button>
+          <Button startIcon={<UndoIcon />} onClick={discardChanges}>
+            Discard
+          </Button>
+        </div>
+      </Fade>
     </div>
   );
 };

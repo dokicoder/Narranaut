@@ -7,11 +7,12 @@ import { useHistory } from 'react-router-dom';
 import { useEntityTypeStore } from 'src/hooks';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 import { pluralize } from 'src/utils';
+import { EntityTypeDetailView } from 'src/components/EntityTypeView';
 
 export const LandingPage: React.FC = () => {
   const history = useHistory();
 
-  const { types } = useEntityTypeStore();
+  const { types, updateType } = useEntityTypeStore();
 
   const loading = types === null;
 
@@ -28,9 +29,12 @@ export const LandingPage: React.FC = () => {
         TODO: LANDING PAGE
       </div>
       {types?.map(({ id, name }) => (
-        <Button key={id} variant="contained" color="primary" onClick={() => history.push(`/${id}s`)}>
+        <Button key={id} variant="contained" color="primary" onClick={() => history.push(`/${name}s`)}>
           {pluralize(name)}
         </Button>
+      ))}
+      {types.map(type => (
+        <EntityTypeDetailView key={type.id} type={type} onSave={updateType} />
       ))}
     </React.Fragment>
   );

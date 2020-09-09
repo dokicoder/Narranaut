@@ -41,6 +41,7 @@ export function useEntityTypeStore() {
   }, [user, db, unsubscribe, updateEntityTypes]);
 
   const updateType = async (type: EntityType) => {
+    console.log({ id: type.id });
     return db.collection('entity-types').doc(type.id).update(type);
   };
 
