@@ -5,6 +5,8 @@ import { css, jsx } from '@emotion/core';
 import { Redirect, useLocation } from 'react-router-dom';
 import { useFirebaseUser, useMountedState } from 'src/hooks';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
+import { TextField } from '@material-ui/core';
+import { Button, Paper } from '@material-ui/core';
 
 export const SignIn: React.FC = () => {
   const { registerUser, signIn } = useContext(FirebaseContext);
@@ -74,98 +76,126 @@ export const SignIn: React.FC = () => {
   return loading ? (
     <LoadingIndicator />
   ) : (
-    <div
+    <form
+      name={`${formMode}-form`}
       css={css`
-        height: 80vh;
+        height: 60vh;
         display: grid;
         place-items: center;
       `}
     >
-      <div
-        className="card"
+      <Paper
+        elevation={3}
         css={css`
-          width: 400px;
-          padding: 14px;
-          box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
+          width: 500px;
+          padding: 30px;
+          display: flex;
+          flex-direction: column;
         `}
       >
-        <header>
-          <h3>{formMode === 'sign-in' ? 'Login' : 'Register'}</h3>
-        </header>
-        <footer>
-          <fieldset
-            name={`${formMode}-form`}
+        <h2>{formMode === 'sign-in' ? 'Login' : 'Register'}</h2>
+
+        <TextField
+          css={css`
+            flex-grow: 1;
+          `}
+          id="email"
+          name="email"
+          value={email}
+          onChange={customOnChangeWrapper(setEmail)}
+          label="email"
+          variant="outlined"
+          type="email"
+        />
+        <TextField
+          css={css`
+            flex-grow: 1;
+            margin-top: 15px;
+          `}
+          id="password"
+          name="password"
+          value={password}
+          onChange={customOnChangeWrapper(setPassword)}
+          label="password"
+          variant="outlined"
+          type="password"
+        />
+        {formMode === 'sign-up' && (
+          <TextField
             css={css`
-              input,
-              button {
-                margin-top: 8px;
-              }
-              button {
-                display: block;
-                width: 100%;
-              }
-              button::first-of-type {
-                margin-top: 20px;
-              }
+              flex-grow: 1;
+              margin-top: 15px;
             `}
+            id="password-repeat"
+            name="password-repeat"
+            value={passwordRepeat}
+            onChange={customOnChangeWrapper(setPasswordRepeat)}
+            label="repeat password"
+            variant="outlined"
+            type="password"
+          />
+        )}
+        {formMode === 'sign-in' && (
+          <Button
+            css={css`
+              margin-top: 15px;
+            `}
+            size="large"
+            variant="contained"
+            color="primary"
+            onClick={onSignIn}
           >
-            <label>
-              <input
-                name="username"
-                value={email}
-                onChange={customOnChangeWrapper(setEmail)}
-                type="email"
-                placeholder="Email"
-              />
-            </label>
-            <label>
-              <input
-                name="password"
-                value={password}
-                onChange={customOnChangeWrapper(setPassword)}
-                type="password"
-                placeholder="Password"
-              />
-            </label>
-            {formMode === 'sign-up' && (
-              <label>
-                <input
-                  name="password-repeat"
-                  value={passwordRepeat}
-                  onChange={customOnChangeWrapper(setPasswordRepeat)}
-                  type="password"
-                  placeholder="Repeat Password"
-                />
-              </label>
-            )}
-            {formMode === 'sign-in' && <button onClick={onSignIn}>Login</button>}
-            {formMode === 'sign-in' && (
-              <button onClick={() => setFormMode('sign-up')} className="pseudo">
-                Sign Up
-              </button>
-            )}
+            login
+          </Button>
+        )}
+        {formMode === 'sign-in' && (
+          <Button
+            css={css`
+              margin-top: 15px;
+            `}
+            size="large"
+            onClick={() => setFormMode('sign-up')}
+          >
+            sign up
+          </Button>
+        )}
+        {formMode === 'sign-up' && (
+          <Button
+            css={css`
+              margin-top: 15px;
+            `}
+            size="large"
+            variant="contained"
+            color="primary"
+            onClick={onRegister}
+          >
+            submit registration
+          </Button>
+        )}
+        {formMode === 'sign-up' && (
+          <Button
+            css={css`
+              margin-top: 15px;
+            `}
+            size="large"
+            onClick={() => setFormMode('sign-in')}
+          >
+            login
+          </Button>
+        )}
 
-            {formMode === 'sign-up' && <button onClick={onRegister}>Submit Registration</button>}
-            {formMode === 'sign-up' && (
-              <button onClick={() => setFormMode('sign-in')} className="pseudo">
-                Login
-              </button>
-            )}
-
-            {signInError && (
-              <label
-                css={css`
-                  color: #dd2200;
-                `}
-                className="error"
-                htmlFor="sign-in"
-              >
-                {error}
-              </label>
-            )}
-          </fieldset>
-        </footer>
-      </div>
-    </div>
+        {signInError && (
+          <label
+            css={css`
+              color: #dd2200;
+            `}
+            className="error"
+            htmlFor="sign-in"
+          >
+            {error}
+          </label>
+        )}
+      </Paper>
+    </form>
   );
 };

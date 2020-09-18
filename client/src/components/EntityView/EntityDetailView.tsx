@@ -108,7 +108,7 @@ export const EntityDetailView: React.FC<Props> = props => {
           name="entity-name"
           value={name}
           onChange={onChangeWrapper(updateName)}
-          label="Name"
+          label="name"
           variant="outlined"
         />
         <div
@@ -148,7 +148,7 @@ export const EntityDetailView: React.FC<Props> = props => {
         `}
         name="entity-description"
         id="entity-description"
-        label="Description"
+        label="description"
         multiline
         rows={8}
         value={description || ''}
@@ -182,10 +182,10 @@ export const EntityDetailView: React.FC<Props> = props => {
           `}
         >
           <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
-            Save
+            save
           </Button>
           <Button startIcon={<UndoIcon />} onClick={discardChanges}>
-            Discard
+            discard
           </Button>
         </div>
       </Fade>
