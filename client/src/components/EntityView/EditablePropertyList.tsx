@@ -165,6 +165,9 @@ export const EditablePropertyList: React.FC<Props> = ({
               variant="outlined"
             />
 
+            <IconButton aria-label="discard property" onClick={() => setNewPropertyName(undefined)}>
+              <ClearIcon />
+            </IconButton>
             <IconButton
               aria-label="add property"
               disabled={!newPropertyName}
@@ -174,9 +177,6 @@ export const EditablePropertyList: React.FC<Props> = ({
               }}
             >
               <CheckIcon />
-            </IconButton>
-            <IconButton aria-label="discard property" onClick={() => setNewPropertyName(undefined)}>
-              <ClearIcon />
             </IconButton>
           </div>
         </Collapse>

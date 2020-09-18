@@ -6,7 +6,7 @@ import LINK from 'src/assets/icons8-link-100-2.png';
 import LOCATION from 'src/assets/icons8-place-marker-100-2.png';
 import PRIZE from 'src/assets/icons8-medal-first-place-100.png';
 import RELATIONSHIP from 'src/assets/icons8-restart-love-100.png';
-import TOOL from 'src/assets/icons8-hammer-100.png';
+import TOOL from 'src/assets/icons8-hammer-100-2.png';
 import TREASURE from 'src/assets/icons8-gold-bars-100.png';
 import USER from 'src/assets/icons8-male-user-100.png';
 import VESSEL from 'src/assets/icons8-box-100.png';
@@ -46,28 +46,28 @@ export type Icon =
 export const Icons: Record<Icon, string> = {
   ALIEN,
   ARTIFACT,
-  CASTLE: 'src/assets/',
-  CHARACTER: 'src/assets/',
-  CHEST: 'src/assets/',
+  CASTLE: '',
+  CHARACTER: '',
+  CHEST: '',
   COIN,
-  CONTRAPTION: 'src/assets/',
-  DEMON: 'src/assets/',
-  DEVICE: 'src/assets/',
+  CONTRAPTION: '',
+  DEMON: '',
+  DEVICE: '',
   GOBLET,
-  HERO: 'src/assets/',
-  HOUSE: 'src/assets/',
-  HUT: 'src/assets/',
-  ITEM: 'src/assets/',
+  HERO: '',
+  HOUSE: '',
+  HUT: '',
+  ITEM: '',
   LEAVE,
   LINK,
   LOCATION,
-  MAP: 'src/assets/',
-  MONSTER: 'src/assets/',
-  OBSTACLE: 'src/assets/',
+  MAP: '',
+  MONSTER: '',
+  OBSTACLE: '',
   PRIZE,
   RELATIONSHIP,
   TOOL,
-  TOWER: 'src/assets/',
+  TOWER: '',
   TREASURE,
   USER,
   VESSEL,

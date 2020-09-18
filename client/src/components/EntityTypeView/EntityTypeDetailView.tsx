@@ -1,10 +1,10 @@
 /** @jsx jsx */
 import React, { useReducer, useCallback, useMemo } from 'react';
 import { css, jsx } from '@emotion/core';
-import { Fade, Button, TextField } from '@material-ui/core';
+import { Fade, Button, TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 import { EntityType } from 'src/models';
-import { onChangeWrapper } from '../../utils';
+import { onChangeWrapper, Icon, Icons } from '../../utils';
 import { MainTheme } from './../../utils/themes';
 
 function entityTypeUpdateReducer(state: Partial<EntityType>, updated: Partial<EntityType>) {
@@ -20,14 +20,13 @@ const invalidatedStyle = (invalidated: boolean) =>
 
 interface Props {
   type: EntityType;
+  alwaysShowDiscard?: boolean;
   onSave: (updatedType: EntityType) => void;
   onDiscard?: () => void;
 }
 
-export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard }) => {
-  const { id, ...typeSansId } = type;
-
-  const [typeState, updateTypeState] = useReducer(entityTypeUpdateReducer, typeSansId);
+export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard, alwaysShowDiscard }) => {
+  const [typeState, updateTypeState] = useReducer(entityTypeUpdateReducer, type);
 
   const isKeyInvalidated = useCallback((name: keyof EntityType, value: string) => type[name] !== value, [type]);
 
@@ -41,9 +40,11 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard 
   };
 
   const discardChanges = () => {
-    updateTypeState(typeSansId);
+    updateTypeState(type);
     onDiscard && onDiscard();
   };
+
+  const definedPropertyList: (keyof EntityType)[] = ['name', 'icon', 'color'];
 
   return (
     <React.Fragment>
@@ -54,39 +55,94 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard 
           align-items: stretch;
         `}
       >
-        {Object.entries(typeState).map(([key, value]) => (
-          <TextField
-            key={`type-${type.id}-${key}`}
-            css={css`
-              margin-top: 15px;
-              ${invalidatedStyle(isKeyInvalidated(key as keyof EntityType, value))}
-            `}
-            id={`type-${type.id}-${key}`}
-            name={`type-${type.id}-${key}`}
-            value={value}
-            onChange={onChangeWrapper(value => updateTypeState({ [key]: value }))}
-            label={key}
-            variant="outlined"
-          />
-        ))}
+        {definedPropertyList.map(key => {
+          const value = typeState[key];
+
+          return key === 'icon' ? (
+            <FormControl
+              variant="outlined"
+              css={css`
+                margin-top: 15px;
+                ${invalidatedStyle(isKeyInvalidated(key as keyof EntityType, value))}
+              `}
+            >
+              <InputLabel id="demo-simple-select-outlined-label">icon</InputLabel>
+              <Select
+                css={css`
+                  div > img {
+                    position: absolute;
+                    margin-left: 20px;
+                    height: 30px;
+                    transform: translateY(-50%);
+                    top: 50%;
+                  }
+                `}
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                value={value}
+                onChange={onChangeWrapper(value => updateTypeState({ [key]: value as Icon }))}
+                label="Age"
+              >
+                {Object.keys(Icons).map(val => {
+                  const iconSrc = Icons[val as Icon];
+
+                  return (
+                    <MenuItem
+                      css={css`
+                        img {
+                          position: absolute;
+                          margin-left: 150px;
+                          height: 30px;
+                          transform: translateX(-50%);
+                        }
+                      `}
+                      key={val}
+                      value={val}
+                    >
+                      {val}
+                      {iconSrc && <img src={iconSrc} />}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          ) : (
+            <TextField
+              key={`type-${type.id}-${key}`}
+              css={css`
+                margin-top: 15px;
+                ${invalidatedStyle(isKeyInvalidated(key as keyof EntityType, value))}
+              `}
+              id={`type-${type.id}-${key}`}
+              name={`type-${type.id}-${key}`}
+              value={value}
+              onChange={onChangeWrapper(value => updateTypeState({ [key]: value }))}
+              label={key}
+              variant="outlined"
+            />
+          );
+        })}
       </div>
-      <Fade in={invalidated}>
-        <div
-          css={css`
-            margin-top: 20px;
-            button {
-              margin-right: 10px;
-            }
-          `}
-        >
-          <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
-            Save
-          </Button>
+
+      <div
+        css={css`
+          margin-top: 20px;
+          button {
+            margin-right: 10px;
+          }
+        `}
+      >
+        <Fade in={alwaysShowDiscard || invalidated}>
           <Button startIcon={<UndoIcon />} onClick={discardChanges}>
             Discard
           </Button>
-        </div>
-      </Fade>
+        </Fade>
+        <Fade in={invalidated}>
+          <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
+            Save
+          </Button>
+        </Fade>
+      </div>
     </React.Fragment>
   );
 };

@@ -181,11 +181,11 @@ export const EntityDetailView: React.FC<Props> = props => {
             }
           `}
         >
-          <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
-            save
-          </Button>
           <Button startIcon={<UndoIcon />} onClick={discardChanges}>
             discard
+          </Button>
+          <Button startIcon={<SaveIcon />} variant="contained" color="primary" onClick={saveChanges}>
+            save
           </Button>
         </div>
       </Fade>

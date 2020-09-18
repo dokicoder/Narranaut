@@ -28,7 +28,7 @@ export function useEntityTypeStore() {
     if (user && !unsubscribeCallback.current) {
       console.log(`fetch entity types`);
       unsubscribeCallback.current = db.collection('entity-types').onSnapshot(({ docs }) => {
-        const types = docs.map(doc => ({ id: doc.id, ...doc.data() } as EntityType));
+        const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as EntityType));
 
         updateEntityTypes(types);
       });
@@ -41,7 +41,6 @@ export function useEntityTypeStore() {
   }, [user, db, unsubscribe, updateEntityTypes]);
 
   const updateType = async (type: EntityType) => {
-    console.log({ id: type.id });
     return db.collection('entity-types').doc(type.id).update(type);
   };
 
