@@ -28,7 +28,7 @@ module.exports = {
         extendDefaults: true,
       },
     ],
-    '@typescript-eslint/no-unused-vars': { ignoreRestSiblings: true },
+    '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
     'react/prop-types': 0,
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': [

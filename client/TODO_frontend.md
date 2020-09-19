@@ -1,5 +1,4 @@
-TODO-List Frontend
---------------
+## TODO-List Frontend
 
 - proper input validation login screen
 - prioritize TODO_Items (meta-TODO anyone?)
@@ -12,3 +11,5 @@ TODO-List Frontend
 - host website using firebase console
 - editable list of tags in details view
 - think about replacing recoil with react-query (maybe test if it works)
+- define security rules (for example limited deleting dependent on properties) => find out how to do this
+- editable entity type on EntityDetailView

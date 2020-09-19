@@ -1,8 +1,8 @@
 /** @jsx jsx */
 import React, { useReducer, useCallback, useMemo } from 'react';
 import { css, jsx } from '@emotion/core';
-import { Fade, Button, TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
+import { Fade, Button, TextField, FormControl, InputLabel, Select, MenuItem, IconButton } from '@material-ui/core';
+import { Replay as UndoIcon, Save as SaveIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { EntityType } from 'src/models';
 import { onChangeWrapper, Icon, Icons } from '../../utils';
 import { MainTheme } from './../../utils/themes';
@@ -18,14 +18,22 @@ const invalidatedStyle = (invalidated: boolean) =>
   }`
     : '';
 
+const invalidatedStyleMultiSelect = (invalidated: boolean) =>
+  invalidated
+    ? `div.MuiSelect-root {
+    color: ${MainTheme.palette.primary.main} !important;
+  }`
+    : '';
+
 interface Props {
   type: EntityType;
   alwaysShowDiscard?: boolean;
   onSave: (updatedType: EntityType) => void;
   onDiscard?: () => void;
+  onDelete?: () => void;
 }
 
-export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard, alwaysShowDiscard }) => {
+export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard, onDelete, alwaysShowDiscard }) => {
   const [typeState, updateTypeState] = useReducer(entityTypeUpdateReducer, type);
 
   const isKeyInvalidated = useCallback((name: keyof EntityType, value: string) => type[name] !== value, [type]);
@@ -60,10 +68,11 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard,
 
           return key === 'icon' ? (
             <FormControl
+              key={`type-${type.id}-${key}`}
               variant="outlined"
               css={css`
                 margin-top: 15px;
-                ${invalidatedStyle(isKeyInvalidated(key as keyof EntityType, value))}
+                ${invalidatedStyleMultiSelect(isKeyInvalidated(key as keyof EntityType, value))}
               `}
             >
               <InputLabel id="demo-simple-select-outlined-label">icon</InputLabel>
@@ -142,6 +151,19 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard,
             Save
           </Button>
         </Fade>
+        {onDelete && (
+          <IconButton
+            css={css`
+              float: right;
+              position: relative;
+              bottom: 8px;
+            `}
+            aria-label="remove property"
+            onClick={onDelete}
+          >
+            <DeleteIcon />
+          </IconButton>
+        )}
       </div>
     </React.Fragment>
   );

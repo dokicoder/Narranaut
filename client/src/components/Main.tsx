@@ -1,15 +1,23 @@
 /** @jsx jsx */
 import React from 'react';
 import { css, jsx } from '@emotion/core';
+import { Paper } from '@material-ui/core';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
-import { Header } from './Header';
-import { Stories, DefaultEntityOverview, Timelines, Relationships, Objects, SignIn, LandingPage } from './Screens';
 import { centeredContainer } from '../styles';
-import { useFirebaseUser } from 'src/hooks';
 import { MainTheme } from './../utils/themes';
-import { Paper } from '@material-ui/core';
-import Events from './Screens/Events/Events';
+import { useFirebaseUser } from 'src/hooks';
+import { Header } from './Header';
+import {
+  Stories,
+  DefaultEntityOverview,
+  Timelines,
+  Relationships,
+  Objects,
+  SignIn,
+  LandingPage,
+  Events,
+} from './Screens';
 
 const ToSignInWithReferrer: React.FC = () => {
   const location = useLocation();

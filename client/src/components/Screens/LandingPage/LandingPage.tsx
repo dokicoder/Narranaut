@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import React, { useMemo } from 'react';
 import { jsx, css } from '@emotion/core';
-import { Button, Paper, Fab, Collapse } from '@material-ui/core';
+import { Button, Paper, Fab, Collapse, Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { Breadcrumbs } from 'src/components';
 import { useHistory } from 'react-router-dom';
 import { useEntityTypeStore } from 'src/hooks';
@@ -20,6 +21,8 @@ export const LandingPage: React.FC = () => {
   const loading = types === null;
 
   const [entityTypeEditCandidate, updateEntityTypeEditCandidate] = useState<EntityType>();
+
+  const [showDeleteNotImplementedInfo, setShowDeleteNotImplementedInfo] = React.useState(false);
 
   const emptyEtityType = (): EntityType => ({
     id: 'ignored',
@@ -75,7 +78,11 @@ export const LandingPage: React.FC = () => {
             margin-top: 20px;
           `}
         >
-          <EntityTypeDetailView type={type} onSave={updateType} />
+          <EntityTypeDetailView
+            type={type}
+            onSave={updateType}
+            onDelete={() => setShowDeleteNotImplementedInfo(true)}
+          />
         </Paper>
       ))}
       <Collapse in={!entityTypeEditCandidate}>
@@ -115,6 +122,15 @@ export const LandingPage: React.FC = () => {
           )}
         </Paper>
       </Collapse>
+      <Snackbar
+        open={showDeleteNotImplementedInfo}
+        autoHideDuration={8000}
+        onClose={() => setShowDeleteNotImplementedInfo(false)}
+      >
+        <Alert severity="info">
+          Deletion of Entity Types is discouraged. If you know what you&apos;re doing, use the Developer Console
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 };
