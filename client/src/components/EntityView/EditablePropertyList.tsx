@@ -48,10 +48,16 @@ export const EditablePropertyList: React.FC<Props> = ({
     onChangePropertyMap(entityProps);
   }, [onChangePropertyMap, entityProps]);
 
-  const isPropInvalidated = useCallback((name: string, value: string) => propertyMap[name] !== value, [propertyMap]);
+  const isPropInvalidated = useCallback(
+    // all new props are also marked as invalidated
+    (name: string, value: string) => propertyMap[name] !== value || propertyMap[name] === undefined,
+    [propertyMap]
+  );
   const propsInvalidated = useMemo(
     () =>
-      Object.keys(entityProps).length !== Object.keys(propertyMap).length ||
+      Object.keys(entityProps)
+        // the filtering is for newly added property keys that were deleted again aterwards (they have a value of undefined and get discarded only after save)
+        .filter(key => entityProps[key] !== undefined).length !== Object.keys(propertyMap).length ||
       Object.entries(entityProps).some(([key, value]) => isPropInvalidated(key, value)),
     [entityProps, propertyMap, isPropInvalidated]
   );
@@ -161,7 +167,7 @@ export const EditablePropertyList: React.FC<Props> = ({
               name={`add-entity-prop`}
               value={newPropertyName || ''}
               onChange={onChangeWrapper(setNewPropertyName)}
-              label="New Property Name"
+              label="new property name"
               variant="outlined"
             />
 
