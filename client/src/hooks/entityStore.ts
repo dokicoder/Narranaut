@@ -32,7 +32,7 @@ export function useEntityStore(storeKey: string) {
         .where('uid', '==', user.uid)
         // deleted flag is used to keep deleted records in db for now
         .where('deleted', '==', false)
-        .where('type.id', '==', storeKey)
+        .where('type.name', '==', storeKey)
         .onSnapshot(({ docs }) => {
           const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
 

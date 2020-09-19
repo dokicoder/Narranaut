@@ -11,7 +11,7 @@ import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 interface Props {
   entity: ObjectEntity;
   cCss?: InterpolationWithTheme<any>;
-  onSave: (updatedEntity: ObjectEntity) => Promise<void>;
+  onSave: (updatedEntity: ObjectEntity) => Promise<any>;
   onDiscard?: () => void;
 }
 

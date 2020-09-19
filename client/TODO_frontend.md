@@ -13,3 +13,4 @@
 - think about replacing recoil with react-query (maybe test if it works)
 - define security rules (for example limited deleting dependent on properties) => find out how to do this
 - editable entity type on EntityDetailView
+- error oundaries, error banners, error components, error pages, error infants (maybe save the last one for later)
