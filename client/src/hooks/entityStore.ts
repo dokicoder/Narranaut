@@ -5,8 +5,16 @@ import { useEffect, useContext, useRef, useCallback } from 'react';
 import { FirebaseContext } from './../firebase';
 import { useRecoilState } from 'recoil';
 
-export function useEntityStore(storeKey: string) {
+interface EntityStoreConfig {
+  showDeleted: boolean;
+}
+
+const defaultEntityStoreConfig: EntityStoreConfig = { showDeleted: false };
+
+export function useEntityStore(storeKey: string, config: Partial<EntityStoreConfig> = {}) {
   const unsubscribeCallback = useRef<() => void>();
+
+  const storeConfig = { ...defaultEntityStoreConfig, ...config };
 
   const unsubscribe = useCallback(() => {
     if (unsubscribeCallback.current) {
@@ -31,7 +39,7 @@ export function useEntityStore(storeKey: string) {
         // only retrieve entities bound to current user
         .where('uid', '==', user.uid)
         // deleted flag is used to keep deleted records in db for now
-        .where('deleted', '==', false)
+        .where('deleted', '==', storeConfig.showDeleted)
         .where('type.name', '==', storeKey)
         .onSnapshot(({ docs }) => {
           const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
@@ -44,7 +52,7 @@ export function useEntityStore(storeKey: string) {
       // unsubscribe on unmount
       unsubscribe();
     };
-  }, [user, db, storeKey, unsubscribe, updateEntities]);
+  }, [user, db, storeKey, unsubscribe, updateEntities, storeConfig.showDeleted]);
 
   const updateEntity = async (entity: ObjectEntity) => {
     return db.collection('entities').doc(entity.id).update(entity);
@@ -54,10 +62,13 @@ export function useEntityStore(storeKey: string) {
     return db.collection('entities').add(entity);
   };
 
-  const removeEntity = async (entity: ObjectEntity) => {
-    return db.collection('entities').doc(entity.id).delete();
-    //return db.collection('entities').doc(entity.id).update({ markedAsDeleted: true });
+  const flagEntityAsDeleted = async (entity: ObjectEntity) => {
+    return db.collection('entities').doc(entity.id).update({ deleted: true });
   };
 
-  return { entities, updateEntity, addEntity, removeEntity };
+  const reallyDeleteEntity = async (entity: ObjectEntity) => {
+    return db.collection('entities').doc(entity.id).delete();
+  };
+
+  return { entities, updateEntity, addEntity, flagEntityAsDeleted, reallyDeleteEntity };
 }

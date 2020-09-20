@@ -3,8 +3,9 @@ import produce from 'immer';
 import React, { useReducer, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { css, jsx } from '@emotion/core';
 import { Add as AddIcon, Clear as ClearIcon, Delete as DeleteIcon, Check as CheckIcon } from '@material-ui/icons';
+import { TextField, Fab, Collapse, IconButton, Fade } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { onChangeWrapper, MainTheme } from '../../utils';
-import { TextField, Fab, Collapse, IconButton } from '@material-ui/core';
 
 interface Props {
   // properties to display as key/value pair map
@@ -26,7 +27,14 @@ function propsStateUpdateReducer(state: Record<string, string>, { updated, mode 
     return { ...state, ...updated };
   }
   if (mode === 'replace') {
-    return { ...updated };
+    // TODO: this could be used to do the proper collapse animation when discarding property edits - you just have to figure out how to trigger it
+    const undefinedMap = Object.keys(state).reduce<Record<string, string>>((acc, key) => {
+      acc[key] = undefined;
+
+      return acc;
+    }, {});
+
+    return { ...undefinedMap, ...updated };
   }
   if (mode === 'remove') {
     const result = { ...state };
@@ -144,9 +152,29 @@ export const EditablePropertyList: React.FC<Props> = ({
         `}
       >
         <Collapse in={newPropertyName == undefined}>
-          <Fab size="small" color="primary" onClick={() => setNewPropertyName('')}>
-            <AddIcon />
-          </Fab>
+          <div
+            css={css`
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            `}
+          >
+            <Fab size="small" color="primary" onClick={() => setNewPropertyName('')}>
+              <AddIcon />
+            </Fab>
+            {!sortedPropertyList.length && (
+              <Fade in={!sortedPropertyList.length}>
+                <Alert
+                  css={css`
+                    margin-top: 20px;
+                  `}
+                  severity="info"
+                >
+                  Add properties by clicking the plus button
+                </Alert>
+              </Fade>
+            )}
+          </div>
         </Collapse>
         <Collapse in={newPropertyName !== undefined}>
           <div

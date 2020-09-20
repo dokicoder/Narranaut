@@ -4,13 +4,18 @@
 - prioritize TODO_Items (meta-TODO anyone?)
 - try including framer motion API (for something I guess?)
 - add image support with react-dropzone
-- adding of entities
 - relationship view
 - relationship menus in the Detail views
 - timeline view
+- allow for keyboard control (example: return after entering new property name should add the property, escape probably abort it)
+- more cool loading indicator
 - host website using firebase console
 - editable list of tags in details view
 - think about replacing recoil with react-query (maybe test if it works)
 - define security rules (for example limited deleting dependent on properties) => find out how to do this
 - editable entity type on EntityDetailView
 - error oundaries, error banners, error components, error pages, error infants (maybe save the last one for later)
+- add JSON export (preferrably both binary/non-binary)
+- the loading of entity lists is becoming slower. may have to think about continuous loading (like infinite scrolling, or fix the hook registration logic to be global)
+- write documentation (no, really!)
+- write tests for stuff (say whaat?! - was'nt this supposed to be fun?)

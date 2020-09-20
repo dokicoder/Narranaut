@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { jsx, css } from '@emotion/core';
 import { Fab } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
@@ -12,14 +12,13 @@ import { singularize } from 'src/utils';
 import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from './../../../hooks/firebase';
 import { useEntityTypeStore } from './../../../hooks/entityTypeStore';
-import { useMemo } from 'react';
 
 export const DefaultEntityOverview: React.FC = () => {
   const user = useFirebaseUser();
 
   const { entityType: entityTypePlural, entityId } = useParams<{ entityType: string; entityId: string }>();
   const entityType = singularize(entityTypePlural);
-  const { entities, updateEntity, addEntity } = useEntityStore(entityType);
+  const { entities, updateEntity, addEntity, flagEntityAsDeleted } = useEntityStore(entityType);
   const { types } = useEntityTypeStore();
 
   const history = useHistory();
@@ -98,6 +97,7 @@ export const DefaultEntityOverview: React.FC = () => {
             <EntityCompactView
               key={entity.id}
               onSelect={onSelectEntity(entity.id)}
+              onDelete={() => flagEntityAsDeleted(entity)}
               entity={entity}
               cCss={css`
                 transition: 0.25s ease-in-out transform;
@@ -110,6 +110,7 @@ export const DefaultEntityOverview: React.FC = () => {
           ))}
           <div
             css={css`
+              margin-top: 10px;
               height: 400px;
               display: flex;
               flex-direction: column;

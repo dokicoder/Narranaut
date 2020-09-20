@@ -1,12 +1,9 @@
 /** @jsx jsx */
-import React from 'react';
+import React, { useState } from 'react';
 import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
+import { Delete as DeleteIcon } from '@material-ui/icons';
+import { Card, IconButton, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
 import { ObjectEntity } from '../../models';
 import { PropertyTable } from './PropertyTable';
 import { Icons } from '../../utils';
@@ -16,6 +13,7 @@ interface Props {
   entity: ObjectEntity;
   cCss?: InterpolationWithTheme<any>;
   onSelect?: () => void;
+  onDelete?: () => void;
 }
 
 const useStyles = makeStyles({
@@ -28,12 +26,20 @@ const useStyles = makeStyles({
   },
 });
 
-export const EntityCompactView: React.FC<Props> = ({ cCss, onSelect, entity }) => {
+export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onDelete }) => {
   const classes = useStyles();
   const { id, image, properties, name, description, type, tags } = entity;
 
+  const [hovered, setHovered] = useState(false);
+
   return (
-    <Card className={classes.root} css={cCss} onClick={onSelect}>
+    <Card
+      className={classes.root}
+      css={cCss}
+      onClick={onSelect}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <CardActionArea>
         <CardMedia className={classes.media} image={image || Icons.USER} title={name} />
         <div
@@ -45,7 +51,7 @@ export const EntityCompactView: React.FC<Props> = ({ cCss, onSelect, entity }) =
             margin: 0 !important;
             position: absolute;
             top: 5px;
-            right: 5px;
+            left: 5px;
           `}
         >
           {type.icon ? (
@@ -61,6 +67,22 @@ export const EntityCompactView: React.FC<Props> = ({ cCss, onSelect, entity }) =
           ) : null}
           <div>{type.name}</div>
         </div>
+        {onDelete && hovered && (
+          <IconButton
+            css={css`
+              position: absolute;
+              top: 5px;
+              right: 5px;
+            `}
+            aria-label={`delete ${type?.name}`}
+            onClick={e => {
+              e.preventDefault();
+              onDelete();
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        )}
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {name}
