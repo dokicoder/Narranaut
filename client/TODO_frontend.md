@@ -1,6 +1,7 @@
 ## TODO-List Frontend
 
 - proper input validation login screen
+- hey, how about allowing for different stories? (oh god, how did I miss that?)
 - prioritize TODO_Items (meta-TODO anyone?)
 - try including framer motion API (for something I guess?)
 - add image support with react-dropzone
@@ -11,11 +12,12 @@
 - more cool loading indicator
 - host website using firebase console
 - editable list of tags in details view
+- add confirmation modals to certain parts of the app (e.g. when creating a ne entity, the breadcrumbs can be used to leave creation - thereby deleting all progress)
 - think about replacing recoil with react-query (maybe test if it works)
 - define security rules (for example limited deleting dependent on properties) => find out how to do this
 - editable entity type on EntityDetailView
-- error oundaries, error banners, error components, error pages, error infants (maybe save the last one for later)
-- add JSON export (preferrably both binary/non-binary)
+- error boundaries, error banners, error components, error pages, error infants (maybe save the last one for later)
+- add JSON export (preferably both binary/non-binary)
 - the loading of entity lists is becoming slower. may have to think about continuous loading (like infinite scrolling, or fix the hook registration logic to be global)
 - write documentation (no, really!)
-- write tests for stuff (say whaat?! - was'nt this supposed to be fun?)
+- write tests for stuff (say whaaat?! - wasn't this supposed to be fun?)

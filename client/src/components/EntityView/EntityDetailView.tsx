@@ -86,11 +86,13 @@ export const EntityDetailView: React.FC<Props> = props => {
         css={css`
           display: flex;
           flex-direction: row;
-          align-items: flex-start;
+          align-items: center;
         `}
       >
         <TextField
           css={css`
+              flex-grow: 1;
+
               label {
                 font-size: 30px !important;
               }
@@ -114,30 +116,40 @@ export const EntityDetailView: React.FC<Props> = props => {
         <div
           css={css`
             background-color: ${type.color || '#eeeeee'};
-            border-radius: 5px;
-            padding: 7px;
+            border-radius: 6px;
+            padding: 8px;
             font-size: 12px;
+            margin-left: 40px;
+            width: 100px;
+            height: 100px;
           `}
         >
           {type.icon ? (
             <img
               css={css`
-                width: 28px;
-                height: 28px;
+                height: 70px;
                 display: block;
                 margin: auto;
               `}
               src={Icons[type.icon]}
             />
           ) : null}
-          <div>{type.name}</div>
+          <h3
+            css={css`
+              padding: 0 !important;
+              margin-top -5px !important;
+              text-align: center;
+            `}
+          >
+            {type.name}
+          </h3>
         </div>
       </div>
 
       <TextField
         css={css`
           display: flex;
-          margin-top: 15px;
+          margin-top: 40px;
           margin-bottom: 15px;
           textarea {
             resize: vertical !important;

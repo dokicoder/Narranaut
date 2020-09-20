@@ -43,21 +43,23 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
       <CardActionArea>
         <CardMedia className={classes.media} image={image || Icons.USER} title={name} />
         <div
+          // TODO: do not hardcode the with somehow
           css={css`
             background-color: ${type.color || '#eeeeee'};
             border-radius: 5px;
+            width: 53px;
             padding: 7px;
             font-size: 10px;
             margin: 0 !important;
             position: absolute;
             top: 5px;
             left: 5px;
+            text-align: center;
           `}
         >
           {type.icon ? (
             <img
               css={css`
-                width: 28px;
                 height: 28px;
                 display: block;
                 margin: auto;
