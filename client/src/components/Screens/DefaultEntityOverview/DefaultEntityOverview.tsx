@@ -1,8 +1,8 @@
 /** @jsx jsx */
 import React, { useMemo } from 'react';
 import { jsx, css } from '@emotion/core';
-import { Fab } from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
+import { Fab, Button } from '@material-ui/core';
+import { Add as AddIcon, Delete as DeleteIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { EntityCompactView, EntityDetailView } from '../../EntityView';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 import { useEntityStore } from 'src/hooks';
@@ -12,13 +12,19 @@ import { singularize } from 'src/utils';
 import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from './../../../hooks/firebase';
 import { useEntityTypeStore } from './../../../hooks/entityTypeStore';
+import {} from '@material-ui/core';
+import { useState } from 'react';
 
 export const DefaultEntityOverview: React.FC = () => {
   const user = useFirebaseUser();
 
+  const [showDeletedEntites, setShowDeletedEntites] = useState(false);
+
   const { entityType: entityTypePlural, entityId } = useParams<{ entityType: string; entityId: string }>();
   const entityType = singularize(entityTypePlural);
-  const { entities, updateEntity, addEntity, flagEntityAsDeleted } = useEntityStore(entityType);
+  const { entities, updateEntity, addEntity, flagEntityDeleted, reallyDeleteEntity } = useEntityStore(entityType, {
+    showDeleted: showDeletedEntites,
+  });
   const { types } = useEntityTypeStore();
 
   const history = useHistory();
@@ -82,7 +88,22 @@ export const DefaultEntityOverview: React.FC = () => {
     <LoadingIndicator />
   ) : (
     <React.Fragment>
-      <Breadcrumbs items={breadcrumbItems} />
+      <div
+        css={css`
+          display: flex;
+          justify-content: space-between;
+          flex-grow: 1;
+          align-items: flex-start;
+        `}
+      >
+        <Breadcrumbs items={breadcrumbItems} />
+        <Button
+          onClick={() => setShowDeletedEntites(!showDeletedEntites)}
+          startIcon={showDeletedEntites ? <ArrowBackIcon /> : <DeleteIcon />}
+        >
+          {showDeletedEntites ? `view ${entityTypePlural}` : `deleted ${entityTypePlural}`}
+        </Button>
+      </div>
       {selectedEntity ? (
         <EntityDetailView entity={selectedEntity} onSave={updateCurrentOrSaveNewEntity} />
       ) : (
@@ -97,7 +118,14 @@ export const DefaultEntityOverview: React.FC = () => {
             <EntityCompactView
               key={entity.id}
               onSelect={onSelectEntity(entity.id)}
-              onDelete={() => flagEntityAsDeleted(entity)}
+              onDelete={() => {
+                if (showDeletedEntites) {
+                  reallyDeleteEntity(entity);
+                } else {
+                  flagEntityDeleted(entity, true);
+                }
+              }}
+              onRestore={showDeletedEntites ? () => flagEntityDeleted(entity, false) : undefined}
               entity={entity}
               cCss={css`
                 transition: 0.25s ease-in-out transform;

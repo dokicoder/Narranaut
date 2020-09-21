@@ -62,13 +62,13 @@ export function useEntityStore(storeKey: string, config: Partial<EntityStoreConf
     return db.collection('entities').add(entity);
   };
 
-  const flagEntityAsDeleted = async (entity: ObjectEntity) => {
-    return db.collection('entities').doc(entity.id).update({ deleted: true });
+  const flagEntityDeleted = async (entity: ObjectEntity, deleted: boolean) => {
+    return db.collection('entities').doc(entity.id).update({ deleted });
   };
 
   const reallyDeleteEntity = async (entity: ObjectEntity) => {
     return db.collection('entities').doc(entity.id).delete();
   };
 
-  return { entities, updateEntity, addEntity, flagEntityAsDeleted, reallyDeleteEntity };
+  return { entities, updateEntity, addEntity, flagEntityDeleted, reallyDeleteEntity };
 }

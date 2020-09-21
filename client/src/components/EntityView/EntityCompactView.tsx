@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Delete as DeleteIcon } from '@material-ui/icons';
+import { Delete as DeleteIcon, RestoreFromTrash as RestoreIcon } from '@material-ui/icons';
 import { Card, IconButton, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
 import { ObjectEntity } from '../../models';
 import { PropertyTable } from './PropertyTable';
@@ -14,6 +14,7 @@ interface Props {
   cCss?: InterpolationWithTheme<any>;
   onSelect?: () => void;
   onDelete?: () => void;
+  onRestore?: () => void;
 }
 
 const useStyles = makeStyles({
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onDelete }) => {
+export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onDelete, onRestore }) => {
   const classes = useStyles();
   const { id, image, properties, name, description, type, tags } = entity;
 
@@ -118,6 +119,22 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
           }}
         >
           <DeleteIcon />
+        </IconButton>
+      )}
+      {onRestore && hovered && (
+        <IconButton
+          css={css`
+            position: absolute;
+            top: 55px;
+            right: 5px;
+          `}
+          aria-label={`delete ${type?.name}`}
+          onClick={e => {
+            e.preventDefault();
+            onRestore();
+          }}
+        >
+          <RestoreIcon />
         </IconButton>
       )}
     </Card>
