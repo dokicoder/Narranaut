@@ -1,10 +1,12 @@
 ## TODO-List Frontend
 
-- proper input validation login screen
 - hey, how about allowing for different stories? (oh god, how did I miss that?)
+- then you could import entities and so on from other users, stories you name it
 - prioritize TODO_Items (meta-TODO anyone?)
-- try including framer motion API (for something I guess?)
+- enable final deletion for entities that are flagged "deleted"
 - add image support with react-dropzone
+- proper input validation login screen
+- try including framer motion API (for something I guess?)
 - relationship view
 - relationship menus in the Detail views
 - timeline view
