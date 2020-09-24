@@ -127,13 +127,6 @@ export const DefaultEntityOverview: React.FC = () => {
               }}
               onRestore={showDeletedEntites ? () => flagEntityDeleted(entity, false) : undefined}
               entity={entity}
-              cCss={css`
-                transition: 0.25s ease-in-out transform;
-                :hover {
-                  transform: scale(1.1);
-                  z-index: 10;
-                }
-              `}
             />
           ))}
           <div

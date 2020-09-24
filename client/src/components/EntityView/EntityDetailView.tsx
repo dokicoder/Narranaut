@@ -6,6 +6,7 @@ import { ObjectEntity } from '../../models';
 import { Icons, onChangeWrapper, MainTheme } from '../../utils';
 import { TagArea } from './TagArea';
 import { EditablePropertyList } from './EditablePropertyList';
+import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 
 interface Props {
@@ -82,6 +83,7 @@ export const EntityDetailView: React.FC<Props> = props => {
         ] as any
       }
     >
+      <EntityDetailViewImageDropzone id={id} />
       <div
         css={css`
           display: flex;
@@ -155,6 +157,10 @@ export const EntityDetailView: React.FC<Props> = props => {
             resize: vertical !important;
             min-height: 60px !important;
           }import { useRef } from 'react';
+import { FirebaseContext } from 'src/firebase';
+import { FirebaseContext } from './../../firebase';
+import { useContext } from 'react';
+import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 
           ${invalidatedStyle(descriptionInvalidated, true)}
         `}

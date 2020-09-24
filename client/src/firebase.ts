@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/storage';
 import React from 'react';
 
 export type User = firebase.User;
@@ -34,6 +35,10 @@ class Firebase {
 
   get db() {
     return this.app.firestore();
+  }
+
+  get fileStorage() {
+    return this.app.storage();
   }
 
   // *** Auth API ***
