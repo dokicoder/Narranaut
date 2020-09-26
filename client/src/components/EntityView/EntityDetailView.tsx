@@ -83,16 +83,41 @@ export const EntityDetailView: React.FC<Props> = props => {
         ] as any
       }
     >
-      <EntityDetailViewImageDropzone id={id} />
       <div
         css={css`
           display: flex;
           flex-direction: row;
           align-items: center;
+          height: 320px;
         `}
       >
-        <TextField
+        <EntityDetailViewImageDropzone
+          entityId={id}
+          entityType={type.name}
+          cCss={css`
+            height: 315px;
+            max-width: 315px;
+            margin-right: 15px;
+            min-width: 250px !important;
+          `}
+        />
+        <div
           css={css`
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            flex-grow: 1;
+          `}
+        >
+          <div
+            css={css`
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            `}
+          >
+            <TextField
+              css={css`
               flex-grow: 1;
 
               label {
@@ -108,48 +133,48 @@ export const EntityDetailView: React.FC<Props> = props => {
 
               ${invalidatedStyle(nameInvalidated)}
             `}
-          id="entity-name"
-          name="entity-name"
-          value={name}
-          onChange={onChangeWrapper(updateName)}
-          label="name"
-          variant="outlined"
-        />
-        <div
-          css={css`
-            background-color: ${type.color || '#eeeeee'};
-            border-radius: 6px;
-            padding: 8px;
-            font-size: 12px;
-            margin-left: 40px;
-            width: 100px;
-            height: 100px;
-          `}
-        >
-          {type.icon ? (
-            <img
-              css={css`
-                height: 70px;
-                display: block;
-                margin: auto;
-              `}
-              src={Icons[type.icon]}
+              id="entity-name"
+              name="entity-name"
+              value={name}
+              onChange={onChangeWrapper(updateName)}
+              label="name"
+              variant="outlined"
             />
-          ) : null}
-          <h3
-            css={css`
+            <div
+              css={css`
+                background-color: ${type.color || '#eeeeee'};
+                border-radius: 6px;
+                padding: 8px;
+                font-size: 12px;
+                margin-left: 40px;
+                width: 100px;
+                height: 100px;
+              `}
+            >
+              {type.icon ? (
+                <img
+                  css={css`
+                    height: 70px;
+                    display: block;
+                    margin: auto;
+                  `}
+                  src={Icons[type.icon]}
+                />
+              ) : null}
+              <h3
+                css={css`
               padding: 0 !important;
               margin-top -5px !important;
               text-align: center;
             `}
-          >
-            {type.name}
-          </h3>
-        </div>
-      </div>
+              >
+                {type.name}
+              </h3>
+            </div>
+          </div>
 
-      <TextField
-        css={css`
+          <TextField
+            css={css`
           display: flex;
           margin-top: 40px;
           margin-bottom: 15px;
@@ -164,15 +189,17 @@ import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 
           ${invalidatedStyle(descriptionInvalidated, true)}
         `}
-        name="entity-description"
-        id="entity-description"
-        label="description"
-        multiline
-        rows={8}
-        value={description || ''}
-        onChange={onChangeWrapper(updateDescription)}
-        variant="outlined"
-      />
+            name="entity-description"
+            id="entity-description"
+            label="description"
+            multiline
+            rows={8}
+            value={description || ''}
+            onChange={onChangeWrapper(updateDescription)}
+            variant="outlined"
+          />
+        </div>
+      </div>
       {tags && <TagArea id={id} tags={tags} />}
       {image ? (
         <img

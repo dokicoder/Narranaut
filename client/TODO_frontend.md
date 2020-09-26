@@ -1,10 +1,12 @@
 ## TODO-List Frontend
 
+- image-upload: limit to image files (png/jpg)
+- image upload: there should be a bug when using the upload on new entity mode: the create-flag will create an upload path that is wrong => test and fix
+- limit upload image size or convert and optimize image via external service
 - hey, how about allowing for different stories? (oh god, how did I miss that?)
 - then you could import entities and so on from other users, stories you name it
 - prioritize TODO_Items (meta-TODO anyone?)
-- enable final deletion for entities that are flagged "deleted"
-- add image support with react-dropzone
+- improve image support with react-dropzone
 - proper input validation login screen
 - try including framer motion API (for something I guess?)
 - relationship view
@@ -23,3 +25,18 @@
 - the loading of entity lists is becoming slower. may have to think about continuous loading (like infinite scrolling, or fix the hook registration logic to be global)
 - write documentation (no, really!)
 - write tests for stuff (say whaaat?! - wasn't this supposed to be fun?)
+
+#Old TODO: TODO: merge this
+
+##next up
+
+- entity types document
+- list entitiy view of all entity types (and get rid of a bunch of redundant code)
+- add some edit functionality
+
+##wishlist
+
+- access rights
+- data migration and schema versioning (if models change)
+- cloud functions to cache data
+- general optimization (take into account that this here is a write-heavy application)

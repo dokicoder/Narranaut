@@ -37,39 +37,18 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
     <Card
       className={classes.root}
       elevation={hovered ? 5 : 2}
-      css={cCss}
+      css={
+        [
+          css`
+            position: relative;
+          `,
+          cCss,
+        ] as any
+      }
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <CardActionArea onClick={onSelect}>
-        <div
-          // TODO: do not hardcode the width somehow
-          css={css`
-            background-color: ${type.color || '#eeeeee'};
-            border-radius: 5px;
-            width: 53px;
-            padding-top: 7px;
-            padding-bottom: 7px;
-            font-size: 10px;
-            margin: 0 !important;
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            text-align: center;
-          `}
-        >
-          {type.icon ? (
-            <img
-              css={css`
-                height: 28px;
-                display: block;
-                margin: auto;
-              `}
-              src={Icons[type.icon]}
-            />
-          ) : null}
-          {type.name}
-        </div>
         <CardMedia className={classes.media} image={image || Icons.USER} title={name} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
@@ -106,40 +85,68 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
           {tags && <TagArea id={id} tags={tags} />}
           <PropertyTable properties={properties} />
         </CardContent>
-
-        {onDelete && hovered && (
-          <IconButton
-            css={css`
-              position: absolute;
-              top: 5px;
-              right: 5px;
-            `}
-            aria-label={`delete ${type?.name}`}
-            onClick={e => {
-              e.preventDefault();
-              onDelete();
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        )}
-        {onRestore && hovered && (
-          <IconButton
-            css={css`
-              position: absolute;
-              top: 55px;
-              right: 5px;
-            `}
-            aria-label={`delete ${type?.name}`}
-            onClick={e => {
-              e.preventDefault();
-              onRestore();
-            }}
-          >
-            <RestoreIcon />
-          </IconButton>
-        )}
       </CardActionArea>
+      <div
+        // TODO: do not hardcode the width somehow
+        css={css`
+          background-color: ${type.color || '#eeeeee'};
+          border-radius: 5px;
+          width: 53px;
+          padding-top: 7px;
+          padding-bottom: 7px;
+          font-size: 10px;
+          margin: 0 !important;
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          text-align: center;
+        `}
+      >
+        {type.icon ? (
+          <img
+            css={css`
+              height: 28px;
+              display: block;
+              margin: auto;
+            `}
+            src={Icons[type.icon]}
+          />
+        ) : null}
+        {type.name}
+      </div>
+
+      {onDelete && hovered && (
+        <IconButton
+          css={css`
+            position: absolute;
+            top: 5px;
+            right: 5px;
+          `}
+          aria-label={`delete ${type?.name}`}
+          onClick={e => {
+            e.preventDefault();
+            onDelete();
+          }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      )}
+      {onRestore && hovered && (
+        <IconButton
+          css={css`
+            position: absolute;
+            top: 55px;
+            right: 5px;
+          `}
+          aria-label={`delete ${type?.name}`}
+          onClick={e => {
+            e.preventDefault();
+            onRestore();
+          }}
+        >
+          <RestoreIcon />
+        </IconButton>
+      )}
     </Card>
   );
 };
