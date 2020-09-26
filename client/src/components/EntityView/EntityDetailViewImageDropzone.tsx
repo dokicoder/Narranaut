@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import firebase from 'firebase/app';
 import 'firebase/storage';
+import { useDropzone } from 'react-dropzone';
+import { Paper, CircularProgress } from '@material-ui/core';
+import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { FirebaseContext } from 'src/firebase';
 import { PlaceholderImages } from 'src/utils';
 import { useFirebaseUser } from './../../hooks/firebase';
-import { Paper, CircularProgress } from '@material-ui/core';
 
 interface Props {
   entityId: string;
@@ -20,10 +20,10 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
   const user = useFirebaseUser();
 
   // semantics: undefined means not yet loaded, null means no image specified
-  const [imageUrl, setImageUrl] = useState<string | null>();
+  const [imageUrl, setImageUrl] = useState<string | null>(entityId ? undefined : null);
 
   // TODO: if this paths needs to be altered, you have to also adjust the security rules under https://console.firebase.google.com/project/narranaut/storage/narranaut.appspot.com/rules
-  const refPath = useMemo(() => user && `user/${user.uid}/${entityId}-image`, [user, entityId]);
+  const refPath = useMemo(() => user && entityId && `user/${user.uid}/${entityId}-image`, [user, entityId]);
 
   const fetchImageUrl = useCallback(() => {
     if (refPath) {
@@ -56,15 +56,21 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
         () => fetchImageUrl(),
         // success handler: this sets the new image URI
         () =>
-          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-            setImageUrl(downloadURL);
-          })
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then(setImageUrl)
+            .catch(() => {
+              // no image set
+              setImageUrl(null);
+            })
       );
     },
     [fileStorage, refPath, fetchImageUrl]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const disabled = !refPath;
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, disabled });
 
   return (
     <Paper
@@ -73,6 +79,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
           css`
             background: #8888cc;
             overflow: hidden;
+            cursor: pointer;
           `,
           cCss,
         ] as any
@@ -90,9 +97,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
           justify-content: space-around;
         `}
       >
-        {isDragActive ? (
-          <p>Drop image here ...</p>
-        ) : (
+        {
           <React.Fragment>
             <input {...getInputProps()} />
             {(imageUrl && (
@@ -128,7 +133,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                 <CircularProgress />
               </div>
             )}
-            {imageUrl === null && (
+            {imageUrl === null && !disabled && (
               <div
                 css={css`
                   position: absolute;
@@ -143,8 +148,23 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                 click to select an image
               </div>
             )}
+            {isDragActive && (
+              <div
+                css={css`
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  white-space: nowrap;
+                  font-weight: bold;
+                  color: white;
+                `}
+              >
+                drop image here to upload
+              </div>
+            )}
           </React.Fragment>
-        )}
+        }
       </div>
     </Paper>
   );

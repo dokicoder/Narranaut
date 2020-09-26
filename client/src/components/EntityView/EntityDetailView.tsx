@@ -87,16 +87,16 @@ export const EntityDetailView: React.FC<Props> = props => {
         css={css`
           display: flex;
           flex-direction: row;
-          align-items: center;
-          height: 320px;
+          align-items: flex-start;
+          min-height: 320px;
         `}
       >
         <EntityDetailViewImageDropzone
           entityId={id}
           entityType={type.name}
           cCss={css`
-            height: 315px;
-            max-width: 315px;
+            height: 326px;
+            max-width: 326px;
             margin-right: 15px;
             min-width: 250px !important;
           `}
@@ -146,7 +146,7 @@ export const EntityDetailView: React.FC<Props> = props => {
                 border-radius: 6px;
                 padding: 8px;
                 font-size: 12px;
-                margin-left: 40px;
+                margin-left: 15px;
                 width: 100px;
                 height: 100px;
               `}
@@ -180,7 +180,7 @@ export const EntityDetailView: React.FC<Props> = props => {
           margin-bottom: 15px;
           textarea {
             resize: vertical !important;
-            min-height: 60px !important;
+            min-height: 100px !important;
           }import { useRef } from 'react';
 import { FirebaseContext } from 'src/firebase';
 import { FirebaseContext } from './../../firebase';
