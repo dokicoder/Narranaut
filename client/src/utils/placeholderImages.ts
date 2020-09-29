@@ -1,4 +1,4 @@
-import character from 'src/assets/images/character-placeholder.png';
+import character from 'src/assets/images/character-placeholder.jpg';
 import event from 'src/assets/images/event-placeholder.jpg';
 import place from 'src/assets/images/place-placeholder.jpg';
 

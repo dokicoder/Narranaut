@@ -7,7 +7,8 @@ import { Paper, CircularProgress } from '@material-ui/core';
 import { css, jsx, InterpolationWithTheme } from '@emotion/core';
 import { FirebaseContext } from 'src/firebase';
 import { PlaceholderImages } from 'src/utils';
-import { useFirebaseUser } from './../../hooks/firebase';
+import { useFirebaseUser } from 'src/hooks/firebase';
+import { MainTheme } from 'src/utils/themes';
 
 interface Props {
   entityId: string;
@@ -77,7 +78,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
       css={
         [
           css`
-            background: #8888cc;
+            background: ${MainTheme.palette.primary.dark};
             overflow: hidden;
             cursor: pointer;
           `,
@@ -115,7 +116,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                 <img
                   css={css`
                     height: 100%;
-                    opacity: 0.4;
+                    opacity: 0.27;
                     object-fit: cover;
                   `}
                   src={placeholder}
@@ -130,7 +131,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                   transform: translate(-50%, -50%);
                 `}
               >
-                <CircularProgress />
+                <CircularProgress color="secondary" />
               </div>
             )}
             {imageUrl === null && !disabled && (
