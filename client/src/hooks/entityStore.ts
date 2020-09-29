@@ -34,6 +34,8 @@ export function useEntityStore(storeKey: string, config: Partial<EntityStoreConf
   useEffect(() => {
     if (user && !unsubscribeCallback.current) {
       console.log(`fetch entities of type "${storeKey}"`);
+      updateEntities(undefined);
+
       unsubscribeCallback.current = db
         .collection('entities')
         // only retrieve entities bound to current user

@@ -78,9 +78,10 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
       css={
         [
           css`
-            background: ${MainTheme.palette.primary.dark};
+            transition: background 0.4s ease-in-out;
+            background: ${imageUrl === undefined ? 'white' : MainTheme.palette.primary.dark};
             overflow: hidden;
-            cursor: pointer;
+            ${refPath ? 'cursor: pointer;' : ''}
           `,
           cCss,
         ] as any

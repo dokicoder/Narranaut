@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React, { useMemo } from 'react';
 import { jsx, css } from '@emotion/core';
-import { Fab, Button } from '@material-ui/core';
+import { Fab, Button, Fade } from '@material-ui/core';
 import { Add as AddIcon, Delete as DeleteIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { EntityCompactView, EntityDetailView } from '../../EntityView';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
@@ -57,6 +57,10 @@ export const DefaultEntityOverview: React.FC = () => {
 
   const onSelectEntity = (id: string) => () => {
     history.push(`/${entityTypePlural}/${id}`);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   };
 
   const onViewEntityList = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -84,9 +88,7 @@ export const DefaultEntityOverview: React.FC = () => {
     breadcrumbItems.push({ label: selectedEntity.name, active: true });
   }
 
-  return loading ? (
-    <LoadingIndicator />
-  ) : (
+  return (
     <React.Fragment>
       <div
         css={css`
@@ -104,47 +106,56 @@ export const DefaultEntityOverview: React.FC = () => {
           {showDeletedEntites ? `view ${entityTypePlural}` : `deleted ${entityTypePlural}`}
         </Button>
       </div>
-      {selectedEntity ? (
-        <EntityDetailView entity={selectedEntity} onSave={updateCurrentOrSaveNewEntity} />
-      ) : (
-        <div
-          css={css`
-            display: grid;
-            grid-gap: 30px;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          `}
-        >
-          {entities.map(entity => (
-            <EntityCompactView
-              key={entity.id}
-              onSelect={onSelectEntity(entity.id)}
-              onDelete={() => {
-                if (showDeletedEntites) {
-                  reallyDeleteEntity(entity);
-                } else {
-                  flagEntityDeleted(entity, true);
-                }
-              }}
-              onRestore={showDeletedEntites ? () => flagEntityDeleted(entity, false) : undefined}
-              entity={entity}
-            />
-          ))}
+      {loading && <LoadingIndicator />}
+
+      {selectedEntity && (
+        <Fade in={!loading && !!selectedEntity}>
+          {<EntityDetailView entity={selectedEntity} onSave={updateCurrentOrSaveNewEntity} />}
+        </Fade>
+      )}
+      {
+        <Fade in={!loading && !selectedEntity}>
           <div
             css={css`
-              margin-top: 10px;
-              height: 400px;
-              display: flex;
-              flex-direction: column;
-              justify-content: space-around;
-              align-items: center;
+              display: grid;
+              grid-gap: 30px;
+              grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             `}
           >
-            <Fab color="primary" onClick={onSelectEntity('create')}>
-              <AddIcon />
-            </Fab>
+            {entities?.map(entity => (
+              <EntityCompactView
+                key={entity.id}
+                onSelect={onSelectEntity(entity.id)}
+                onDelete={() => {
+                  if (showDeletedEntites) {
+                    reallyDeleteEntity(entity);
+                  } else {
+                    flagEntityDeleted(entity, true);
+                  }
+                }}
+                onRestore={showDeletedEntites ? () => flagEntityDeleted(entity, false) : undefined}
+                entity={entity}
+              />
+            ))}
+            <Fade in={!showDeletedEntites}>
+              <div
+                css={css`
+                  margin-top: 10px;
+                  height: 400px;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-around;
+                  align-items: center;
+                `}
+              >
+                <Fab color="primary" onClick={onSelectEntity('create')}>
+                  <AddIcon />
+                </Fab>
+              </div>
+            </Fade>
           </div>
-        </div>
-      )}
+        </Fade>
+      }
     </React.Fragment>
   );
 };

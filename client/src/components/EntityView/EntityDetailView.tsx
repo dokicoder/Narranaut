@@ -96,9 +96,8 @@ export const EntityDetailView: React.FC<Props> = props => {
           entityType={type.name}
           cCss={css`
             height: 326px;
-            max-width: 326px;
+            width: 290px;
             margin-right: 15px;
-            min-width: 250px !important;
           `}
         />
         <div
