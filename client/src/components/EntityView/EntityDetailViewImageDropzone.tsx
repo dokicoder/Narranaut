@@ -4,7 +4,7 @@ import firebase from 'firebase/app';
 import 'firebase/storage';
 import { useDropzone } from 'react-dropzone';
 import { Paper, CircularProgress } from '@material-ui/core';
-import { css, jsx, InterpolationWithTheme } from '@emotion/core';
+import { css, jsx, SerializedStyles } from '@emotion/core';
 import { FirebaseContext } from 'src/firebase';
 import { PlaceholderImages } from 'src/utils';
 import { useFirebaseUser } from 'src/hooks/firebase';
@@ -13,8 +13,22 @@ import { MainTheme } from 'src/utils/themes';
 interface Props {
   entityId: string;
   entityType?: string;
-  cCss?: InterpolationWithTheme<any>;
+  cCss?: SerializedStyles;
 }
+
+type FileRejectionError = 'file-too-large' | 'file-invalid-type';
+
+interface IFileRejection {
+  errors: { code: FileRejectionError }[];
+}
+
+const fileRejectionErrorMessageMap: Record<FileRejectionError, string> = {
+  'file-too-large': 'The max image size is 250KB',
+  'file-invalid-type': 'Upload a .png or .jpg image',
+};
+
+const mapRejectionToMessage = (rejection: IFileRejection): string =>
+  fileRejectionErrorMessageMap[rejection.errors[0].code];
 
 export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entityType, cCss }) => {
   const { fileStorage } = useContext(FirebaseContext);
@@ -22,6 +36,8 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
 
   // semantics: undefined means not yet loaded, null means no image specified
   const [imageUrl, setImageUrl] = useState<string | null>(entityId ? undefined : null);
+
+  const [fileRejectionErrorMessage, setFileRejectionErrorMessage] = useState<string>();
 
   // TODO: if this paths needs to be altered, you have to also adjust the security rules under https://console.firebase.google.com/project/narranaut/storage/narranaut.appspot.com/rules
   const refPath = useMemo(() => user && entityId && `user/${user.uid}/${entityId}-image`, [user, entityId]);
@@ -44,7 +60,12 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
   const placeholder = PlaceholderImages[entityType];
 
   const onDrop = useCallback(
-    ([imageFile]: File[]) => {
+    ([imageFile]: File[], [rejection]: any[]) => {
+      if (rejection) {
+        setFileRejectionErrorMessage(mapRejectionToMessage(rejection as IFileRejection));
+      }
+      if (!imageFile) return;
+
       setImageUrl(undefined);
 
       const uploadTask = fileStorage.ref(refPath).put(imageFile);
@@ -56,14 +77,17 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
         // error handler: this resets the old image - TODO: at the cost of a probably unnecessary refetch
         () => fetchImageUrl(),
         // success handler: this sets the new image URI
-        () =>
+        () => {
           uploadTask.snapshot.ref
             .getDownloadURL()
             .then(setImageUrl)
             .catch(() => {
               // no image set
               setImageUrl(null);
-            })
+            });
+
+          setFileRejectionErrorMessage(undefined);
+        }
       );
     },
     [fileStorage, refPath, fetchImageUrl]
@@ -71,21 +95,25 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
 
   const disabled = !refPath;
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, disabled });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: 'image/jpeg, image/png',
+    disabled,
+    multiple: false,
+    maxSize: 262144,
+  });
 
   return (
     <Paper
-      css={
-        [
-          css`
-            transition: background 0.4s ease-in-out;
-            background: ${imageUrl === undefined ? 'white' : MainTheme.palette.primary.dark};
-            overflow: hidden;
-            ${refPath ? 'cursor: pointer;' : ''}
-          `,
-          cCss,
-        ] as any
-      }
+      css={[
+        css`
+          transition: background 0.4s ease-in-out;
+          background: ${imageUrl === undefined ? 'white' : MainTheme.palette.primary.dark};
+          overflow: hidden;
+          ${refPath ? 'cursor: pointer;' : ''}
+        `,
+        cCss,
+      ]}
     >
       <div
         {...getRootProps()}
@@ -135,7 +163,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                 <CircularProgress color="secondary" />
               </div>
             )}
-            {imageUrl === null && !disabled && (
+            {imageUrl === null && !disabled && !isDragActive && (
               <div
                 css={css`
                   position: absolute;
@@ -148,6 +176,21 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                 `}
               >
                 click to select an image
+              </div>
+            )}
+            {imageUrl && !disabled && !isDragActive && (
+              <div
+                css={css`
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  white-space: nowrap;
+                  font-weight: bold;
+                  color: white;
+                `}
+              >
+                {fileRejectionErrorMessage}
               </div>
             )}
             {isDragActive && (

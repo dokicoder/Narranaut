@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import React, { useState, useRef } from 'react';
-import { css, jsx, InterpolationWithTheme } from '@emotion/core';
+import { css, jsx, SerializedStyles } from '@emotion/core';
 import { TextField, Button, Fade } from '@material-ui/core';
 import { ObjectEntity } from '../../models';
 import { Icons, onChangeWrapper, MainTheme } from '../../utils';
@@ -11,7 +11,7 @@ import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 
 interface Props {
   entity: ObjectEntity;
-  cCss?: InterpolationWithTheme<any>;
+  cCss?: SerializedStyles;
   onSave: (updatedEntity: ObjectEntity) => Promise<any>;
   onDiscard?: () => void;
 }
@@ -72,16 +72,14 @@ export const EntityDetailView: React.FC<Props> = props => {
 
   return (
     <div
-      css={
-        [
-          css`
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-          `,
-          cCss,
-        ] as any
-      }
+      css={[
+        css`
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+        `,
+        cCss,
+      ]}
     >
       <div
         css={css`
@@ -174,20 +172,15 @@ export const EntityDetailView: React.FC<Props> = props => {
 
           <TextField
             css={css`
-          display: flex;
-          margin-top: 40px;
-          margin-bottom: 15px;
-          textarea {
-            resize: vertical !important;
-            min-height: 100px !important;
-          }import { useRef } from 'react';
-import { FirebaseContext } from 'src/firebase';
-import { FirebaseContext } from './../../firebase';
-import { useContext } from 'react';
-import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
-
-          ${invalidatedStyle(descriptionInvalidated, true)}
-        `}
+              display: flex;
+              margin-top: 40px;
+              margin-bottom: 15px;
+              textarea {
+                resize: vertical !important;
+                min-height: 146px !important;
+              }
+              ${invalidatedStyle(descriptionInvalidated, true)}
+            `}
             name="entity-description"
             id="entity-description"
             label="description"
