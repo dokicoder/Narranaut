@@ -48,48 +48,54 @@ export const Main: React.FC = () => {
       >
         <Header />
       </header>
-      <main id="main-container" css={centeredContainer}>
-        <Paper
-          css={css`
-            padding: 50px;
-          `}
-        >
-          <Switch>
-            <Route path="/sign-in">
-              <SignIn />
-            </Route>
-            {user === null ? (
-              <Route path="*">
-                <ToSignInWithReferrer />
+      <div
+        css={css`
+          margin-left: calc(100vw - 100%);
+        `}
+      >
+        <main id="main-container" css={centeredContainer}>
+          <Paper
+            css={css`
+              padding: 50px;
+            `}
+          >
+            <Switch>
+              <Route path="/sign-in">
+                <SignIn />
               </Route>
-            ) : null}
-            <Route path="/stories">
-              <Stories />
-            </Route>
-            <Route path="/timelines">
-              <Timelines />
-            </Route>
-            <Route path="/events">
-              <Events />
-            </Route>
-            <Route path="/relationships">
-              <Relationships />
-            </Route>
-            <Route path="/:entityType/:entityId?">
-              <DefaultEntityOverview />
-            </Route>
-            <Route path="/objects">
-              <Objects />
-            </Route>
-            <Route path="/" exact>
-              <LandingPage />
-            </Route>
-            <Route path="*">
-              <Redirect to="/" />
-            </Route>
-          </Switch>
-        </Paper>
-      </main>
+              {user === null ? (
+                <Route path="*">
+                  <ToSignInWithReferrer />
+                </Route>
+              ) : null}
+              <Route path="/stories">
+                <Stories />
+              </Route>
+              <Route path="/timelines">
+                <Timelines />
+              </Route>
+              <Route path="/events">
+                <Events />
+              </Route>
+              <Route path="/relationships">
+                <Relationships />
+              </Route>
+              <Route path="/:entityType/:entityId?">
+                <DefaultEntityOverview />
+              </Route>
+              <Route path="/objects">
+                <Objects />
+              </Route>
+              <Route path="/" exact>
+                <LandingPage />
+              </Route>
+              <Route path="*">
+                <Redirect to="/" />
+              </Route>
+            </Switch>
+          </Paper>
+        </main>
+      </div>
     </ThemeProvider>
   );
 };

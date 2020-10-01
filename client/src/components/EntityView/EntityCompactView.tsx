@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import React, { useState } from 'react';
-import { css, jsx, InterpolationWithTheme } from '@emotion/core';
+import { css, jsx, SerializedStyles } from '@emotion/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Delete as DeleteIcon, RestoreFromTrash as RestoreIcon } from '@material-ui/icons';
 import { Card, IconButton, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
@@ -11,7 +11,7 @@ import { TagArea } from './TagArea';
 
 interface Props {
   entity: ObjectEntity;
-  cCss?: InterpolationWithTheme<any>;
+  cCss?: SerializedStyles;
   onSelect?: () => void;
   onDelete?: () => void;
   onRestore?: () => void;
@@ -37,14 +37,12 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
     <Card
       className={classes.root}
       elevation={hovered ? 5 : 2}
-      css={
-        [
-          css`
-            position: relative;
-          `,
-          cCss,
-        ] as any
-      }
+      css={[
+        css`
+          position: relative;
+        `,
+        cCss,
+      ]}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

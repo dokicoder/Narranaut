@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     link: {
       display: 'flex',
+      'text-transform': 'capitalize',
     },
     icon: {
       marginRight: theme.spacing(0.5),

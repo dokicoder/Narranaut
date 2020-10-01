@@ -27,6 +27,8 @@ export function useEntityTypeStore() {
   useEffect(() => {
     if (user && !unsubscribeCallback.current) {
       console.log(`fetch entity types`);
+      updateEntityTypes(undefined);
+
       unsubscribeCallback.current = db.collection('entity-types').onSnapshot(({ docs }) => {
         const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as EntityType));
 
