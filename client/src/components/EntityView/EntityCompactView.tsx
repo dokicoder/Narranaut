@@ -1,13 +1,17 @@
 /** @jsx jsx */
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useContext } from 'react';
 import { css, jsx, SerializedStyles } from '@emotion/core';
-import { makeStyles } from '@material-ui/core/styles';
 import { Delete as DeleteIcon, RestoreFromTrash as RestoreIcon } from '@material-ui/icons';
 import { Card, IconButton, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
 import { ObjectEntity } from '../../models';
 import { PropertyTable } from './PropertyTable';
 import { Icons } from '../../utils';
 import { TagArea } from './TagArea';
+
+import 'firebase/storage';
+import { FirebaseContext } from 'src/firebase';
+import { PlaceholderImages } from 'src/utils';
+import { useFirebaseUser } from 'src/hooks/firebase';
 
 interface Props {
   entity: ObjectEntity;
@@ -17,29 +21,42 @@ interface Props {
   onRestore?: () => void;
 }
 
-const useStyles = makeStyles({
-  root: {
-    height: 450,
-  },
-  media: {
-    height: 140,
-    margin: '0 30%',
-  },
-});
-
 export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onDelete, onRestore }) => {
-  const classes = useStyles();
-  const { id, image, properties, name, description, type, tags } = entity;
+  const { fileStorage } = useContext(FirebaseContext);
+  const user = useFirebaseUser();
+
+  const { id, properties, name, description, type, tags } = entity;
 
   const [hovered, setHovered] = useState(false);
 
+  // semantics: undefined means not yet loaded, null means no image specified
+  const [imageUrl, setImageUrl] = useState<string | null>(undefined);
+
+  // TODO: if this paths needs to be altered, you have to also adjust the security rules under https://console.firebase.google.com/project/narranaut/storage/narranaut.appspot.com/rules
+  const refPath = useMemo(() => user && `user/${user.uid}/${entity.id}-image`, [user, entity.id]);
+
+  const fetchImageUrl = useCallback(() => {
+    if (refPath) {
+      fileStorage
+        .ref(refPath)
+        .getDownloadURL()
+        .then(setImageUrl)
+        .catch(() => {
+          // no image set
+          setImageUrl(null);
+        });
+    }
+  }, [fileStorage, refPath]);
+
+  useEffect(() => fetchImageUrl(), [fetchImageUrl]);
+
   return (
     <Card
-      className={classes.root}
       elevation={hovered ? 5 : 2}
       css={[
         css`
           position: relative;
+          height: 450px;
         `,
         cCss,
       ]}
@@ -47,7 +64,13 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
       onMouseLeave={() => setHovered(false)}
     >
       <CardActionArea onClick={onSelect}>
-        <CardMedia className={classes.media} image={image || Icons.USER} title={name} />
+        <CardMedia
+          css={css`
+            height: 140px;
+            object-position: 100px 50px;
+          `}
+          image={imageUrl || PlaceholderImages[entity.type.name]}
+        />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {name}

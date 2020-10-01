@@ -10,6 +10,7 @@
 - proper input validation login screen
 - try including framer motion API (for something I guess?)
 - relationship view
+- how to incorporate thumbnails?
 - relationship menus in the Detail views
 - timeline view
 - allow for keyboard control (example: return after entering new property name should add the property, escape probably abort it)
@@ -25,6 +26,7 @@
 - the loading of entity lists is becoming slower. may have to think about continuous loading (like infinite scrolling, or fix the hook registration logic to be global)
 - write documentation (no, really!)
 - write tests for stuff (say whaaat?! - wasn't this supposed to be fun?)
+- Ideas for additional icons: Car, plane for vehicle...
 
 #Old TODO: TODO: merge this
 
@@ -32,7 +34,6 @@
 
 - entity types document
 - list entitiy view of all entity types (and get rid of a bunch of redundant code)
-- add some edit functionality
 
 ##wishlist
 

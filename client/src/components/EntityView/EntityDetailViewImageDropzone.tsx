@@ -34,10 +34,10 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
   const { fileStorage } = useContext(FirebaseContext);
   const user = useFirebaseUser();
 
+  const [fileRejectionErrorMessage, setFileRejectionErrorMessage] = useState<string>();
+
   // semantics: undefined means not yet loaded, null means no image specified
   const [imageUrl, setImageUrl] = useState<string | null>(entityId ? undefined : null);
-
-  const [fileRejectionErrorMessage, setFileRejectionErrorMessage] = useState<string>();
 
   // TODO: if this paths needs to be altered, you have to also adjust the security rules under https://console.firebase.google.com/project/narranaut/storage/narranaut.appspot.com/rules
   const refPath = useMemo(() => user && entityId && `user/${user.uid}/${entityId}-image`, [user, entityId]);

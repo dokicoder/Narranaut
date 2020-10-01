@@ -18,7 +18,7 @@ interface Props {
 
 export const EntityDetailView: React.FC<Props> = props => {
   const { cCss, entity, onSave, onDiscard } = props;
-  const { id, image, type, tags } = entity;
+  const { id, type, tags } = entity;
 
   const [name, updateName] = useState(entity.name);
   const [description, updateDescription] = useState(entity.description);
@@ -193,14 +193,6 @@ export const EntityDetailView: React.FC<Props> = props => {
         </div>
       </div>
       {tags && <TagArea id={id} tags={tags} />}
-      {image ? (
-        <img
-          src={image}
-          css={css`
-            width: 30%;
-          `}
-        />
-      ) : null}
       <EditablePropertyList
         key={String(propertiesListReset)}
         propertyMap={entity.properties}
