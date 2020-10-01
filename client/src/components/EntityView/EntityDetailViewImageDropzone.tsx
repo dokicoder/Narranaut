@@ -163,7 +163,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                 <CircularProgress color="secondary" />
               </div>
             )}
-            {imageUrl === null && !disabled && !isDragActive && (
+            {imageUrl === null && !disabled && !isDragActive && !fileRejectionErrorMessage && (
               <div
                 css={css`
                   position: absolute;
@@ -178,7 +178,7 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
                 click to select an image
               </div>
             )}
-            {imageUrl && !disabled && !isDragActive && (
+            {imageUrl !== undefined && !disabled && !isDragActive && (
               <div
                 css={css`
                   position: absolute;
