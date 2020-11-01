@@ -1,8 +1,14 @@
-import { useCallback, useMemo, useContext, useState, useEffect } from 'react';
+import { useCallback, useMemo, useContext, useEffect } from 'react';
+import { atomFamily, useRecoilState } from 'recoil';
 import 'firebase/storage';
 import { useFirebaseUser } from './firebase';
 import { FirebaseContext } from 'src/firebase';
 import { useMountedState } from './utils';
+
+export const createImageStore = atomFamily<string | null, string>({
+  key: 'IMAGES',
+  default: undefined,
+});
 
 // the default value for unset entries in localStorage is null, not undefined. this hack converts according to the semantics of the url state so we can work with that
 const toStorableUrl = (url: string) => (url === null ? 'null' : url);
@@ -22,7 +28,7 @@ export const useImageUrl = (entityId: string) => {
   const { fileStorage } = useContext(FirebaseContext);
 
   // semantics: undefined means not yet loaded, null means no image specified
-  const [imageUrl, setImageUrl] = useState<string | null>(undefined);
+  const [imageUrl, setImageUrl] = useRecoilState<string | null>(createImageStore(entityId));
 
   const isMounted = useMountedState();
 
@@ -59,7 +65,7 @@ export const useImageUrl = (entityId: string) => {
           }
         });
     }
-  }, [fileStorage, refPath, isMounted]);
+  }, [fileStorage, refPath, isMounted, setImageUrl]);
 
   useEffect(() => fetchImageUrl(), [fetchImageUrl]);
 

@@ -1,9 +1,14 @@
+import { atomFamily } from 'recoil';
 import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
-import { createEntityStore } from './../store/recoilStore';
 import { useEffect, useContext, useRef, useCallback } from 'react';
 import { FirebaseContext } from './../firebase';
 import { useRecoilState } from 'recoil';
+
+export const createEntityStore = atomFamily<ObjectEntity[], string>({
+  key: 'ENTITIES',
+  default: null,
+});
 
 interface EntityStoreConfig {
   showDeleted: boolean;
