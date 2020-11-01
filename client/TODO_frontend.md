@@ -27,6 +27,8 @@
 - write documentation (no, really!)
 - write tests for stuff (say whaaat?! - wasn't this supposed to be fun?)
 - Ideas for additional icons: Car, plane for vehicle...
+- image caching or the fetching will become expensive => local storage should be fine though
+- using localStorage now - maybe call `localStorage.clear();` on logout?
 
 #Old TODO: TODO: merge this
 

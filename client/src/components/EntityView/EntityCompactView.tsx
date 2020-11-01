@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useState, useCallback, useMemo, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
 import { css, jsx, SerializedStyles } from '@emotion/core';
 import { Delete as DeleteIcon, RestoreFromTrash as RestoreIcon } from '@material-ui/icons';
 import { Card, IconButton, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
@@ -7,11 +7,8 @@ import { ObjectEntity } from '../../models';
 import { PropertyTable } from './PropertyTable';
 import { Icons } from '../../utils';
 import { TagArea } from './TagArea';
-
-import 'firebase/storage';
-import { FirebaseContext } from 'src/firebase';
 import { PlaceholderImages } from 'src/utils';
-import { useFirebaseUser } from 'src/hooks/firebase';
+import { useImageUrl } from 'src/hooks';
 
 interface Props {
   entity: ObjectEntity;
@@ -22,33 +19,11 @@ interface Props {
 }
 
 export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onDelete, onRestore }) => {
-  const { fileStorage } = useContext(FirebaseContext);
-  const user = useFirebaseUser();
-
   const { id, properties, name, description, type, tags } = entity;
 
   const [hovered, setHovered] = useState(false);
 
-  // semantics: undefined means not yet loaded, null means no image specified
-  const [imageUrl, setImageUrl] = useState<string | null>(undefined);
-
-  // TODO: if this paths needs to be altered, you have to also adjust the security rules under https://console.firebase.google.com/project/narranaut/storage/narranaut.appspot.com/rules
-  const refPath = useMemo(() => user && `user/${user.uid}/${entity.id}-image`, [user, entity.id]);
-
-  const fetchImageUrl = useCallback(() => {
-    if (refPath) {
-      fileStorage
-        .ref(refPath)
-        .getDownloadURL()
-        .then(setImageUrl)
-        .catch(() => {
-          // no image set
-          setImageUrl(null);
-        });
-    }
-  }, [fileStorage, refPath]);
-
-  useEffect(() => fetchImageUrl(), [fetchImageUrl]);
+  const { imageUrl } = useImageUrl(id);
 
   return (
     <Card

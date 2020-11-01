@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/storage';
 import { useDropzone } from 'react-dropzone';
@@ -7,8 +7,9 @@ import { Paper, CircularProgress } from '@material-ui/core';
 import { css, jsx, SerializedStyles } from '@emotion/core';
 import { FirebaseContext } from 'src/firebase';
 import { PlaceholderImages } from 'src/utils';
-import { useFirebaseUser } from 'src/hooks/firebase';
 import { MainTheme } from 'src/utils/themes';
+import { useImageUrl } from 'src/hooks/useImageUrl';
+import { useRef } from 'react';
 
 interface Props {
   entityId: string;
@@ -32,30 +33,13 @@ const mapRejectionToMessage = (rejection: IFileRejection): string =>
 
 export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entityType, cCss }) => {
   const { fileStorage } = useContext(FirebaseContext);
-  const user = useFirebaseUser();
 
   const [fileRejectionErrorMessage, setFileRejectionErrorMessage] = useState<string>();
 
   // semantics: undefined means not yet loaded, null means no image specified
-  const [imageUrl, setImageUrl] = useState<string | null>(entityId ? undefined : null);
+  const { imageUrl, refPath, updateImageUrl } = useImageUrl(entityId);
 
-  // TODO: if this paths needs to be altered, you have to also adjust the security rules under https://console.firebase.google.com/project/narranaut/storage/narranaut.appspot.com/rules
-  const refPath = useMemo(() => user && entityId && `user/${user.uid}/${entityId}-image`, [user, entityId]);
-
-  const fetchImageUrl = useCallback(() => {
-    if (refPath) {
-      fileStorage
-        .ref(refPath)
-        .getDownloadURL()
-        .then(setImageUrl)
-        .catch(() => {
-          // no image set
-          setImageUrl(null);
-        });
-    }
-  }, [fileStorage, refPath]);
-
-  useEffect(() => fetchImageUrl(), [fetchImageUrl]);
+  const urlBackupRef = useRef<string>();
 
   const placeholder = PlaceholderImages[entityType];
 
@@ -66,7 +50,8 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
       }
       if (!imageFile) return;
 
-      setImageUrl(undefined);
+      urlBackupRef.current = imageUrl;
+      updateImageUrl(undefined);
 
       const uploadTask = fileStorage.ref(refPath).put(imageFile);
 
@@ -74,23 +59,23 @@ export const EntityDetailViewImageDropzone: React.FC<Props> = ({ entityId, entit
       uploadTask.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
         null,
-        // error handler: this resets the old image - TODO: at the cost of a probably unnecessary refetch
-        () => fetchImageUrl(),
+        // error handler: this resets the old image
+        () => updateImageUrl(urlBackupRef.current),
         // success handler: this sets the new image URI
         () => {
           uploadTask.snapshot.ref
             .getDownloadURL()
-            .then(setImageUrl)
+            .then(updateImageUrl)
             .catch(() => {
               // no image set
-              setImageUrl(null);
+              updateImageUrl(null);
             });
 
           setFileRejectionErrorMessage(undefined);
         }
       );
     },
-    [fileStorage, refPath, fetchImageUrl]
+    [fileStorage, refPath, imageUrl, updateImageUrl]
   );
 
   const disabled = !refPath;
