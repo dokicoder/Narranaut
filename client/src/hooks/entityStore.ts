@@ -1,10 +1,11 @@
 import { atomFamily } from 'recoil';
 import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
-import { useEffect, useContext, useRef, useCallback } from 'react';
-import { FirebaseContext } from './../firebase';
+import { useEffect, useContext, useRef, useCallback, useMemo } from 'react';
+import { FirebaseContext } from '../firebase';
 import { useRecoilState } from 'recoil';
 
+// semantics: null means "before initial load", will be set to undefined when reload with loading indication is intended
 export const createEntityStore = atomFamily<ObjectEntity[], string>({
   key: 'ENTITIES',
   default: null,
@@ -36,30 +37,45 @@ export function useEntityStore(storeKey: string, config: Partial<EntityStoreConf
 
   const [entities, updateEntities] = useRecoilState(createEntityStore(storeKey));
 
-  useEffect(() => {
-    if (user && !unsubscribeCallback.current) {
-      console.log(`fetch entities of type "${storeKey}"`);
-      updateEntities(undefined);
+  const entityMap = useMemo(
+    () =>
+      entities?.reduce<Record<string, ObjectEntity>>((acc, relationship) => {
+        acc[relationship.id] = relationship;
 
-      unsubscribeCallback.current = db
-        .collection('entities')
-        // only retrieve entities bound to current user
-        .where('uid', '==', user.uid)
-        // deleted flag is used to keep deleted records in db for now
-        .where('deleted', '==', storeConfig.showDeleted)
-        .where('type.name', '==', storeKey)
-        .onSnapshot(({ docs }) => {
-          const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
+        return acc;
+      }, {}) || {},
+    [entities]
+  );
 
-          updateEntities(entities);
-        });
-    }
+  // this effect is only called on page load. since the state is shared with recoil (due to the entities === null part of the condition)
+  useEffect(
+    () => {
+      if (user && !unsubscribeCallback.current && entities === null) {
+        console.log(`fetch entities of type "${storeKey}"`);
+        updateEntities(undefined);
 
-    return () => {
-      // unsubscribe on unmount
-      unsubscribe();
-    };
-  }, [user, db, storeKey, unsubscribe, updateEntities, storeConfig.showDeleted]);
+        unsubscribeCallback.current = db
+          .collection('entities')
+          // only retrieve entities bound to current user
+          .where('uid', '==', user.uid)
+          // deleted flag is used to keep deleted records in db for now
+          .where('deleted', '==', storeConfig.showDeleted)
+          .where('type.name', '==', storeKey)
+          .onSnapshot(({ docs }) => {
+            const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
+
+            updateEntities(entities);
+          });
+      }
+
+      return () => {
+        // unsubscribe on unmount
+        unsubscribe();
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user, db, storeKey, unsubscribe, updateEntities, storeConfig.showDeleted]
+  );
 
   const updateEntity = async (entity: ObjectEntity) => {
     return db.collection('entities').doc(entity.id).update(entity);
@@ -77,5 +93,5 @@ export function useEntityStore(storeKey: string, config: Partial<EntityStoreConf
     return db.collection('entities').doc(entity.id).delete();
   };
 
-  return { entities, updateEntity, addEntity, flagEntityDeleted, reallyDeleteEntity };
+  return { entities, entityMap, updateEntity, addEntity, flagEntityDeleted, reallyDeleteEntity };
 }

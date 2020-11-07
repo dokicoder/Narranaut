@@ -1,6 +1,6 @@
 import { useMountedState } from 'src/hooks';
 import { useState, useEffect, useContext } from 'react';
-import { User, FirebaseContext } from './../firebase';
+import { User, FirebaseContext } from '../firebase';
 
 export function useFirebaseUser(callback: (user: User) => void = () => undefined): User {
   const { auth } = useContext(FirebaseContext);

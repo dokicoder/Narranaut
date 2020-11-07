@@ -1,13 +1,13 @@
-import { EntityType } from 'src/models';
+import { RelationshipType } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
 import { useEffect, useContext, useRef, useCallback } from 'react';
 import { FirebaseContext } from '../firebase';
 import { useRecoilState, atom } from 'recoil';
 
 // semantics: null means "before initial load", will be set to undefined when reload with loading indication is intended
-const entityTypesState = atom<EntityType[]>({ key: 'ENTITY_TYPES', default: null });
+const relationshipTypesState = atom<RelationshipType[]>({ key: 'RELATIONSHIP_TYPES', default: null });
 
-export function useEntityTypeStore() {
+export function useRelationshipTypeStore() {
   const unsubscribeCallback = useRef<() => void>();
 
   const unsubscribe = useCallback(() => {
@@ -23,19 +23,19 @@ export function useEntityTypeStore() {
   });
   const { db } = useContext(FirebaseContext);
 
-  const [types, updateEntityTypes] = useRecoilState(entityTypesState);
+  const [types, updateRelationshipTypes] = useRecoilState(relationshipTypesState);
 
   useEffect(
     () => {
       if (user && !unsubscribeCallback.current && types === null) {
-        console.log(`fetch entity types`);
-        updateEntityTypes(undefined);
+        console.log(`fetch relationship types`);
+        updateRelationshipTypes(undefined);
 
         // firebase onSnapshot handler is triggered on every update
-        unsubscribeCallback.current = db.collection('entity-types').onSnapshot(({ docs }) => {
-          const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as EntityType));
+        unsubscribeCallback.current = db.collection('relationship-types').onSnapshot(({ docs }) => {
+          const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as RelationshipType));
 
-          updateEntityTypes(types);
+          updateRelationshipTypes(types);
         });
       }
 
@@ -45,15 +45,15 @@ export function useEntityTypeStore() {
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, db, unsubscribe, updateEntityTypes]
+    [user, db, unsubscribe, updateRelationshipTypes]
   );
 
-  const updateType = async (type: EntityType) => {
-    return db.collection('entity-types').doc(type.id).update(type);
+  const updateType = async (type: RelationshipType) => {
+    return db.collection('relationship-types').doc(type.id).update(type);
   };
 
-  const addType = async (type: EntityType) => {
-    return db.collection('entity-types').add(type);
+  const addType = async (type: RelationshipType) => {
+    return db.collection('relationship-types').add(type);
   };
 
   return { types, updateType, addType };

@@ -10,9 +10,8 @@ import { useParams, useHistory } from 'react-router-dom';
 import { Breadcrumbs } from 'src/components';
 import { singularize } from 'src/utils';
 import { ObjectEntity } from 'src/models';
-import { useFirebaseUser } from './../../../hooks/firebase';
-import { useEntityTypeStore } from './../../../hooks/entityTypeStore';
-import {} from '@material-ui/core';
+import { useFirebaseUser } from 'src/hooks/firebase';
+import { useEntityTypeStore } from 'src/hooks/entityTypeStore';
 import { useState } from 'react';
 
 export const DefaultEntityOverview: React.FC = () => {
@@ -39,7 +38,6 @@ export const DefaultEntityOverview: React.FC = () => {
             name: '',
             type: types.find(type => type.name === entityType),
             properties: {},
-            relationships: [],
             deleted: false,
           } as ObjectEntity)
         : undefined,

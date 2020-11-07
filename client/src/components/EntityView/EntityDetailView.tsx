@@ -8,6 +8,7 @@ import { TagArea } from './TagArea';
 import { EditablePropertyList } from './EditablePropertyList';
 import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
+import { RelationshipViewById } from '../RelationshipView/RelationshipView';
 
 interface Props {
   entity: ObjectEntity;
@@ -18,7 +19,7 @@ interface Props {
 
 export const EntityDetailView: React.FC<Props> = props => {
   const { cCss, entity, onSave, onDiscard } = props;
-  const { id, type, tags } = entity;
+  const { id, type, tags, relationshipIds } = entity;
 
   const [name, updateName] = useState(entity.name);
   const [description, updateDescription] = useState(entity.description);
@@ -179,6 +180,7 @@ export const EntityDetailView: React.FC<Props> = props => {
                 resize: vertical !important;
                 min-height: 146px !important;
               }
+
               ${invalidatedStyle(descriptionInvalidated, true)}
             `}
             name="entity-description"
@@ -201,6 +203,9 @@ export const EntityDetailView: React.FC<Props> = props => {
           propertyMapCache.current = updatedMap;
         }}
       />
+      {relationshipIds?.map(relationshipId => (
+        <RelationshipViewById key={relationshipId} relationshipId={relationshipId} displayingEntityId={id} />
+      ))}
       <Fade in={invalidated}>
         <div
           css={css`

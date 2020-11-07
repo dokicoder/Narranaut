@@ -1,4 +1,4 @@
-import { Icon } from './../utils';
+import { Icon } from '../utils';
 import { WithTags } from './WithTags';
 import { WithRelationships } from './WithRelationships';
 import { PropertyMap } from './Property';

@@ -3,11 +3,11 @@ import React, { useReducer, useCallback, useMemo } from 'react';
 import { css, jsx } from '@emotion/core';
 import { Fade, Button, TextField, FormControl, InputLabel, Select, MenuItem, IconButton } from '@material-ui/core';
 import { Replay as UndoIcon, Save as SaveIcon, Delete as DeleteIcon } from '@material-ui/icons';
-import { EntityType } from 'src/models';
+import { RelationshipType } from 'src/models';
 import { onChangeWrapper, Icon, Icons } from '../../utils';
-import { MainTheme } from './../../utils/themes';
+import { MainTheme } from '../../utils/themes';
 
-function entityTypeUpdateReducer(state: Partial<EntityType>, updated: Partial<EntityType>) {
+function relationshipTypeUpdateReducer(state: Partial<RelationshipType>, updated: Partial<RelationshipType>) {
   return { ...state, ...updated };
 }
 
@@ -25,21 +25,36 @@ const invalidatedStyleMultiSelect = (invalidated: boolean) =>
   }`
     : '';
 
+const definedPropertyList: (keyof RelationshipType)[] = [
+  'name',
+  'description',
+  'forwardName',
+  'backwardName',
+  'icon',
+  'color',
+];
+
 interface Props {
-  type: EntityType;
+  type: RelationshipType;
   alwaysShowDiscard?: boolean;
-  onSave: (updatedType: EntityType) => void;
+  onSave: (updatedType: RelationshipType) => void;
   onDiscard?: () => void;
   onDelete?: () => void;
 }
 
-export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard, onDelete, alwaysShowDiscard }) => {
-  const [typeState, updateTypeState] = useReducer(entityTypeUpdateReducer, type);
+export const RelationshipTypeDetailView: React.FC<Props> = ({
+  type,
+  onSave,
+  onDiscard,
+  onDelete,
+  alwaysShowDiscard,
+}) => {
+  const [typeState, updateTypeState] = useReducer(relationshipTypeUpdateReducer, type);
 
-  const isKeyInvalidated = useCallback((name: keyof EntityType, value: string) => type[name] !== value, [type]);
+  const isKeyInvalidated = useCallback((name: keyof RelationshipType, value: string) => type[name] !== value, [type]);
 
   const invalidated = useMemo(
-    () => Object.entries(typeState).some(([key, value]) => isKeyInvalidated(key as keyof EntityType, value)),
+    () => Object.entries(typeState).some(([key, value]) => isKeyInvalidated(key as keyof RelationshipType, value)),
     [typeState, isKeyInvalidated]
   );
 
@@ -51,8 +66,6 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard,
     updateTypeState(type);
     onDiscard && onDiscard();
   };
-
-  const definedPropertyList: (keyof EntityType)[] = ['name', 'icon', 'color'];
 
   return (
     <React.Fragment>
@@ -72,7 +85,7 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard,
               variant="outlined"
               css={css`
                 margin-top: 15px;
-                ${invalidatedStyleMultiSelect(isKeyInvalidated(key as keyof EntityType, value))}
+                ${invalidatedStyleMultiSelect(isKeyInvalidated(key as keyof RelationshipType, value))}
               `}
             >
               <InputLabel id="demo-simple-select-outlined-label">icon</InputLabel>
@@ -120,7 +133,7 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard,
               key={`type-${type.id}-${key}`}
               css={css`
                 margin-top: 15px;
-                ${invalidatedStyle(isKeyInvalidated(key as keyof EntityType, value))}
+                ${invalidatedStyle(isKeyInvalidated(key as keyof RelationshipType, value))}
               `}
               id={`type-${type.id}-${key}`}
               name={`type-${type.id}-${key}`}

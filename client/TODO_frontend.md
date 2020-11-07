@@ -29,6 +29,10 @@
 - Ideas for additional icons: Car, plane for vehicle...
 - image caching or the fetching will become expensive => local storage should be fine though
 - using localStorage now - maybe call `localStorage.clear();` on logout?
+- entity types are discerned by name. this makes renaming entity types a problem => would be better to discern them by id and create a map of type => id on load
+- use Entities, Relationships into comtext, so they are global between views and only need to be fetched once per page load / update
+- I would like the fadein to also work in the entity details. Why again isn't it working?
+- copying entities and moving entities between categories might be useful
 
 #Old TODO: TODO: merge this
 

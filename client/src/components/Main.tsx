@@ -5,7 +5,7 @@ import { Paper } from '@material-ui/core';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 import { centeredContainer } from '../styles';
-import { MainTheme } from './../utils/themes';
+import { MainTheme } from '../utils/themes';
 import { useFirebaseUser } from 'src/hooks';
 import { Header } from './Header';
 import {

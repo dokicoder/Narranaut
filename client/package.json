@@ -48,7 +48,8 @@
   },
   "scripts": {
     "start": "webpack-dev-server --open --port 3000",
-    "build": "webpack -p --env production"
+    "build": "webpack -p --env production",
+    "lint": "eslint ./src --fix"
   },
   "author": "Kay Illner",
   "contributors": [
