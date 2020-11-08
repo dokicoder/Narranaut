@@ -33,6 +33,8 @@
 - use Entities, Relationships into comtext, so they are global between views and only need to be fetched once per page load / update
 - I would like the fadein to also work in the entity details. Why again isn't it working?
 - copying entities and moving entities between categories might be useful
+- install guide for firebase setup
+- ref.update(<entity>) and ref.set(<entity>, { merge: true }) can be used with partial objects. exploiting this should be a moderate performance gain
 
 #Old TODO: TODO: merge this
 

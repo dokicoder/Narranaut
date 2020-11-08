@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    match /entities/{doc} {
+    	allow write: if request.auth.uid == request.resource.data.uid;
+      allow read, delete: if request.auth.uid == resource.data.uid;
+    }
+    
+    match /relationships/{doc} {
+    	allow write: if request.auth.uid == request.resource.data.uid;
+      allow read, delete: if request.auth.uid == resource.data.uid;
+    }
+    
+    match /entity-types/{doc} {
+      allow read, write: if true;
+    }
+    
+    match /relationship-types/{doc} {
+      allow read, write: if true;
+    }
+  }
+}
