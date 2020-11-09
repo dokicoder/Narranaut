@@ -8,16 +8,8 @@ import { useRecoilState } from 'recoil';
 // semantics: null is the loading state here - TODO: should this be undefined? make it consistent with other stores, maybe define an interface for that
 const relationshipState = atom<Relationship[]>({ key: 'RELATIONSHIPS', default: null });
 
-interface RelationshipStoreConfig {
-  showDeleted: boolean;
-}
-
-const defaultRelationshipStoreConfig: RelationshipStoreConfig = { showDeleted: false };
-
-export function useRelationshipStore(config: Partial<RelationshipStoreConfig> = {}) {
+export function useRelationshipStore() {
   const unsubscribeCallback = useRef<() => void>();
-
-  const storeConfig = { ...defaultRelationshipStoreConfig, ...config };
 
   const unsubscribe = useCallback(() => {
     if (unsubscribeCallback.current) {
@@ -56,8 +48,6 @@ export function useRelationshipStore(config: Partial<RelationshipStoreConfig> = 
           .collection('relationships')
           // only retrieve relationships bound to current user
           .where('uid', '==', user.uid)
-          // deleted flag is used to keep deleted records in db for now
-          .where('deleted', '==', storeConfig.showDeleted)
           .onSnapshot(({ docs }) => {
             const relationships = docs.map(doc => ({ id: doc.id, ...doc.data() } as Relationship));
 
@@ -71,7 +61,7 @@ export function useRelationshipStore(config: Partial<RelationshipStoreConfig> = 
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, db, unsubscribe, updateRelationships, storeConfig.showDeleted]
+    [user, db, unsubscribe, updateRelationships]
   );
 
   const updateRelationship = async (entity: Relationship) => {

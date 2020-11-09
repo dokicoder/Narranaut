@@ -21,14 +21,19 @@ export const DefaultEntityOverview: React.FC = () => {
 
   const { entityType: entityTypePlural, entityId } = useParams<{ entityType: string; entityId: string }>();
   const entityType = singularize(entityTypePlural);
-  const { entities, updateEntity, addEntity, flagEntityDeleted, reallyDeleteEntity } = useEntityStore(entityType, {
-    showDeleted: showDeletedEntites,
-  });
+  const { entities: allEntities, updateEntity, addEntity, flagEntityDeleted, reallyDeleteEntity } = useEntityStore(
+    entityType
+  );
   const { types } = useEntityTypeStore();
 
   const history = useHistory();
 
   const isNewEntity = entityId === 'create';
+
+  const entities = useMemo(() => allEntities?.filter(e => e.deleted === showDeletedEntites), [
+    allEntities,
+    showDeletedEntites,
+  ]);
 
   const newEmptyEntity = useMemo(
     (): ObjectEntity =>

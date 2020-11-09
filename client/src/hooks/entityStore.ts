@@ -11,16 +11,8 @@ export const createEntityStore = atomFamily<ObjectEntity[], string>({
   default: null,
 });
 
-interface EntityStoreConfig {
-  showDeleted: boolean;
-}
-
-const defaultEntityStoreConfig: EntityStoreConfig = { showDeleted: false };
-
-export function useEntityStore(storeKey: string, config: Partial<EntityStoreConfig> = {}) {
+export function useEntityStore(storeKey: string) {
   const unsubscribeCallback = useRef<() => void>();
-
-  const storeConfig = { ...defaultEntityStoreConfig, ...config };
 
   const unsubscribe = useCallback(() => {
     if (unsubscribeCallback.current) {
@@ -58,8 +50,6 @@ export function useEntityStore(storeKey: string, config: Partial<EntityStoreConf
           .collection('entities')
           // only retrieve entities bound to current user
           .where('uid', '==', user.uid)
-          // deleted flag is used to keep deleted records in db for now
-          .where('deleted', '==', storeConfig.showDeleted)
           .where('type.name', '==', storeKey)
           .onSnapshot(({ docs }) => {
             const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
@@ -74,7 +64,7 @@ export function useEntityStore(storeKey: string, config: Partial<EntityStoreConf
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, db, storeKey, unsubscribe, updateEntities, storeConfig.showDeleted]
+    [user, db, storeKey, unsubscribe, updateEntities]
   );
 
   const updateEntity = async (entity: ObjectEntity) => {
