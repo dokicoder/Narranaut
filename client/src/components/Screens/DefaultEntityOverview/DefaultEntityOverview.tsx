@@ -36,6 +36,7 @@ export const DefaultEntityOverview: React.FC = () => {
         ? ({
             uid: user.uid,
             name: '',
+            description: '',
             type: types.find(type => type.name === entityType),
             properties: {},
             deleted: false,

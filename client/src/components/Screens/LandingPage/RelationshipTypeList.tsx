@@ -36,7 +36,11 @@ export const RelationshipTypeList: React.FC = () => {
     <React.Fragment>
       {loading && <LoadingIndicator />}
       <Fade in={!loading}>
-        <div>
+        <div
+          css={css`
+            margin-top: 60px;
+          `}
+        >
           {types?.map(type => (
             <Chip key={`relationship-${type.id}`} label={type.name} />
           ))}

@@ -36,6 +36,12 @@
 - install guide for firebase setup
 - ref.update(<entity>) and ref.set(<entity>, { merge: true }) can be used with partial objects. exploiting this should be a moderate performance gain
 
+#known bugs:
+
+- delete icons not displayed / not visible on mobile
+- cannot change icons of types on mobile
+- updating the types does not update entities
+
 #Old TODO: TODO: merge this
 
 ##next up
