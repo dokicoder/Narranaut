@@ -35,6 +35,8 @@
 - copying entities and moving entities between categories might be useful
 - install guide for firebase setup
 - ref.update(<entity>) and ref.set(<entity>, { merge: true }) can be used with partial objects. exploiting this should be a moderate performance gain
+- think about what properties the relationship cloud function really needs to track. e.g. it does not have to track the relationship array of the entites itself, so this can be optimized
+- relationhips could display information when in the story they develop or disaappear. these relationship-transitions could relate to story events
 
 #known bugs:
 

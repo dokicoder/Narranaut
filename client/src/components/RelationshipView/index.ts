@@ -1,1 +1,1 @@
-export * from './RelationshipView';
+export * from './RelationshipCompactView';

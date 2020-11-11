@@ -8,7 +8,7 @@ import { TagArea } from './TagArea';
 import { EditablePropertyList } from './EditablePropertyList';
 import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
-import { RelationshipViewById } from '../RelationshipView/RelationshipView';
+import { RelationshipCompactViewById } from '../RelationshipView';
 
 interface Props {
   entity: ObjectEntity;
@@ -204,7 +204,7 @@ export const EntityDetailView: React.FC<Props> = props => {
         }}
       />
       {relationshipIds?.map(relationshipId => (
-        <RelationshipViewById key={relationshipId} relationshipId={relationshipId} displayingEntityId={id} />
+        <RelationshipCompactViewById key={relationshipId} relationshipId={relationshipId} displayingEntityId={id} />
       ))}
       <Fade in={invalidated}>
         <div

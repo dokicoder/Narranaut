@@ -55,7 +55,7 @@ export const DefaultEntityOverview: React.FC = () => {
     return <div>Error: entity type was undefined</div>;
   }
 
-  const selectedEntity = entityId && (entities?.find(({ id }) => id === entityId) || newEmptyEntity);
+  const selectedEntity = entityId && (allEntities?.find(({ id }) => id === entityId) || newEmptyEntity);
 
   const loading = !entities;
 
@@ -103,18 +103,21 @@ export const DefaultEntityOverview: React.FC = () => {
         `}
       >
         <Breadcrumbs items={breadcrumbItems} />
-        <Button
-          onClick={() => setShowDeletedEntites(!showDeletedEntites)}
-          startIcon={showDeletedEntites ? <ArrowBackIcon /> : <DeleteIcon />}
-        >
-          {showDeletedEntites ? `view ${entityTypePlural}` : `deleted ${entityTypePlural}`}
-        </Button>
+
+        {!selectedEntity && (
+          <Button
+            onClick={() => setShowDeletedEntites(!showDeletedEntites)}
+            startIcon={showDeletedEntites ? <ArrowBackIcon /> : <DeleteIcon />}
+          >
+            {showDeletedEntites ? `view ${entityTypePlural}` : `deleted ${entityTypePlural}`}
+          </Button>
+        )}
       </div>
       {loading && <LoadingIndicator />}
 
       {selectedEntity && (
         <Fade in={!loading && !!selectedEntity}>
-          {<EntityDetailView entity={selectedEntity} onSave={updateCurrentOrSaveNewEntity} />}
+          {<EntityDetailView entity={selectedEntity} onSave={updateCurrentOrSaveNewEntity} key={entityId} />}
         </Fade>
       )}
       {
