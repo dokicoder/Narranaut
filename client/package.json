@@ -54,7 +54,8 @@
   "scripts": {
     "start": "webpack-dev-server --open --port 3000",
     "build": "webpack -p --env production",
-    "lint": "eslint ./src --fix"
+    "lint": "eslint ./src --fix",
+    "deploy-functions": "firebase deploy --only functions"
   },
   "author": "Kay Illner",
   "contributors": [
