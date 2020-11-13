@@ -64,20 +64,20 @@ export function useRelationshipStore() {
     [user, db, unsubscribe, updateRelationships]
   );
 
-  const updateRelationship = async (entity: Relationship) => {
-    return db.collection('relationships').doc(entity.id).update(entity);
+  const updateRelationship = async (relationship: Relationship) => {
+    return db.collection('relationships').doc(relationship.id).update(relationship);
   };
 
-  const addRelationship = async (entity: Relationship) => {
-    return db.collection('relationships').add(entity);
+  const addRelationship = async (relationship: Relationship) => {
+    return db.collection('relationships').add(relationship);
   };
 
-  const flagRelationshipDeleted = async (entity: Relationship, deleted: boolean) => {
-    return db.collection('relationships').doc(entity.id).update({ deleted });
+  const flagRelationshipDeleted = async (relationship: Relationship, deleted: boolean) => {
+    return db.collection('relationships').doc(relationship.id).update({ deleted });
   };
 
-  const reallyDeleteRelationship = async (entity: Relationship) => {
-    return db.collection('relationships').doc(entity.id).delete();
+  const reallyDeleteRelationship = async (relationship: Relationship) => {
+    return db.collection('relationships').doc(relationship.id).delete();
   };
 
   return {

@@ -57,6 +57,7 @@ export const Main: React.FC = () => {
           <Paper
             css={css`
               padding: 50px;
+              background-color: #fcfcff;
             `}
           >
             <Switch>

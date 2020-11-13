@@ -9,8 +9,6 @@
 - improve image support with react-dropzone
 - proper input validation login screen
 - try including framer motion API (for something I guess?)
-- relationship view
-- how to incorporate thumbnails?
 - relationship menus in the Detail views
 - timeline view
 - allow for keyboard control (example: return after entering new property name should add the property, escape probably abort it)
@@ -37,6 +35,7 @@
 - ref.update(<entity>) and ref.set(<entity>, { merge: true }) can be used with partial objects. exploiting this should be a moderate performance gain
 - think about what properties the relationship cloud function really needs to track. e.g. it does not have to track the relationship array of the entites itself, so this can be optimized
 - relationhips could display information when in the story they develop or disaappear. these relationship-transitions could relate to story events
+- give the option of importing entity type and relationship type templates (or autoimport some of them when creating a story)
 
 #known bugs:
 

@@ -1,6 +1,6 @@
 import { EntityType } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
-import { useEffect, useContext, useRef, useCallback } from 'react';
+import { useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import { FirebaseContext } from '../firebase';
 import { useRecoilState, atom } from 'recoil';
 
@@ -24,6 +24,16 @@ export function useEntityTypeStore() {
   const { db } = useContext(FirebaseContext);
 
   const [types, updateEntityTypes] = useRecoilState(entityTypesState);
+
+  const typesMap = useMemo(
+    () =>
+      types?.reduce<Record<string, EntityType>>((acc, type) => {
+        acc[type.id] = type;
+
+        return acc;
+      }, {}) || {},
+    [types]
+  );
 
   useEffect(
     () => {
@@ -56,5 +66,5 @@ export function useEntityTypeStore() {
     return db.collection('entity-types').add(type);
   };
 
-  return { types, updateType, addType };
+  return { types, typesMap, updateType, addType };
 }

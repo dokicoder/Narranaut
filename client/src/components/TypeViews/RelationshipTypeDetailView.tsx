@@ -88,7 +88,7 @@ export const RelationshipTypeDetailView: React.FC<Props> = ({
                 ${invalidatedStyleMultiSelect(isKeyInvalidated(key as keyof RelationshipType, value))}
               `}
             >
-              <InputLabel id="demo-simple-select-outlined-label">icon</InputLabel>
+              <InputLabel id="icon-select-label">icon</InputLabel>
               <Select
                 css={css`
                   div > img {
@@ -99,8 +99,8 @@ export const RelationshipTypeDetailView: React.FC<Props> = ({
                     top: 50%;
                   }
                 `}
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
+                labelId="icon-select-label"
+                id="icon-select"
                 value={value}
                 onChange={onChangeWrapper(value => updateTypeState({ [key]: value as Icon }))}
                 label="Age"

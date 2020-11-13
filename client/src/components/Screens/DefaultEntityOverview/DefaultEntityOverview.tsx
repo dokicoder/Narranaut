@@ -57,6 +57,9 @@ export const DefaultEntityOverview: React.FC = () => {
 
   const selectedEntity = entityId && (allEntities?.find(({ id }) => id === entityId) || newEmptyEntity);
 
+  const hasDeletedEntities =
+    allEntities && !!(showDeletedEntites ? entities.length : allEntities.length - entities.length);
+
   const loading = !entities;
 
   const onSelectEntity = (id: string) => () => {
@@ -104,7 +107,7 @@ export const DefaultEntityOverview: React.FC = () => {
       >
         <Breadcrumbs items={breadcrumbItems} />
 
-        {!selectedEntity && (
+        {!selectedEntity && hasDeletedEntities && (
           <Button
             onClick={() => setShowDeletedEntites(!showDeletedEntites)}
             startIcon={showDeletedEntites ? <ArrowBackIcon /> : <DeleteIcon />}
@@ -126,29 +129,30 @@ export const DefaultEntityOverview: React.FC = () => {
             css={css`
               display: grid;
               grid-gap: 30px;
-              grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+              grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             `}
           >
-            {entities?.map(entity => (
-              <EntityCompactView
-                key={entity.id}
-                onSelect={onSelectEntity(entity.id)}
-                onDelete={() => {
-                  if (showDeletedEntites) {
-                    reallyDeleteEntity(entity);
-                  } else {
-                    flagEntityDeleted(entity, true);
-                  }
-                }}
-                onRestore={showDeletedEntites ? () => flagEntityDeleted(entity, false) : undefined}
-                entity={entity}
-              />
-            ))}
+            {!selectedEntity &&
+              entities?.map(entity => (
+                <EntityCompactView
+                  key={entity.id}
+                  onSelect={onSelectEntity(entity.id)}
+                  onDelete={() => {
+                    if (showDeletedEntites) {
+                      reallyDeleteEntity(entity);
+                    } else {
+                      flagEntityDeleted(entity, true);
+                    }
+                  }}
+                  onRestore={showDeletedEntites ? () => flagEntityDeleted(entity, false) : undefined}
+                  entity={entity}
+                />
+              ))}
             <Fade in={!showDeletedEntites}>
               <div
                 css={css`
                   margin-top: 10px;
-                  height: 400px;
+                  height: 600px;
                   display: flex;
                   flex-direction: column;
                   justify-content: space-around;

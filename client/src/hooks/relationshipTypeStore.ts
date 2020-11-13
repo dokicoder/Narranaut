@@ -1,6 +1,6 @@
 import { RelationshipType } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
-import { useEffect, useContext, useRef, useCallback } from 'react';
+import { useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import { FirebaseContext } from '../firebase';
 import { useRecoilState, atom } from 'recoil';
 
@@ -24,6 +24,16 @@ export function useRelationshipTypeStore() {
   const { db } = useContext(FirebaseContext);
 
   const [types, updateRelationshipTypes] = useRecoilState(relationshipTypesState);
+
+  const typesMap = useMemo(
+    () =>
+      types?.reduce<Record<string, RelationshipType>>((acc, type) => {
+        acc[type.id] = type;
+
+        return acc;
+      }, {}) || {},
+    [types]
+  );
 
   useEffect(
     () => {
@@ -56,5 +66,5 @@ export function useRelationshipTypeStore() {
     return db.collection('relationship-types').add(type);
   };
 
-  return { types, updateType, addType };
+  return { types, typesMap, updateType, addType };
 }

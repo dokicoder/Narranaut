@@ -25,7 +25,8 @@ export interface Relationship {
   party1: ObjectEntity;
   party2: ObjectEntity;
 
-  type: RelationshipType;
+  // id of relationship type
+  typeId: string;
 
   deleted: boolean;
 }

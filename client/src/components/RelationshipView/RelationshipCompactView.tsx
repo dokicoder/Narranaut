@@ -1,28 +1,36 @@
 /** @jsx jsx */
 import React from 'react';
+import produce from 'immer';
 import { useHistory } from 'react-router-dom';
 import { css } from '@emotion/core';
-import { Avatar, Paper } from '@material-ui/core';
+import { Avatar, Paper, Select } from '@material-ui/core';
 import { jsx } from '@emotion/core';
-import { Relationship } from '../../models';
+import { onChangeWrapper } from 'src/utils/form';
 import { useRelationshipStore } from 'src/hooks/relationshipStore';
 import { useImageUrl } from 'src/hooks';
 import { Icon, Icons } from 'src/utils';
-import { ObjectEntity } from 'src/models';
+import { ObjectEntity, Relationship } from 'src/models';
 import { pluralize } from 'src/utils';
+import { FormControl } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
+import { useRelationshipTypeStore } from 'src/hooks';
+import { MainTheme } from './../../utils/themes';
 
 interface Props {
   relationship: Relationship;
   displayingEntityId?: string;
+  // flag the view as editable (extended UI) by providing this callback
+  onUpdate?: (updated: Relationship) => void;
 }
 
-export const RelationshipView: React.FC<Props> = ({ relationship, displayingEntityId }) => {
-  const {
-    id,
-    type: { forwardName, backwardName, icon },
-    party1,
-    party2,
-  } = relationship;
+const emphasize = (text: string) => {
+  return `<span style="font-weight: bold; color: ${MainTheme.palette.primary.main}">${text}</span>`;
+};
+
+export const RelationshipView: React.FC<Props> = ({ relationship, displayingEntityId, onUpdate }) => {
+  const { typeId, party1, party2 } = relationship;
+
+  const { typesMap, types } = useRelationshipTypeStore();
 
   const history = useHistory();
 
@@ -39,17 +47,28 @@ export const RelationshipView: React.FC<Props> = ({ relationship, displayingEnti
     });
   };
 
-  if (!party1 || !party2) {
-    // TODO: proper error label - also these should always be defined if this works as expected
-    return <div>Entities missing in relationship #{id}</div>;
+  // TODO: does this obfuscate errors? (I think so...)
+  if (!typesMap?.[typeId] || !party1 || !party2) {
+    return null;
   }
+
+  // these expressions need to also work for displayingEntity === undefined
+  const leftParty = displayingEntityId === party2.id ? party2 : party1;
+  const rightParty = displayingEntityId === party2.id ? party1 : party2;
+  const leftPartyImageUrl = displayingEntityId === party2.id ? party2imageUrl : party1imageUrl;
+  const rightPartyImageUrl = displayingEntityId === party2.id ? party1imageUrl : party2imageUrl;
+
+  const editMode = !!onUpdate;
+
+  const { forwardName, backwardName, icon } = typesMap[typeId];
+
+  const relationshipDirection = !backwardName ? 'symmetric' : displayingEntityId === party2.id ? 'backward' : 'forward';
 
   const placeholderLabel = (displayingEntityId === party2.id && backwardName) || forwardName;
 
-  // these expressions need to also work for displayingEntity === undefined
   const label = placeholderLabel
-    .replace('{{p1}}', (displayingEntityId === party2.id ? party2 : party1).name)
-    .replace('{{p2}}', (displayingEntityId === party2.id ? party1 : party2).name);
+    .replace('{{p1}}', emphasize(leftParty.name))
+    .replace('{{p2}}', emphasize(rightParty.name));
 
   const iconSrc = Icons[icon as Icon];
 
@@ -76,42 +95,130 @@ export const RelationshipView: React.FC<Props> = ({ relationship, displayingEnti
             height: 100px;
             cursor: pointer;
           `}
-          alt={party1.name}
-          src={party1imageUrl}
-          onClick={onSelectEntity(party1)}
+          alt={leftParty.name}
+          src={leftPartyImageUrl}
+          onClick={onSelectEntity(leftParty)}
         />
-        <img
+        <div
           css={css`
-            width: 30px;
-            height: 30px;
-            margin: 15px;
+            position: relative;
           `}
-          src={iconSrc}
-        />
+        >
+          {editMode ? (
+            <FormControl variant="outlined">
+              <Select
+                css={css`
+                  width: 60px;
+                  height: 60px;
+                  margin: 10px;
+
+                  color: transparent;
+                  overflow: hidden;
+
+                  div > img {
+                    position: absolute;
+
+                    width: 30px;
+                    height: 30px;
+                    transform: translate(-50%, -50%);
+                    top: 50%;
+                    left: 50%;
+                  }
+
+                  svg.MuiSvgIcon-root.MuiSelect-icon {
+                    left: 50% !important;
+                    transform: translateX(-50%);
+                    top: auto !important;
+                    bottom: 0 !important;
+                  }
+                `}
+                value={typeId}
+                onChange={
+                  onUpdate &&
+                  onChangeWrapper(newTypeid =>
+                    onUpdate(
+                      produce(relationship, r => {
+                        r.typeId = newTypeid;
+                      })
+                    )
+                  )
+                }
+              >
+                {types?.map(type => {
+                  const iconSrc = Icons[type.icon as Icon];
+
+                  return (
+                    <MenuItem
+                      css={css`
+                        padding-left: 45px;
+
+                        img {
+                          position: absolute;
+                          margin-left: -5px;
+                          height: 30px;
+                          transform: translateX(-100%);
+                        }
+                      `}
+                      key={type.id}
+                      value={type.id}
+                    >
+                      {type.name}
+                      {iconSrc && <img src={iconSrc} />}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          ) : (
+            <img
+              css={css`
+                width: 30px;
+                height: 30px;
+                margin: 25px;
+              `}
+              src={iconSrc}
+            />
+          )}
+          <h2
+            css={css`
+              position: absolute;
+              transform: translate(-50%, 100%);
+              left: 50%;
+              bottom: -5px;
+            `}
+          >
+            {
+              {
+                symmetric: '⇔',
+                forward: '⇒',
+                backward: '⇐',
+              }[relationshipDirection]
+            }
+          </h2>
+        </div>
         <Avatar
           css={css`
             width: 100px;
             height: 100px;
             cursor: pointer;
           `}
-          alt={party2.name}
-          src={party2imageUrl}
-          onClick={onSelectEntity(party2)}
+          alt={rightParty.name}
+          src={rightPartyImageUrl}
+          onClick={onSelectEntity(rightParty)}
         />
       </div>
-      {label}
+      <span dangerouslySetInnerHTML={{ __html: label }}></span>
     </Paper>
   );
 };
 
-interface ByIdProps {
+interface ByIdProps extends Omit<Props, 'relationship'> {
   relationshipId: string;
-  displayingEntityId: string;
 }
 
-export const RelationshipCompactViewById: React.FC<ByIdProps> = ({ relationshipId, displayingEntityId }) => {
+export const RelationshipCompactViewById: React.FC<ByIdProps> = ({ relationshipId, ...props }) => {
   const { relationshipMap } = useRelationshipStore();
   const relationship = relationshipMap[relationshipId];
 
-  return relationship ? <RelationshipView relationship={relationship} displayingEntityId={displayingEntityId} /> : null;
+  return relationship ? <RelationshipView {...props} relationship={relationship} /> : null;
 };

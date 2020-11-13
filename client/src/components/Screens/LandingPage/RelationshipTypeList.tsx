@@ -42,7 +42,13 @@ export const RelationshipTypeList: React.FC = () => {
           `}
         >
           {types?.map(type => (
-            <Chip key={`relationship-${type.id}`} label={type.name} />
+            <Chip
+              css={css`
+                margin-right: 5px;
+              `}
+              key={`relationship-${type.id}`}
+              label={type.name}
+            />
           ))}
           <div
             css={css`

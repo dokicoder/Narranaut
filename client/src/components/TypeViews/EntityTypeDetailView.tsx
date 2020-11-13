@@ -75,7 +75,7 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard,
                 ${invalidatedStyleMultiSelect(isKeyInvalidated(key as keyof EntityType, value))}
               `}
             >
-              <InputLabel id="demo-simple-select-outlined-label">icon</InputLabel>
+              <InputLabel id="icon-select-label">icon</InputLabel>
               <Select
                 css={css`
                   div > img {
@@ -86,8 +86,8 @@ export const EntityTypeDetailView: React.FC<Props> = ({ type, onSave, onDiscard,
                     top: 50%;
                   }
                 `}
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
+                labelId="icon-select-label"
+                id="icon-select"
                 value={value}
                 onChange={onChangeWrapper(value => updateTypeState({ [key]: value as Icon }))}
                 label="Age"

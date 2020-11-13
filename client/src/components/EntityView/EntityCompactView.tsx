@@ -31,7 +31,7 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
       css={[
         css`
           position: relative;
-          height: 450px;
+          height: 600px;
         `,
         cCss,
       ]}
@@ -41,8 +41,8 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
       <CardActionArea onClick={onSelect}>
         <CardMedia
           css={css`
-            height: 140px;
-            object-position: 100px 50px;
+            height: 220px;
+            background-position: 0 30%;
           `}
           image={imageUrl || PlaceholderImages[entity.type.name]}
         />

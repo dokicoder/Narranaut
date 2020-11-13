@@ -9,6 +9,7 @@ import { EditablePropertyList } from './EditablePropertyList';
 import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 import { RelationshipCompactViewById } from '../RelationshipView';
+import { useRelationshipStore } from 'src/hooks';
 
 interface Props {
   entity: ObjectEntity;
@@ -20,6 +21,8 @@ interface Props {
 export const EntityDetailView: React.FC<Props> = props => {
   const { cCss, entity, onSave, onDiscard } = props;
   const { id, type, tags, relationshipIds } = entity;
+
+  const { updateRelationship } = useRelationshipStore();
 
   const [name, updateName] = useState(entity.name);
   const [description, updateDescription] = useState(entity.description);
@@ -203,9 +206,6 @@ export const EntityDetailView: React.FC<Props> = props => {
           propertyMapCache.current = updatedMap;
         }}
       />
-      {relationshipIds?.map(relationshipId => (
-        <RelationshipCompactViewById key={relationshipId} relationshipId={relationshipId} displayingEntityId={id} />
-      ))}
       <Fade in={invalidated}>
         <div
           css={css`
@@ -223,6 +223,21 @@ export const EntityDetailView: React.FC<Props> = props => {
           </Button>
         </div>
       </Fade>
+      <div
+        css={css`
+          margin-top: 20px;
+        `}
+      >
+        <h3>RELATIONSHIPS</h3>
+        {relationshipIds?.map(relationshipId => (
+          <RelationshipCompactViewById
+            key={relationshipId}
+            relationshipId={relationshipId}
+            displayingEntityId={id}
+            onUpdate={updateRelationship}
+          />
+        ))}
+      </div>
     </div>
   );
 };
