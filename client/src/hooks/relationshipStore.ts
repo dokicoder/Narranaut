@@ -7,17 +7,26 @@ import { useRecoilState } from 'recoil';
 
 // semantics: null is the loading state here - TODO: should this be undefined? make it consistent with other stores, maybe define an interface for that
 const relationshipState = atom<Relationship[]>({ key: 'RELATIONSHIPS', default: null });
+// stores array of unique ids representing the hook calls listening for firebase store updates - this is the only way I could think of to track when the last registration is unmounted and trigger an unsubscribe
+const registrationIdState = atom<number[]>({ key: 'RELATIONSHIPS_REGISTRATION_STATE', default: [] });
+
+let idCounter = 0;
 
 export function useRelationshipStore() {
   const unsubscribeCallback = useRef<() => void>();
 
+  const thisRegistrationIdRef = useRef<number>(++idCounter);
+
+  const [relationships, updateRelationships] = useRecoilState(relationshipState);
+
   const unsubscribe = useCallback(() => {
     if (unsubscribeCallback.current) {
-      console.log('unsubscribe');
+      console.log('unsubscribe from relationships update');
       unsubscribeCallback.current();
       unsubscribeCallback.current = undefined;
+      updateRelationships(undefined);
     }
-  }, [unsubscribeCallback]);
+  }, [unsubscribeCallback, updateRelationships]);
 
   const user = useFirebaseUser(user => {
     // unsubscribe on logout
@@ -25,7 +34,28 @@ export function useRelationshipStore() {
   });
   const { db } = useContext(FirebaseContext);
 
-  const [relationships, updateRelationships] = useRecoilState(relationshipState);
+  const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
+
+  useEffect(
+    () => {
+      updateRegistrationIds(registrationIds => [...registrationIds, thisRegistrationIdRef.current]);
+
+      // this fixes the following warning:
+      // "The ref value 'thisRegistrationIdRef.current' will likely have changed by the time this effect cleanup function runs."
+      const saveRefValue = thisRegistrationIdRef.current;
+
+      // unsubscribe if last tracked listener of store unmounts
+      return () => {
+        updateRegistrationIds(registrationIds => registrationIds.filter(id => id !== saveRefValue));
+
+        if (registrationIds.length === 1) {
+          unsubscribe();
+        }
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const relationshipMap = useMemo(
     () =>
@@ -37,10 +67,15 @@ export function useRelationshipStore() {
     [relationships]
   );
 
-  // this effect is only called on page load. since the state is shared with recoil (due to the relationships === null part of the condition)
+  // this effect is only called on first registration. the state is shared with recoil and a list of references to hook calls kept
   useEffect(
     () => {
-      if (user && !unsubscribeCallback.current && relationships === null) {
+      if (
+        user &&
+        !unsubscribeCallback.current &&
+        relationships === null &&
+        thisRegistrationIdRef.current === registrationIds[0]
+      ) {
         console.log(`fetch relationships`);
         updateRelationships(undefined);
 
@@ -49,16 +84,12 @@ export function useRelationshipStore() {
           // only retrieve relationships bound to current user
           .where('uid', '==', user.uid)
           .onSnapshot(({ docs }) => {
+            console.log('relationships update callback');
             const relationships = docs.map(doc => ({ id: doc.id, ...doc.data() } as Relationship));
 
             updateRelationships(relationships);
           });
       }
-
-      return () => {
-        // unsubscribe on unmount
-        unsubscribe();
-      };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, db, unsubscribe, updateRelationships]

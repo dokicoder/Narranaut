@@ -207,6 +207,7 @@ export const RelationshipView: React.FC<Props> = ({ relationship, displayingEnti
           onClick={onSelectEntity(rightParty)}
         />
       </div>
+      {/* TODO: this adds unnormalized form content to the DOM :( - it's called dangerouslySetInnerHTML for a reason */}
       <span dangerouslySetInnerHTML={{ __html: label }}></span>
     </Paper>
   );
