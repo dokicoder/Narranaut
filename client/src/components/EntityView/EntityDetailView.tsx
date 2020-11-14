@@ -8,8 +8,7 @@ import { TagArea } from './TagArea';
 import { EditablePropertyList } from './EditablePropertyList';
 import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
-import { RelationshipCompactViewById } from '../RelationshipView';
-import { useRelationshipStore } from 'src/hooks';
+import { EditableRelationshipList } from './EditableRelationshipList';
 
 interface Props {
   entity: ObjectEntity;
@@ -21,8 +20,6 @@ interface Props {
 export const EntityDetailView: React.FC<Props> = props => {
   const { cCss, entity, onSave, onDiscard } = props;
   const { id, type, tags, relationshipIds } = entity;
-
-  const { updateRelationship } = useRelationshipStore();
 
   const [name, updateName] = useState(entity.name);
   const [description, updateDescription] = useState(entity.description);
@@ -182,7 +179,8 @@ export const EntityDetailView: React.FC<Props> = props => {
               textarea {
                 resize: vertical !important;
                 min-height: 146px !important;
-              }
+              }import { EditableRelationshipList } from './EditableRelationshipList';
+
 
               ${invalidatedStyle(descriptionInvalidated, true)}
             `}
@@ -223,21 +221,7 @@ export const EntityDetailView: React.FC<Props> = props => {
           </Button>
         </div>
       </Fade>
-      <div
-        css={css`
-          margin-top: 20px;
-        `}
-      >
-        <h3>RELATIONSHIPS</h3>
-        {relationshipIds?.map(relationshipId => (
-          <RelationshipCompactViewById
-            key={relationshipId}
-            relationshipId={relationshipId}
-            displayingEntityId={id}
-            onUpdate={updateRelationship}
-          />
-        ))}
-      </div>
+      <EditableRelationshipList relationshipIds={relationshipIds} entityId={id} />
     </div>
   );
 };

@@ -5,6 +5,7 @@ export const MainTheme = {
       main: '#27ae60',
       dark: '#54797A',
       contrastText: '#fff',
+      transparent: '#33ce2022',
     },
     secondary: {
       light: '#f4c680',

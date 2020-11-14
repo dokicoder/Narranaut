@@ -17,7 +17,7 @@ let unsubscribeCallback: () => void | undefined = undefined;
 export function useRelationshipStore() {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
 
-  const [relationships, updateRelationships] = useRecoilState(relationshipState);
+  const [relationships, updateRelationshipStore] = useRecoilState(relationshipState);
   const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(() => {
@@ -25,9 +25,9 @@ export function useRelationshipStore() {
       console.log('unsubscribe from relationships update');
       unsubscribeCallback();
       unsubscribeCallback = undefined;
-      updateRelationships(null);
+      updateRelationshipStore(null);
     }
-  }, [updateRelationships]);
+  }, [updateRelationshipStore]);
 
   const user = useFirebaseUser(user => {
     // unsubscribe on logout
@@ -76,7 +76,7 @@ export function useRelationshipStore() {
         thisRegistrationIdRef.current === registrationIds[0]
       ) {
         console.log(`fetch relationships`);
-        updateRelationships(undefined);
+        updateRelationshipStore(undefined);
 
         unsubscribeCallback = db
           .collection('relationships')
@@ -86,16 +86,26 @@ export function useRelationshipStore() {
             console.log('relationships update callback');
             const relationships = docs.map(doc => ({ id: doc.id, ...doc.data() } as Relationship));
 
-            updateRelationships(relationships);
+            updateRelationshipStore(relationships);
           });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, db, unsubscribe, updateRelationships]
+    [user, db, unsubscribe, updateRelationshipStore]
   );
 
   const updateRelationship = async (relationship: Relationship) => {
     return db.collection('relationships').doc(relationship.id).update(relationship);
+  };
+
+  const updateRelationships = async (relationships: Relationship[]) => {
+    const batch = db.batch();
+
+    relationships.forEach(r => {
+      batch.update(db.collection('relationships').doc(r.id), r);
+    });
+
+    return batch.commit();
   };
 
   const addRelationship = async (relationship: Relationship) => {
@@ -114,6 +124,7 @@ export function useRelationshipStore() {
     relationships,
     relationshipMap,
     updateRelationship,
+    updateRelationships,
     addRelationship,
     flagRelationshipDeleted,
     reallyDeleteRelationship,

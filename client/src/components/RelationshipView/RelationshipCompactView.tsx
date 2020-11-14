@@ -2,7 +2,7 @@
 import React from 'react';
 import produce from 'immer';
 import { useHistory } from 'react-router-dom';
-import { css } from '@emotion/core';
+import { css, SerializedStyles } from '@emotion/core';
 import { Avatar, Paper, Select } from '@material-ui/core';
 import { jsx } from '@emotion/core';
 import { onChangeWrapper } from 'src/utils/form';
@@ -14,20 +14,21 @@ import { pluralize } from 'src/utils';
 import { FormControl } from '@material-ui/core';
 import { MenuItem } from '@material-ui/core';
 import { useRelationshipTypeStore } from 'src/hooks';
-import { MainTheme } from './../../utils/themes';
+import { MainTheme } from 'src/utils/themes';
 
 interface Props {
   relationship: Relationship;
   displayingEntityId?: string;
   // flag the view as editable (extended UI) by providing this callback
   onUpdate?: (updated: Relationship) => void;
+  cCss?: SerializedStyles;
 }
 
 const emphasize = (text: string) => {
   return `<span style="font-weight: bold; color: ${MainTheme.palette.primary.main}">${text}</span>`;
 };
 
-export const RelationshipView: React.FC<Props> = ({ relationship, displayingEntityId, onUpdate }) => {
+export const RelationshipCompactView: React.FC<Props> = ({ relationship, displayingEntityId, cCss, onUpdate }) => {
   const { typeId, party1, party2 } = relationship;
 
   const { typesMap, types } = useRelationshipTypeStore();
@@ -74,12 +75,15 @@ export const RelationshipView: React.FC<Props> = ({ relationship, displayingEnti
 
   return (
     <Paper
-      css={css`
-        display: inline-flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
-      `}
+      css={[
+        css`
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 10px;
+        `,
+        cCss,
+      ]}
     >
       <div
         css={css`
@@ -221,5 +225,5 @@ export const RelationshipCompactViewById: React.FC<ByIdProps> = ({ relationshipI
   const { relationshipMap } = useRelationshipStore();
   const relationship = relationshipMap[relationshipId];
 
-  return relationship ? <RelationshipView {...props} relationship={relationship} /> : null;
+  return relationship ? <RelationshipCompactView {...props} relationship={relationship} /> : null;
 };
