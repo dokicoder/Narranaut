@@ -18,6 +18,7 @@ export function useRelationshipStore() {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
 
   const [relationships, updateRelationships] = useRecoilState(relationshipState);
+  const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(() => {
     if (unsubscribeCallback.current) {
@@ -33,8 +34,6 @@ export function useRelationshipStore() {
     if (!user) unsubscribe();
   });
   const { db } = useContext(FirebaseContext);
-
-  const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   useEffect(
     () => {
