@@ -15,21 +15,26 @@ const createRegistrationIdStore = atomFamily<number[], string>({ key: 'ENTITIES_
 
 let idCounter = 0;
 
-export function useEntityStore(storeKey: string) {
-  const unsubscribeCallback = useRef<() => void>();
+let unsubscribeCallback: () => void | undefined = undefined;
 
+export function useEntityStore(storeKey: string) {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
 
   const [entities, updateEntities] = useRecoilState(createEntityStore(storeKey));
   const [registrationIds, updateRegistrationIds] = useRecoilState(createRegistrationIdStore(storeKey));
 
-  const unsubscribe = useCallback(() => {
-    if (unsubscribeCallback.current) {
-      unsubscribeCallback.current();
-      unsubscribeCallback.current = undefined;
-      updateEntities(undefined);
-    }
-  }, [unsubscribeCallback, updateEntities]);
+  const unsubscribe = useCallback(
+    () => {
+      if (unsubscribeCallback) {
+        console.log(`unsubscribe from entities of type "${storeKey}" update`);
+        unsubscribeCallback();
+        unsubscribeCallback = undefined;
+        updateEntities(null);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [updateEntities]
+  );
 
   const user = useFirebaseUser(user => {
     // unsubscribe on logout
@@ -71,16 +76,11 @@ export function useEntityStore(storeKey: string) {
   // this effect is only called on page load. since the state is shared with recoil (due to the entities === null part of the condition)
   useEffect(
     () => {
-      if (
-        user &&
-        !unsubscribeCallback.current &&
-        entities === null &&
-        thisRegistrationIdRef.current === registrationIds[0]
-      ) {
+      if (user && !unsubscribeCallback && entities === null && thisRegistrationIdRef.current === registrationIds[0]) {
         console.log(`fetch entities of type "${storeKey}"`);
         updateEntities(undefined);
 
-        unsubscribeCallback.current = db
+        unsubscribeCallback = db
           .collection('entities')
           // only retrieve entities bound to current user
           .where('uid', '==', user.uid)

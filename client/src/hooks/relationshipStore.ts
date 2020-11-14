@@ -12,22 +12,22 @@ const registrationIdState = atom<number[]>({ key: 'RELATIONSHIPS_REGISTRATION_ST
 
 let idCounter = 0;
 
-export function useRelationshipStore() {
-  const unsubscribeCallback = useRef<() => void>();
+let unsubscribeCallback: () => void | undefined = undefined;
 
+export function useRelationshipStore() {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
 
   const [relationships, updateRelationships] = useRecoilState(relationshipState);
   const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(() => {
-    if (unsubscribeCallback.current) {
+    if (unsubscribeCallback) {
       console.log('unsubscribe from relationships update');
-      unsubscribeCallback.current();
-      unsubscribeCallback.current = undefined;
-      updateRelationships(undefined);
+      unsubscribeCallback();
+      unsubscribeCallback = undefined;
+      updateRelationships(null);
     }
-  }, [unsubscribeCallback, updateRelationships]);
+  }, [updateRelationships]);
 
   const user = useFirebaseUser(user => {
     // unsubscribe on logout
@@ -71,14 +71,14 @@ export function useRelationshipStore() {
     () => {
       if (
         user &&
-        !unsubscribeCallback.current &&
+        !unsubscribeCallback &&
         relationships === null &&
         thisRegistrationIdRef.current === registrationIds[0]
       ) {
         console.log(`fetch relationships`);
         updateRelationships(undefined);
 
-        unsubscribeCallback.current = db
+        unsubscribeCallback = db
           .collection('relationships')
           // only retrieve relationships bound to current user
           .where('uid', '==', user.uid)

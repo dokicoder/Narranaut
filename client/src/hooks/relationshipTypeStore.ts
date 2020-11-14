@@ -11,21 +11,22 @@ const registrationIdState = atom<number[]>({ key: 'RELATIONSHIP_TYPES_REGISTRATI
 
 let idCounter = 0;
 
-export function useRelationshipTypeStore() {
-  const unsubscribeCallback = useRef<() => void>();
+let unsubscribeCallback: () => void | undefined = undefined;
 
+export function useRelationshipTypeStore() {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
 
   const [types, updateRelationshipTypes] = useRecoilState(relationshipTypesState);
   const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(() => {
-    if (unsubscribeCallback.current) {
-      unsubscribeCallback.current();
-      unsubscribeCallback.current = undefined;
-      updateRelationshipTypes(undefined);
+    if (unsubscribeCallback) {
+      console.log('unsubscribe from relationship types update');
+      unsubscribeCallback();
+      unsubscribeCallback = undefined;
+      updateRelationshipTypes(null);
     }
-  }, [unsubscribeCallback, updateRelationshipTypes]);
+  }, [updateRelationshipTypes]);
 
   const user = useFirebaseUser(user => {
     // unsubscribe on logout
@@ -66,17 +67,12 @@ export function useRelationshipTypeStore() {
 
   useEffect(
     () => {
-      if (
-        user &&
-        !unsubscribeCallback.current &&
-        types === null &&
-        thisRegistrationIdRef.current === registrationIds[0]
-      ) {
+      if (user && !unsubscribeCallback && types === null && thisRegistrationIdRef.current === registrationIds[0]) {
         console.log(`fetch relationship types`);
         updateRelationshipTypes(undefined);
 
         // firebase onSnapshot handler is triggered on every update
-        unsubscribeCallback.current = db.collection('relationship-types').onSnapshot(({ docs }) => {
+        unsubscribeCallback = db.collection('relationship-types').onSnapshot(({ docs }) => {
           console.log('relationship types update callback');
           const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as RelationshipType));
 

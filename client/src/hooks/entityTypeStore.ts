@@ -11,21 +11,22 @@ const registrationIdState = atom<number[]>({ key: 'ENTITY_TYPES_REGISTRATION_STA
 
 let idCounter = 0;
 
-export function useEntityTypeStore() {
-  const unsubscribeCallback = useRef<() => void>();
+let unsubscribeCallback: () => void | undefined = undefined;
 
+export function useEntityTypeStore() {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
 
   const [types, updateEntityTypes] = useRecoilState(entityTypesState);
   const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(() => {
-    if (unsubscribeCallback.current) {
-      unsubscribeCallback.current();
-      unsubscribeCallback.current = undefined;
-      updateEntityTypes(undefined);
+    if (unsubscribeCallback) {
+      console.log('unsubscribe from entity types update');
+      unsubscribeCallback();
+      unsubscribeCallback = undefined;
+      updateEntityTypes(null);
     }
-  }, [unsubscribeCallback, updateEntityTypes]);
+  }, [updateEntityTypes]);
 
   const user = useFirebaseUser(user => {
     // unsubscribe on logout
@@ -66,17 +67,12 @@ export function useEntityTypeStore() {
 
   useEffect(
     () => {
-      if (
-        user &&
-        !unsubscribeCallback.current &&
-        types === null &&
-        thisRegistrationIdRef.current === registrationIds[0]
-      ) {
+      if (user && !unsubscribeCallback && types === null && thisRegistrationIdRef.current === registrationIds[0]) {
         console.log(`fetch entity types`);
         updateEntityTypes(undefined);
 
         // firebase onSnapshot handler is triggered on every update
-        unsubscribeCallback.current = db.collection('entity-types').onSnapshot(({ docs }) => {
+        unsubscribeCallback = db.collection('entity-types').onSnapshot(({ docs }) => {
           console.log('entity types update callback');
           const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as EntityType));
 
