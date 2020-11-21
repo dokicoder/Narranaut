@@ -15,7 +15,7 @@ const createRegistrationIdStore = atomFamily<number[], string>({ key: 'ENTITIES_
 
 let idCounter = 0;
 
-let unsubscribeCallback: () => void | undefined = undefined;
+const unsubscribeCallbackMap: Record<string, () => void | undefined> = {};
 
 export function useEntityStore(storeKey: string) {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
@@ -25,10 +25,10 @@ export function useEntityStore(storeKey: string) {
 
   const unsubscribe = useCallback(
     () => {
-      if (unsubscribeCallback) {
+      if (unsubscribeCallbackMap[storeKey]) {
         console.log(`unsubscribe from entities of type "${storeKey}" update`);
-        unsubscribeCallback();
-        unsubscribeCallback = undefined;
+        unsubscribeCallbackMap[storeKey]();
+        unsubscribeCallbackMap[storeKey] = undefined;
         updateEntities(null);
       }
     },
@@ -54,7 +54,7 @@ export function useEntityStore(storeKey: string) {
       return () => {
         updateRegistrationIds(registrationIds => registrationIds.filter(id => id !== saveRefValue));
 
-        if (registrationIds.length === 1) {
+        if (registrationIds.length === 1 && saveRefValue === registrationIds[0]) {
           unsubscribe();
         }
       };
@@ -76,11 +76,11 @@ export function useEntityStore(storeKey: string) {
   // this effect is only called on page load. since the state is shared with recoil (due to the entities === null part of the condition)
   useEffect(
     () => {
-      if (user && !unsubscribeCallback && entities === null && thisRegistrationIdRef.current === registrationIds[0]) {
+      if (user && !unsubscribeCallbackMap[storeKey] && thisRegistrationIdRef.current === registrationIds[0]) {
         console.log(`fetch entities of type "${storeKey}"`);
         updateEntities(undefined);
 
-        unsubscribeCallback = db
+        unsubscribeCallbackMap[storeKey] = db
           .collection('entities')
           // only retrieve entities bound to current user
           .where('uid', '==', user.uid)
@@ -92,11 +92,6 @@ export function useEntityStore(storeKey: string) {
             updateEntities(entities);
           });
       }
-
-      return () => {
-        // unsubscribe on unmount
-        unsubscribe();
-      };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, db, storeKey, unsubscribe, updateEntities]

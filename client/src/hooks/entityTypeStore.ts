@@ -46,7 +46,7 @@ export function useEntityTypeStore() {
       return () => {
         updateRegistrationIds(registrationIds => registrationIds.filter(id => id !== saveRefValue));
 
-        if (registrationIds.length === 1) {
+        if (registrationIds.length === 1 && saveRefValue === registrationIds[0]) {
           unsubscribe();
         }
       };
@@ -67,7 +67,7 @@ export function useEntityTypeStore() {
 
   useEffect(
     () => {
-      if (user && !unsubscribeCallback && types === null && thisRegistrationIdRef.current === registrationIds[0]) {
+      if (user && !unsubscribeCallback && thisRegistrationIdRef.current === registrationIds[0]) {
         console.log(`fetch entity types`);
         updateEntityTypes(undefined);
 
@@ -79,11 +79,6 @@ export function useEntityTypeStore() {
           updateEntityTypes(types);
         });
       }
-
-      return () => {
-        // unsubscribe on unmount
-        unsubscribe();
-      };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, db, unsubscribe, updateEntityTypes]

@@ -47,7 +47,7 @@ export function useRelationshipStore() {
       return () => {
         updateRegistrationIds(registrationIds => registrationIds.filter(id => id !== saveRefValue));
 
-        if (registrationIds.length === 1) {
+        if (registrationIds.length === 1 && saveRefValue === registrationIds[0]) {
           unsubscribe();
         }
       };
@@ -69,12 +69,7 @@ export function useRelationshipStore() {
   // this effect is only called on first registration. the state is shared with recoil and a list of references to hook calls kept
   useEffect(
     () => {
-      if (
-        user &&
-        !unsubscribeCallback &&
-        relationships === null &&
-        thisRegistrationIdRef.current === registrationIds[0]
-      ) {
+      if (user && !unsubscribeCallback && thisRegistrationIdRef.current === registrationIds[0]) {
         console.log(`fetch relationships`);
         updateRelationshipStore(undefined);
 
