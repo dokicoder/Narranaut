@@ -107,6 +107,20 @@ export function useRelationshipStore() {
     return db.collection('relationships').add(relationship);
   };
 
+  /**
+   * this method can add *and* update entities simultaneously. those with Ids that are not available will be created
+   * @param relationships list of relationships to be added, updated
+   */
+  const addRelationships = async (relationship: Relationship) => {
+    const batch = db.batch();
+
+    relationships.forEach(r => {
+      batch.set(db.collection('relationships').doc(r.id), r);
+    });
+
+    return db.collection('relationships').add(relationship);
+  };
+
   const flagRelationshipDeleted = async (relationship: Relationship, deleted: boolean) => {
     return db.collection('relationships').doc(relationship.id).update({ deleted });
   };
@@ -121,6 +135,7 @@ export function useRelationshipStore() {
     updateRelationship,
     updateRelationships,
     addRelationship,
+    addRelationships,
     flagRelationshipDeleted,
     reallyDeleteRelationship,
   };

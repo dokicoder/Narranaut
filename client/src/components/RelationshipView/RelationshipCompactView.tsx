@@ -50,7 +50,8 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
 
   // TODO: does this obfuscate errors? (I think so...)
   if (!typesMap?.[typeId] || !party1 || !party2) {
-    return null;
+    console.log(!!typesMap?.[typeId], !!party1, !party2);
+    return <div>No can do {JSON.stringify(relationship, null, 2)}</div>;
   }
 
   // these expressions need to also work for displayingEntity === undefined
@@ -67,9 +68,10 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
 
   const placeholderLabel = (displayingEntityId === party2.id && backwardName) || forwardName;
 
-  const label = placeholderLabel
-    .replace('{{p1}}', emphasize(leftParty.name))
-    .replace('{{p2}}', emphasize(rightParty.name));
+  const label =
+    leftParty.name &&
+    rightParty.name &&
+    placeholderLabel.replace('{{p1}}', emphasize(leftParty.name)).replace('{{p2}}', emphasize(rightParty.name));
 
   const iconSrc = Icons[icon as Icon];
 
@@ -81,6 +83,7 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
           flex-direction: column;
           align-items: center;
           padding: 10px;
+          flex-wrap: wrap;
         `,
         cCss,
       ]}
@@ -95,8 +98,8 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
       >
         <Avatar
           css={css`
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             cursor: pointer;
           `}
           alt={leftParty.name}
@@ -183,27 +186,51 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
               src={iconSrc}
             />
           )}
-          <h2
+          <button
             css={css`
               position: absolute;
               transform: translate(-50%, 100%);
               left: 50%;
-              bottom: -5px;
+              bottom: 8px;
+              padding: 0 5px;
+              border: none;
+              background-color: transparent;
+
+              :disabled {
+                color: initial;
+              }
+
+              :active,
+              :focus {
+                outline: none;
+              }
+
+              :hover {
+                background-color: #00000020;
+              }
             `}
+            disabled={relationshipDirection === 'symmetric'}
+            onClick={() => onUpdate({ ...relationship, party1: relationship.party2, party2: relationship.party1 })}
           >
-            {
+            <h2
+              css={css`
+                margin: 0;
+              `}
+            >
               {
-                symmetric: '⇔',
-                forward: '⇒',
-                backward: '⇐',
-              }[relationshipDirection]
-            }
-          </h2>
+                {
+                  symmetric: '⇔',
+                  forward: '⇒',
+                  backward: '⇐',
+                }[relationshipDirection]
+              }
+            </h2>
+          </button>
         </div>
         <Avatar
           css={css`
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             cursor: pointer;
           `}
           alt={rightParty.name}
@@ -212,7 +239,7 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
         />
       </div>
       {/* TODO: this adds unnormalized form content to the DOM :( - it's called dangerouslySetInnerHTML for a reason */}
-      <span dangerouslySetInnerHTML={{ __html: label }}></span>
+      {label && <span dangerouslySetInnerHTML={{ __html: label }} />}
     </Paper>
   );
 };

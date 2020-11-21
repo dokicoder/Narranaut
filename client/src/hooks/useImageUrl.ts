@@ -33,7 +33,7 @@ export const useImageUrl = (entityId: string) => {
   const isMounted = useMountedState();
 
   // TODO: if this paths needs to be altered, you have to also adjust the security rules under https://console.firebase.google.com/project/narranaut/storage/narranaut.appspot.com/rules
-  const refPath = useMemo(() => user && `user/${user.uid}/${entityId}-image`, [user, entityId]);
+  const refPath = useMemo(() => user && entityId && `user/${user.uid}/${entityId}-image`, [user, entityId]);
 
   const fetchImageUrl = useCallback(() => {
     if (refPath) {

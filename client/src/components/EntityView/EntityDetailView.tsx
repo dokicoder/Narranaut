@@ -221,7 +221,7 @@ export const EntityDetailView: React.FC<Props> = props => {
           </Button>
         </div>
       </Fade>
-      <EditableRelationshipList relationshipIds={relationshipIds} entityId={id} />
+      <EditableRelationshipList relationshipIds={relationshipIds} entity={entity} />
     </div>
   );
 };
