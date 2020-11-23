@@ -1,21 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { splitToChunks } from './utils';
-
-// TODO: share models between both projects
-interface Relationship {
-  readonly id: string;
-
-  party1: ObjectEntity;
-  party2: ObjectEntity;
-}
-
-interface ObjectEntity {
-  readonly id: string;
-
-  uid: string;
-  relationshipIds: string[];
-}
+import { ObjectEntity, Relationship } from './types';
 
 const updateRelationshipsChunk = (entity: ObjectEntity) => async (relationshipIds: string[]) => {
   const snapshot = await admin
@@ -23,7 +9,7 @@ const updateRelationshipsChunk = (entity: ObjectEntity) => async (relationshipId
     .collection('relationships')
     // only retrieve relationships bound to user of entity
     .where('uid', '==', entity.uid)
-    // TODO: the "in" query is limited to arrays of max length 10. There could easily be more than 10 relationships
+    // the "in" query is limited to arrays of max length 10
     .where('id', 'in', relationshipIds)
     .get();
 
@@ -47,11 +33,18 @@ const updateRelationshipsChunk = (entity: ObjectEntity) => async (relationshipId
   );
 };
 
-const updateRelationships = functions.firestore.document('/entities/{entityId}').onUpdate(async change => {
+export const updateRelationships = functions.firestore.document('/entities/{entityId}').onUpdate(async change => {
   try {
+    const beforeEntity = change.before.data() as ObjectEntity;
     const entity = change.after.data() as ObjectEntity;
 
-    if (!entity.relationshipIds.length) {
+    // only update when properties relevant for display for relationship change
+    // TODO: these might change when the detail view of relationships is implemented
+    if (beforeEntity.name === entity.name && beforeEntity.description === entity.description) {
+      return null;
+    }
+
+    if (!entity.relationshipIds?.length) {
       return null;
     }
 
@@ -65,5 +58,3 @@ const updateRelationships = functions.firestore.document('/entities/{entityId}')
 
   return null;
 });
-
-export default updateRelationships;

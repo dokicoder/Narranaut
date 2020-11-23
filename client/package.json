@@ -55,7 +55,8 @@
     "start": "webpack-dev-server --open --port 3000",
     "build": "webpack -p --env production",
     "lint": "eslint ./src --fix",
-    "deploy-functions": "firebase deploy --only functions"
+    "deploy-functions": "firebase deploy --only functions",
+    "deploy-static": "yarn build && firebase deploy --only hosting"
   },
   "author": "Kay Illner",
   "contributors": [
