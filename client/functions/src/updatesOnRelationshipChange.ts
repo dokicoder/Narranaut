@@ -24,51 +24,59 @@ export const updateEntitiesOfRelationship = functions.firestore
         party2Before.id !== party2After.id && party2After.id,
       ].filter(Boolean);
 
-      if (changedBefore.length) {
+      return Promise.all(
         // delete relationships from old entities
-        await admin
-          .firestore()
-          .collection('entities')
-          // only retrieve relationships bound to user of entity
-          .where('uid', '==', relationshipAfter.uid)
-          .where('id', 'in', changedBefore)
-          .get()
-          .then(({ docs }) =>
-            Promise.all(
-              docs.map(doc => {
-                const entity = { ...doc.data(), id: doc.id } as ObjectEntity;
+        [
+          changedBefore.length
+            ? admin
+                .firestore()
+                .collection('entities')
+                // only retrieve relationships bound to user of entity
+                .where('uid', '==', relationshipAfter.uid)
+                .where('id', 'in', changedBefore)
+                .get()
+                .then(({ docs }) =>
+                  Promise.all(
+                    docs.map(doc => {
+                      const entity = { ...doc.data(), id: doc.id } as ObjectEntity;
 
-                return doc.ref.update({
-                  ...entity,
-                  relationshipIds: (entity.relationshipIds || []).filter(id => id !== relationshipId),
-                });
-              })
-            )
-          );
-      }
+                      return doc.ref.update({
+                        ...entity,
+                        relationshipIds: (entity.relationshipIds || []).filter(id => id !== relationshipId),
+                      });
+                    })
+                  )
+                )
+            : undefined,
+          changedAfter.length
+            ? admin
+                .firestore()
+                .collection('entities')
+                // only retrieve relationships bound to user of entity
+                .where('uid', '==', relationshipAfter.uid)
+                .where('id', 'in', changedAfter)
+                .get()
+                .then(({ docs }) =>
+                  Promise.all(
+                    docs.map(doc => {
+                      const entity = { ...doc.data(), id: doc.id } as ObjectEntity;
+                      const curentRelationshipIds = entity.relationshipIds || [];
 
-      if (changedAfter.length) {
-        // add relationships to new entities
-        await admin
-          .firestore()
-          .collection('entities')
-          // only retrieve relationships bound to user of entity
-          .where('uid', '==', relationshipAfter.uid)
-          .where('id', 'in', changedAfter)
-          .get()
-          .then(({ docs }) =>
-            Promise.all(
-              docs.map(doc => {
-                const entity = { ...doc.data(), id: doc.id } as ObjectEntity;
+                      // only add id if not already included
+                      if (curentRelationshipIds.includes(relationshipId)) {
+                        return;
+                      }
 
-                return doc.ref.update({
-                  ...entity,
-                  relationshipIds: [...(entity.relationshipIds || []), relationshipId],
-                });
-              })
-            )
-          );
-      }
+                      return doc.ref.update({
+                        ...entity,
+                        relationshipIds: [...curentRelationshipIds, relationshipId],
+                      });
+                    })
+                  )
+                )
+            : undefined,
+        ]
+      );
     } catch (e) {
       functions.logger.error(e);
     }
