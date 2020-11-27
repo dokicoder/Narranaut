@@ -36,12 +36,15 @@
 - think about what properties the relationship cloud function really needs to track. e.g. it does not have to track the relationship array of the entites itself, so this can be optimized
 - relationhips could display information when in the story they develop or disaappear. these relationship-transitions could relate to story events
 - give the option of importing entity type and relationship type templates (or autoimport some of them when creating a story)
+- disallow duplicate relationships on entities
+- use color of relationships
+- conditions for relationhips? like you can only own items and onl live in places?
 
 #known bugs:
 
 - delete icons not displayed / not visible on mobile
-- cannot change icons of types on mobile
 - updating the types does not update entities
+- there seems to be some discrepancy between the local and the deployed version that leads to the entity images not being shared between them
 
 #Old TODO: TODO: merge this
 

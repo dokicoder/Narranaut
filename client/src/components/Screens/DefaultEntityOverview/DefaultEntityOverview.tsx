@@ -44,6 +44,7 @@ export const DefaultEntityOverview: React.FC = () => {
             description: '',
             type: types.find(type => type.name === entityType),
             properties: {},
+            relationshipIds: [],
             deleted: false,
           } as ObjectEntity)
         : undefined,

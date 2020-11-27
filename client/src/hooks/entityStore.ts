@@ -102,7 +102,11 @@ export function useEntityStore(storeKey: string) {
   };
 
   const addEntity = async (entity: ObjectEntity) => {
-    return db.collection('entities').add(entity);
+    const doc = db.collection('entities').doc();
+    const entityWithId: ObjectEntity = { ...entity, id: doc.id };
+    await doc.set(entityWithId);
+
+    return entityWithId;
   };
 
   const flagEntityDeleted = async (entity: ObjectEntity, deleted: boolean) => {

@@ -24,7 +24,7 @@ export const EditableRelationshipList: React.FC<Props> = ({ entity, relationship
   const entityId = entity?.id;
 
   const [relationships, updateRelationships] = useState<Relationship[]>([]);
-  const { relationshipMap, updateRelationships: saveRelationships } = useRelationshipStore();
+  const { relationshipMap, addRelationships: saveRelationships, reallyDeleteRelationships } = useRelationshipStore();
 
   const { types } = useRelationshipTypeStore();
 
@@ -35,21 +35,22 @@ export const EditableRelationshipList: React.FC<Props> = ({ entity, relationship
       user
         ? (({
             uid: user.uid,
-            name: '',
             typeId: types[0]?.id,
-            description: '',
             party1: entity || {},
             party2: {},
-            forwardName: '',
             deleted: false,
           } as unknown) as Relationship)
         : undefined,
     [user, entity, types]
   );
 
+  const relationshipsUnaltered = useMemo(() => {
+    return relationshipIds?.map(id => relationshipMap[id]).filter(Boolean) || [];
+  }, [relationshipIds, relationshipMap]);
+
   useEffect(
     () => {
-      updateRelationships(relationshipIds?.map(id => relationshipMap[id]).filter(Boolean) || []);
+      updateRelationships(relationshipsUnaltered);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [...(relationshipIds || []), relationshipMap]
@@ -64,16 +65,23 @@ export const EditableRelationshipList: React.FC<Props> = ({ entity, relationship
   }, [relationships, relationshipMap]);
 
   const invalidated = useMemo(
-    () => relationships.length !== Object.values(relationshipMap).length || invalidatedFlags.some(flag => flag),
-    [invalidatedFlags, relationships, relationshipMap]
+    () => relationships.length !== relationshipsUnaltered.length || invalidatedFlags.some(flag => flag),
+    [invalidatedFlags, relationships, relationshipsUnaltered.length]
   );
 
   const undoChanges = () => {
     updateRelationships(relationshipIds?.map(id => relationshipMap[id]).filter(Boolean) || []);
   };
 
-  const saveChanges = () => {
-    saveRelationships(relationships.filter((_, idx) => invalidatedFlags[idx]));
+  const saveChanges = async () => {
+    const invalidatedRelationships = relationships.filter((_, idx) => invalidatedFlags[idx]);
+
+    const deletedRelationships = relationshipsUnaltered.filter(ur => !relationships.find(r => r.id === ur.id));
+    reallyDeleteRelationships(deletedRelationships);
+
+    saveRelationships(invalidatedRelationships);
+    // this is just an optimistic update before the firebase cloud function adds them
+    updateRelationships(relationships);
   };
 
   const saveButtonDisabled = useMemo(() => !relationships?.every(r => r.party1.id && r.party2.id), [relationships]);
@@ -106,22 +114,34 @@ export const EditableRelationshipList: React.FC<Props> = ({ entity, relationship
                 key={relationship.id || idx}
                 relationship={relationship}
                 displayingEntityId={entityId}
+                canSelectNonDisplayingEntity={!relationship.id}
                 onUpdate={updateRelationship}
+                onDelete={
+                  relationship.id && (() => updateRelationships(relationships.filter(r => r.id !== relationship.id)))
+                }
               />
             ) || 'did not render'
         )}
         <div
           css={css`
-            width: 340px;
+            width: 400px;
             min-height: 170px;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
             align-items: center;
+            transition: 0.4s ease-in-out background-color;
+            :hover {
+              background-color: #00000010;
+            }
           `}
         >
-          <Fab size="small" color="primary">
-            <AddIcon onClick={() => updateRelationships([...relationships, relationshipTemplate()])} />
+          <Fab
+            size="small"
+            color="primary"
+            onClick={() => updateRelationships([...relationships, relationshipTemplate()])}
+          >
+            <AddIcon />
           </Fab>
         </div>
       </div>

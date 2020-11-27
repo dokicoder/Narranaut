@@ -104,21 +104,38 @@ export function useRelationshipStore() {
   };
 
   const addRelationship = async (relationship: Relationship) => {
-    return db.collection('relationships').add(relationship);
+    const doc = db.collection('relationships').doc();
+    const relationshipWithId: Relationship = { ...relationship, id: doc.id };
+    await doc.set(relationshipWithId);
+
+    return relationshipWithId;
   };
 
   /**
    * this method can add *and* update entities simultaneously. those with Ids that are not available will be created
    * @param relationships list of relationships to be added, updated
    */
-  const addRelationships = async (relationship: Relationship) => {
+  const addRelationships = async (relationships: Relationship[]) => {
     const batch = db.batch();
 
-    relationships.forEach(r => {
-      batch.set(db.collection('relationships').doc(r.id), r);
+    const docs = relationships.map(r => {
+      const doc = r.id ? db.collection('relationships').doc(r.id) : db.collection('relationships').doc();
+      return { r, doc };
     });
 
-    return db.collection('relationships').add(relationship);
+    docs.forEach(({ r, doc }) => {
+      batch.set(doc, { ...r, id: doc.id });
+    });
+
+    await batch.commit();
+
+    return Promise.all(
+      docs.map(({ doc }) =>
+        doc.get().then(doc => {
+          return { id: doc.id, ...doc.data() } as Relationship;
+        })
+      )
+    );
   };
 
   const flagRelationshipDeleted = async (relationship: Relationship, deleted: boolean) => {
@@ -127,6 +144,16 @@ export function useRelationshipStore() {
 
   const reallyDeleteRelationship = async (relationship: Relationship) => {
     return db.collection('relationships').doc(relationship.id).delete();
+  };
+
+  const reallyDeleteRelationships = async (relationships: Relationship[]) => {
+    const batch = db.batch();
+
+    relationships.map(r => {
+      batch.delete(db.collection('relationships').doc(r.id));
+    });
+
+    return batch.commit();
   };
 
   return {
@@ -138,5 +165,6 @@ export function useRelationshipStore() {
     addRelationships,
     flagRelationshipDeleted,
     reallyDeleteRelationship,
+    reallyDeleteRelationships,
   };
 }

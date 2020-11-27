@@ -1,12 +1,13 @@
 /** @jsx jsx */
-import React from 'react';
+import React, { useState } from 'react';
 import produce from 'immer';
 import { useHistory } from 'react-router-dom';
 import { css, SerializedStyles } from '@emotion/core';
-import { Avatar, Paper, Select } from '@material-ui/core';
+import { Avatar, Paper, Select, IconButton } from '@material-ui/core';
 import { jsx } from '@emotion/core';
 import { onChangeWrapper } from 'src/utils/form';
 import { useRelationshipStore } from 'src/hooks/relationshipStore';
+import { useEntityStore } from 'src/hooks/entityStore';
 import { useImageUrl } from 'src/hooks';
 import { Icon, Icons } from 'src/utils';
 import { ObjectEntity, Relationship } from 'src/models';
@@ -14,6 +15,7 @@ import { pluralize } from 'src/utils';
 import { FormControl } from '@material-ui/core';
 import { MenuItem } from '@material-ui/core';
 import { useRelationshipTypeStore } from 'src/hooks';
+import { Delete as DeleteIcon } from '@material-ui/icons';
 import { MainTheme } from 'src/utils/themes';
 
 interface Props {
@@ -21,17 +23,36 @@ interface Props {
   displayingEntityId?: string;
   // flag the view as editable (extended UI) by providing this callback
   onUpdate?: (updated: Relationship) => void;
+  onDelete?: () => void;
   cCss?: SerializedStyles;
+  canSelectNonDisplayingEntity?: boolean;
 }
 
 const emphasize = (text: string) => {
   return `<span style="font-weight: bold; color: ${MainTheme.palette.primary.main}">${text}</span>`;
 };
 
-export const RelationshipCompactView: React.FC<Props> = ({ relationship, displayingEntityId, cCss, onUpdate }) => {
+export const RelationshipCompactView: React.FC<Props> = ({
+  relationship,
+  displayingEntityId,
+  cCss,
+  canSelectNonDisplayingEntity,
+  onUpdate,
+  onDelete,
+}) => {
   const { typeId, party1, party2 } = relationship;
 
+  const [hovered, setHovered] = useState(false);
+
   const { typesMap, types } = useRelationshipTypeStore();
+  const { entities: allEntities, entityMap } = useEntityStore('character');
+  const entities = allEntities
+    .filter(e => !e.deleted)
+    .sort((e1, e2) => {
+      const name1 = e1.name.toLowerCase();
+      const name2 = e2.name.toLowerCase();
+      return name1 < name2 ? -1 : name1 > name2 ? 1 : 0;
+    });
 
   const history = useHistory();
 
@@ -50,7 +71,6 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
 
   // TODO: does this obfuscate errors? (I think so...)
   if (!typesMap?.[typeId] || !party1 || !party2) {
-    console.log(!!typesMap?.[typeId], !!party1, !party2);
     return <div>No can do {JSON.stringify(relationship, null, 2)}</div>;
   }
 
@@ -77,8 +97,11 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
 
   return (
     <Paper
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       css={[
         css`
+          position: relative;
           display: inline-flex;
           flex-direction: column;
           align-items: center;
@@ -237,9 +260,97 @@ export const RelationshipCompactView: React.FC<Props> = ({ relationship, display
           src={rightPartyImageUrl}
           onClick={onSelectEntity(rightParty)}
         />
+        {canSelectNonDisplayingEntity && (
+          <FormControl variant="outlined">
+            <Select
+              css={css`
+                width: 120px;
+                height: 120px;
+                position: absolute;
+                border: none;
+                outline: none;
+                top: 0;
+                right: 0;
+
+                transform: translateY(-50%);
+
+                color: transparent;
+                overflow: hidden;
+
+                div > img {
+                  display: none;
+                }
+
+                svg.MuiSvgIcon-root.MuiSelect-icon {
+                  left: 50% !important;
+                  transform: translateX(-50%);
+                  top: auto !important;
+                  bottom: 0 !important;
+                  color: white;
+                  border: 50%;
+                }
+              `}
+              value={(displayingEntityId === party2.id ? party1.id : party2.id) || ''}
+              onChange={
+                onUpdate &&
+                onChangeWrapper(newEntityId =>
+                  onUpdate(
+                    produce(relationship, r => {
+                      if (displayingEntityId === party2.id) {
+                        r.party1 = entityMap[newEntityId];
+                      } else {
+                        r.party2 = entityMap[newEntityId];
+                      }
+                    })
+                  )
+                )
+              }
+            >
+              {entities?.map(entity => {
+                const iconSrc = Icons[entity.type.icon as Icon];
+
+                return (
+                  <MenuItem
+                    css={css`
+                      padding-left: 45px;
+
+                      img {
+                        position: absolute;
+                        margin-left: -5px;
+                        height: 30px;
+                        transform: translateX(-100%);
+                      }
+                    `}
+                    key={entity.id}
+                    value={entity.id}
+                  >
+                    {entity.name}
+                    {iconSrc && <img src={iconSrc} />}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        )}
       </div>
       {/* TODO: this adds unnormalized form content to the DOM :( - it's called dangerouslySetInnerHTML for a reason */}
       {label && <span dangerouslySetInnerHTML={{ __html: label }} />}
+      {onDelete && hovered && (
+        <IconButton
+          css={css`
+            position: absolute;
+            top: 5px;
+            right: 5px;
+          `}
+          aria-label={`delete relationship`}
+          onClick={e => {
+            e.preventDefault();
+            onDelete();
+          }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      )}
     </Paper>
   );
 };
