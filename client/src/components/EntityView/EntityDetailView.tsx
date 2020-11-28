@@ -179,8 +179,7 @@ export const EntityDetailView: React.FC<Props> = props => {
               textarea {
                 resize: vertical !important;
                 min-height: 146px !important;
-              }import { EditableRelationshipList } from './EditableRelationshipList';
-
+              }
 
               ${invalidatedStyle(descriptionInvalidated, true)}
             `}

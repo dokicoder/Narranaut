@@ -128,6 +128,40 @@ export const RelationshipTypeDetailView: React.FC<Props> = ({
                 })}
               </Select>
             </FormControl>
+          ) : key === 'color' ? (
+            <div
+              key={`type-${type.id}-${key}`}
+              css={css`
+                margin-top: 15px;
+                position: relative;
+                display: inline-flex;
+              `}
+            >
+              <TextField
+                css={css`
+                  width: 100%;
+                  ${invalidatedStyle(isKeyInvalidated(key as keyof RelationshipType, value))};
+                `}
+                id={`type-${type.id}-${key}`}
+                name={`type-${type.id}-${key}`}
+                value={value}
+                onChange={onChangeWrapper(value => updateTypeState({ [key]: value }))}
+                label={key}
+                variant="outlined"
+              />
+              <div
+                css={css`
+                  position: absolute;
+                  transform: translateY(-50%);
+                  top: 50%;
+                  left: 120px;
+                  width: 30px;
+                  height: 30px;
+                  border-radius: 5px;
+                  background-color: ${value};
+                `}
+              />
+            </div>
           ) : (
             <TextField
               key={`type-${type.id}-${key}`}

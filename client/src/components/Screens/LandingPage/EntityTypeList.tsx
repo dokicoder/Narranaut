@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useMemo } from 'react';
+import React from 'react';
 import { jsx, css } from '@emotion/core';
 import { Button, Paper, Fab, Collapse, Snackbar, Fade } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -30,17 +30,12 @@ export const EntityTypeList: React.FC = () => {
     color: '',
   });
 
-  const sortedTypes = useMemo(
-    () => (types ? [...types].sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB)) : []),
-    [types]
-  );
-
   return (
     <React.Fragment>
       {loading && <LoadingIndicator />}
       <Fade in={!loading}>
         <div>
-          {sortedTypes.map(({ id, name }) => (
+          {types?.map(({ id, name }) => (
             <Button
               css={css`
                 margin-right: 10px;
@@ -61,7 +56,7 @@ export const EntityTypeList: React.FC = () => {
           >
             DEBUG EDITING TOOL FOR ENTITY TYPES - TODO: REMOVE (OR HIDE BEHIND ADMINISTRATION USER RIGHTS)
           </div>
-          {sortedTypes.map(type => (
+          {types?.map(type => (
             <Paper
               key={type.id}
               elevation={2}

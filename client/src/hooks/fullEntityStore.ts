@@ -1,4 +1,4 @@
-import { atomFamily } from 'recoil';
+import { atom } from 'recoil';
 import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
 import { useEffect, useContext, useRef, useCallback, useMemo } from 'react';
@@ -6,29 +6,27 @@ import { FirebaseContext } from '../firebase';
 import { useRecoilState } from 'recoil';
 
 // semantics: null means "before initial load", will be set to undefined when reload with loading indication is intended
-export const createEntityStore = atomFamily<ObjectEntity[], string>({
-  key: 'ENTITIES',
-  default: null,
-});
+const entityState = atom<ObjectEntity[]>({ key: 'ALL_ENTITIES', default: null });
+
 // stores array of unique ids representing the hook calls listening for firebase store updates - this is the only way I could think of to track when the last registration is unmounted and trigger an unsubscribe
-const createRegistrationIdStore = atomFamily<number[], string>({ key: 'ENTITIES_REGISTRATION_STATE', default: [] });
+const registrationIdState = atom<number[]>({ key: 'ALL_ENTITIES_REGISTRATION_STATE', default: [] });
 
 let idCounter = 0;
 
-const unsubscribeCallbackMap: Record<string, () => void | undefined> = {};
+let unsubscribeCallback: () => void | undefined;
 
-export function useEntityStore(storeKey: string) {
+export function useFullEntityStore() {
   const thisRegistrationIdRef = useRef<number>(++idCounter);
 
-  const [entities, updateEntities] = useRecoilState(createEntityStore(storeKey));
-  const [registrationIds, updateRegistrationIds] = useRecoilState(createRegistrationIdStore(storeKey));
+  const [entities, updateEntities] = useRecoilState(entityState);
+  const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(
     () => {
-      if (unsubscribeCallbackMap[storeKey]) {
-        console.log(`unsubscribe from entities of type "${storeKey}" update`);
-        unsubscribeCallbackMap[storeKey]();
-        unsubscribeCallbackMap[storeKey] = undefined;
+      if (unsubscribeCallback) {
+        console.log(`unsubscribe from all entities update`);
+        unsubscribeCallback();
+        unsubscribeCallback = undefined;
         updateEntities(null);
       }
     },
@@ -73,20 +71,20 @@ export function useEntityStore(storeKey: string) {
     [entities]
   );
 
-  // this effect is only called for the first component registration. the store state is shared between instances with recoil
+  // this effect is only called for the first component registration. the store state is shared between instances with recoil (due to the entities === null part of the condition)
   useEffect(
     () => {
-      if (user && !unsubscribeCallbackMap[storeKey] && thisRegistrationIdRef.current === registrationIds[0]) {
-        console.log(`fetch entities of type "${storeKey}"`);
+      if (user && !unsubscribeCallback && thisRegistrationIdRef.current === registrationIds[0]) {
+        console.log(`fetch all entities`);
         updateEntities(undefined);
 
-        unsubscribeCallbackMap[storeKey] = db
+        unsubscribeCallback = db
           .collection('entities')
           // only retrieve entities bound to current user
           .where('uid', '==', user.uid)
-          .where('type.name', '==', storeKey)
+          .orderBy('name')
           .onSnapshot(({ docs }) => {
-            console.log(`entities of type "${storeKey}" update callback`);
+            console.log(`all entities update callback`);
             const entities = docs.map(doc => ({ id: doc.id, ...doc.data() } as ObjectEntity));
 
             updateEntities(entities);
@@ -94,7 +92,7 @@ export function useEntityStore(storeKey: string) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, db, storeKey, unsubscribe, updateEntities]
+    [user, db, unsubscribe, updateEntities]
   );
 
   const updateEntity = async (entity: ObjectEntity) => {

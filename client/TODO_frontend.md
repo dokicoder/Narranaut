@@ -39,12 +39,14 @@
 - disallow duplicate relationships on entities
 - use color of relationships
 - conditions for relationhips? like you can only own items and onl live in places?
+- renaming an entity type leads to all the items being lost since the collection is named after the name, not the id. This should change, even if the names are convenient for development
 
 #known bugs:
 
 - delete icons not displayed / not visible on mobile
 - updating the types does not update entities
 - there seems to be some discrepancy between the local and the deployed version that leads to the entity images not being shared between them
+- first time after page load when you select a character with a relationshift to another entity type (e.g. Slartibartfast and the Hitchhiker), clicking on the Hitchhiker should redirect to its detail page, but the page gets locked on loading state
 
 #Old TODO: TODO: merge this
 

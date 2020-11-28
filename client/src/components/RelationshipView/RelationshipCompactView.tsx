@@ -7,8 +7,7 @@ import { Avatar, Paper, Select, IconButton } from '@material-ui/core';
 import { jsx } from '@emotion/core';
 import { onChangeWrapper } from 'src/utils/form';
 import { useRelationshipStore } from 'src/hooks/relationshipStore';
-import { useEntityStore } from 'src/hooks/entityStore';
-import { useImageUrl } from 'src/hooks';
+import { useFullEntityStore, useImageUrl } from 'src/hooks';
 import { Icon, Icons } from 'src/utils';
 import { ObjectEntity, Relationship } from 'src/models';
 import { pluralize } from 'src/utils';
@@ -45,14 +44,8 @@ export const RelationshipCompactView: React.FC<Props> = ({
   const [hovered, setHovered] = useState(false);
 
   const { typesMap, types } = useRelationshipTypeStore();
-  const { entities: allEntities, entityMap } = useEntityStore('character');
-  const entities = allEntities
-    .filter(e => !e.deleted)
-    .sort((e1, e2) => {
-      const name1 = e1.name.toLowerCase();
-      const name2 = e2.name.toLowerCase();
-      return name1 < name2 ? -1 : name1 > name2 ? 1 : 0;
-    });
+  const { entities: allEntities, entityMap } = useFullEntityStore();
+  const entities = allEntities?.filter(e => !e.deleted);
 
   const history = useHistory();
 
@@ -71,7 +64,7 @@ export const RelationshipCompactView: React.FC<Props> = ({
 
   // TODO: does this obfuscate errors? (I think so...)
   if (!typesMap?.[typeId] || !party1 || !party2) {
-    return <div>No can do {JSON.stringify(relationship, null, 2)}</div>;
+    return <div>No can do {JSON.stringify(relationship, null, 2)}</div>; // for debugging purposes. Should never render - TODO: remove
   }
 
   // these expressions need to also work for displayingEntity === undefined
@@ -82,7 +75,7 @@ export const RelationshipCompactView: React.FC<Props> = ({
 
   const editMode = !!onUpdate;
 
-  const { forwardName, backwardName, icon } = typesMap[typeId];
+  const { forwardName, backwardName, icon, color } = typesMap[typeId];
 
   const relationshipDirection = !backwardName ? 'symmetric' : displayingEntityId === party2.id ? 'backward' : 'forward';
 
@@ -155,11 +148,13 @@ export const RelationshipCompactView: React.FC<Props> = ({
                     left: 50%;
                   }
 
+                  background-color: ${color};
+
                   svg.MuiSvgIcon-root.MuiSelect-icon {
                     left: 50% !important;
                     transform: translateX(-50%);
                     top: auto !important;
-                    bottom: 0 !important;
+                    bottom: -4px !important;
                   }
                 `}
                 value={typeId}
@@ -187,6 +182,9 @@ export const RelationshipCompactView: React.FC<Props> = ({
                           margin-left: -5px;
                           height: 30px;
                           transform: translateX(-100%);
+                          background-color: ${typesMap[type.id]?.color};
+                          padding: 3px;
+                          border-radius: 3px;
                         }
                       `}
                       key={type.id}
@@ -286,7 +284,8 @@ export const RelationshipCompactView: React.FC<Props> = ({
                   transform: translateX(-50%);
                   top: auto !important;
                   bottom: 0 !important;
-                  color: white;
+                  color: whitimport { useFullEntityStore } from './../../hooks/fullEntityStore';
+e;
                   border: 50%;
                 }
               `}
@@ -319,6 +318,10 @@ export const RelationshipCompactView: React.FC<Props> = ({
                         margin-left: -5px;
                         height: 30px;
                         transform: translateX(-100%);
+
+                        background-color: ${entity.type.color};
+                        padding: 3px;
+                        border-radius: 3px;
                       }
                     `}
                     key={entity.id}

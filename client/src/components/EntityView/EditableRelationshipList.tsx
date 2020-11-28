@@ -120,7 +120,7 @@ export const EditableRelationshipList: React.FC<Props> = ({ entity, relationship
                   relationship.id && (() => updateRelationships(relationships.filter(r => r.id !== relationship.id)))
                 }
               />
-            ) || 'did not render'
+            ) || 'did not render' // for debugging purposes. Should never render - TODO: remove
         )}
         <div
           css={css`

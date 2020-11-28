@@ -72,12 +72,15 @@ export function useRelationshipTypeStore() {
         updateRelationshipTypes(undefined);
 
         // firebase onSnapshot handler is triggered on every update
-        unsubscribeCallback = db.collection('relationship-types').onSnapshot(({ docs }) => {
-          console.log('relationship types update callback');
-          const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as RelationshipType));
+        unsubscribeCallback = db
+          .collection('relationship-types')
+          .orderBy('name')
+          .onSnapshot(({ docs }) => {
+            console.log('relationship types update callback');
+            const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as RelationshipType));
 
-          updateRelationshipTypes(types);
-        });
+            updateRelationshipTypes(types);
+          });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

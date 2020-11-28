@@ -72,12 +72,15 @@ export function useEntityTypeStore() {
         updateEntityTypes(undefined);
 
         // firebase onSnapshot handler is triggered on every update
-        unsubscribeCallback = db.collection('entity-types').onSnapshot(({ docs }) => {
-          console.log('entity types update callback');
-          const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as EntityType));
+        unsubscribeCallback = db
+          .collection('entity-types')
+          .orderBy('name')
+          .onSnapshot(({ docs }) => {
+            console.log('entity types update callback');
+            const types = docs.map(doc => ({ ...doc.data(), id: doc.id } as EntityType));
 
-          updateEntityTypes(types);
-        });
+            updateEntityTypes(types);
+          });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

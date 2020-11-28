@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { jsx, css } from '@emotion/core';
 import { Paper, Fab, Collapse, Snackbar, Fade } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -27,11 +27,6 @@ export const RelationshipTypeList: React.FC = () => {
     forwardName: '',
   });
 
-  const sortedTypes = useMemo(
-    () => (types ? [...types].sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB)) : []),
-    [types]
-  );
-
   return (
     <React.Fragment>
       {loading && <LoadingIndicator />}
@@ -58,7 +53,7 @@ export const RelationshipTypeList: React.FC = () => {
           >
             DEBUG EDITING TOOL FOR RELATIONSHIP TYPES - TODO: REMOVE (OR HIDE BEHIND ADMINISTRATION USER RIGHTS)
           </div>
-          {sortedTypes.map(type => (
+          {types?.map(type => (
             <Paper
               key={type.id}
               elevation={2}
