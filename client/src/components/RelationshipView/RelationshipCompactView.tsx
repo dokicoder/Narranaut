@@ -284,7 +284,7 @@ export const RelationshipCompactView: React.FC<Props> = ({
                   transform: translateX(-50%);
                   top: auto !important;
                   bottom: 0 !important;
-                  color: whitimport { useFullEntityStore } from './../../hooks/fullEntityStore';
+                  color: whitimport { useFullEntityStore } from '../../hooks/fullEntityStore';
 e;
                   border: 50%;
                 }

@@ -4,8 +4,7 @@ import { css, jsx } from '@emotion/core';
 import { Fade, Button, TextField, FormControl, InputLabel, Select, MenuItem, IconButton } from '@material-ui/core';
 import { Replay as UndoIcon, Save as SaveIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { EntityType } from 'src/models';
-import { onChangeWrapper, Icon, Icons } from '../../utils';
-import { MainTheme } from '../../utils/themes';
+import { onChangeWrapper, Icon, Icons, MainTheme } from 'src/utils';
 
 function entityTypeUpdateReducer(state: Partial<EntityType>, updated: Partial<EntityType>) {
   return { ...state, ...updated };

@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import React, { useContext, useState } from 'react';
-import { FirebaseContext } from '../../../firebase';
+import { FirebaseContext } from 'src/firebase';
 import { css, jsx } from '@emotion/core';
 import { Redirect, useLocation } from 'react-router-dom';
 import { useFirebaseUser, useMountedState } from 'src/hooks';

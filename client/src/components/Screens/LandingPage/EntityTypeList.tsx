@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import React from 'react';
 import { jsx, css } from '@emotion/core';
-import { Button, Paper, Fab, Collapse, Snackbar, Fade } from '@material-ui/core';
+import { Button, Paper, Collapse, Snackbar, Fade } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import { useEntityTypeStore } from 'src/hooks';
@@ -10,7 +10,7 @@ import { pluralize } from 'src/utils';
 import { EntityTypeDetailView } from 'src/components/TypeViews';
 import { useState } from 'react';
 import { EntityType } from 'src/models';
-import { Add as AddIcon } from '@material-ui/icons';
+import { AddButton } from 'src/components/Reusable';
 
 export const EntityTypeList: React.FC = () => {
   const history = useHistory();
@@ -73,18 +73,13 @@ export const EntityTypeList: React.FC = () => {
             </Paper>
           ))}
           <Collapse in={!entityTypeEditCandidate}>
-            <div
-              css={css`
+            <AddButton
+              size="small"
+              cCss={css`
                 margin-top: 50px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
               `}
-            >
-              <Fab size="small" color="primary" onClick={() => updateEntityTypeEditCandidate(emptyEntityType())}>
-                <AddIcon />
-              </Fab>
-            </div>
+              onClick={() => updateEntityTypeEditCandidate(emptyEntityType())}
+            />
           </Collapse>
           <Collapse in={!!entityTypeEditCandidate}>
             <Paper

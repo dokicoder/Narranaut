@@ -4,8 +4,8 @@ import { css, jsx } from '@emotion/core';
 import { Fade, Button, TextField, FormControl, InputLabel, Select, MenuItem, IconButton } from '@material-ui/core';
 import { Replay as UndoIcon, Save as SaveIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { RelationshipType } from 'src/models';
-import { onChangeWrapper, Icon, Icons } from '../../utils';
-import { MainTheme } from '../../utils/themes';
+import { onChangeWrapper, Icon, Icons } from 'src/utils';
+import { MainTheme } from 'src/utils/themes';
 
 function relationshipTypeUpdateReducer(state: Partial<RelationshipType>, updated: Partial<RelationshipType>) {
   return { ...state, ...updated };

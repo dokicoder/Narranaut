@@ -12,7 +12,7 @@ import Menu from '@material-ui/core/Menu';
 import { FirebaseContext } from 'src/firebase';
 import { useFirebaseUser } from 'src/hooks';
 import { useHistory } from 'react-router-dom';
-import StoryIcon from '../../assets/story.svg';
+import StoryIcon from 'src/assets/story.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

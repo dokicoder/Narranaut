@@ -2,10 +2,10 @@
 import produce from 'immer';
 import React, { useReducer, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { css, jsx } from '@emotion/core';
-import { Add as AddIcon, Clear as ClearIcon, Delete as DeleteIcon, Check as CheckIcon } from '@material-ui/icons';
-import { TextField, Fab, Collapse, IconButton, Fade } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
-import { onChangeWrapper, MainTheme } from '../../utils';
+import { Clear as ClearIcon, Delete as DeleteIcon, Check as CheckIcon } from '@material-ui/icons';
+import { TextField, Collapse, IconButton } from '@material-ui/core';
+import { onChangeWrapper, MainTheme } from 'src/utils';
+import { AddButton } from '../Reusable';
 
 interface Props {
   // properties to display as key/value pair map
@@ -152,29 +152,11 @@ export const EditablePropertyList: React.FC<Props> = ({
         `}
       >
         <Collapse in={newPropertyName == undefined}>
-          <div
-            css={css`
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-            `}
-          >
-            <Fab size="small" color="primary" onClick={() => setNewPropertyName('')}>
-              <AddIcon />
-            </Fab>
-            {!sortedPropertyList.length && (
-              <Fade in={!sortedPropertyList.length}>
-                <Alert
-                  css={css`
-                    margin-top: 20px;
-                  `}
-                  severity="info"
-                >
-                  Add properties by clicking the plus button
-                </Alert>
-              </Fade>
-            )}
-          </div>
+          <AddButton
+            size="small"
+            onClick={() => setNewPropertyName('')}
+            infoLabel={'Add properties by clicking the plus button'}
+          />
         </Collapse>
         <Collapse in={newPropertyName !== undefined}>
           <div

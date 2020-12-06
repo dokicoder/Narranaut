@@ -1,9 +1,9 @@
 /** @jsx jsx */
 import React, { useMemo } from 'react';
 import { jsx, css } from '@emotion/core';
-import { Fab, Button, Fade } from '@material-ui/core';
-import { Add as AddIcon, Delete as DeleteIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons';
-import { EntityCompactView, EntityDetailView } from '../../EntityView';
+import { Button, Fade } from '@material-ui/core';
+import { Delete as DeleteIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons';
+import { EntityCompactView, EntityDetailView } from 'src/components/EntityView';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 import { useEntityStore } from 'src/hooks';
 import { useParams, useHistory } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from 'src/hooks/firebase';
 import { useEntityTypeStore } from 'src/hooks/entityTypeStore';
 import { useState } from 'react';
+import { AddButton } from 'src/components/Reusable';
 
 export const DefaultEntityOverview: React.FC = () => {
   const user = useFirebaseUser();
@@ -150,20 +151,13 @@ export const DefaultEntityOverview: React.FC = () => {
                 />
               ))}
             <Fade in={!showDeletedEntites}>
-              <div
-                css={css`
+              <AddButton
+                cCss={css`
                   margin-top: 10px;
                   height: 600px;
-                  display: flex;
-                  flex-direction: column;
-                  justify-content: space-around;
-                  align-items: center;
                 `}
-              >
-                <Fab color="primary" onClick={onSelectEntity('create')}>
-                  <AddIcon />
-                </Fab>
-              </div>
+                onClick={onSelectEntity('create')}
+              />
             </Fade>
           </div>
         </Fade>

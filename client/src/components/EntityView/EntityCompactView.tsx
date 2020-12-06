@@ -3,11 +3,10 @@ import React, { useState } from 'react';
 import { css, jsx, SerializedStyles } from '@emotion/core';
 import { Delete as DeleteIcon, RestoreFromTrash as RestoreIcon } from '@material-ui/icons';
 import { Card, IconButton, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
-import { ObjectEntity } from '../../models';
+import { ObjectEntity } from 'src/models';
 import { PropertyTable } from './PropertyTable';
-import { Icons } from '../../utils';
+import { Icons, PlaceholderImages } from 'src/utils';
 import { TagArea } from './TagArea';
-import { PlaceholderImages } from 'src/utils';
 import { useImageUrl } from 'src/hooks';
 
 interface Props {

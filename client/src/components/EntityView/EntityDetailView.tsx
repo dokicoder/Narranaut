@@ -2,8 +2,8 @@
 import React, { useState, useRef } from 'react';
 import { css, jsx, SerializedStyles } from '@emotion/core';
 import { TextField, Button, Fade } from '@material-ui/core';
-import { ObjectEntity } from '../../models';
-import { Icons, onChangeWrapper, MainTheme } from '../../utils';
+import { ObjectEntity } from 'src/models';
+import { Icons, onChangeWrapper, MainTheme } from 'src/utils';
 import { TagArea } from './TagArea';
 import { EditablePropertyList } from './EditablePropertyList';
 import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';

@@ -1,14 +1,14 @@
 /** @jsx jsx */
 import React, { useState } from 'react';
 import { jsx, css } from '@emotion/core';
-import { Paper, Fab, Collapse, Snackbar, Fade } from '@material-ui/core';
+import { Paper, Collapse, Snackbar, Fade } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { useRelationshipTypeStore } from 'src/hooks';
 import { LoadingIndicator } from 'src/components/LoadingIndicator';
 import { RelationshipTypeDetailView } from 'src/components/TypeViews';
 import { RelationshipType } from 'src/models';
-import { Add as AddIcon } from '@material-ui/icons';
 import { Chip } from '@material-ui/core';
+import { AddButton } from 'src/components/Reusable';
 
 export const RelationshipTypeList: React.FC = () => {
   const { types, updateType, addType } = useRelationshipTypeStore();
@@ -70,22 +70,13 @@ export const RelationshipTypeList: React.FC = () => {
             </Paper>
           ))}
           <Collapse in={!relationshipTypeEditCandidate}>
-            <div
-              css={css`
+            <AddButton
+              size="small"
+              cCss={css`
                 margin-top: 50px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
               `}
-            >
-              <Fab
-                size="small"
-                color="primary"
-                onClick={() => updateRelationshipTypeEditCandidate(emptyRelationshipType())}
-              >
-                <AddIcon />
-              </Fab>
-            </div>
+              onClick={() => updateRelationshipTypeEditCandidate(emptyRelationshipType())}
+            />
           </Collapse>
           <Collapse in={!!relationshipTypeEditCandidate}>
             <Paper

@@ -7,13 +7,13 @@ import { useRelationshipStore } from 'src/hooks';
 import { useEffect } from 'react';
 import { Relationship } from 'src/models';
 import { Button, Fade } from '@material-ui/core';
-import { Replay as UndoIcon, Save as SaveIcon, Add as AddIcon } from '@material-ui/icons';
+import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 import { MainTheme } from 'src/utils/themes';
-import { Fab } from '@material-ui/core';
-import { useFirebaseUser } from './../../hooks/firebase';
+import { useFirebaseUser } from '../../hooks/firebase';
 import { useCallback } from 'react';
 import { useRelationshipTypeStore } from 'src/hooks';
 import { ObjectEntity } from 'src/models';
+import { AddButton } from '../Reusable';
 
 interface Props {
   entity?: ObjectEntity;
@@ -122,28 +122,18 @@ export const EditableRelationshipList: React.FC<Props> = ({ entity, relationship
               />
             ) || 'did not render' // for debugging purposes. Should never render - TODO: remove
         )}
-        <div
-          css={css`
+        <AddButton
+          size="small"
+          cCss={css`
             width: 400px;
             min-height: 170px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
             transition: 0.4s ease-in-out background-color;
             :hover {
               background-color: #00000010;
             }
           `}
-        >
-          <Fab
-            size="small"
-            color="primary"
-            onClick={() => updateRelationships([...relationships, relationshipTemplate()])}
-          >
-            <AddIcon />
-          </Fab>
-        </div>
+          onClick={() => updateRelationships([...relationships, relationshipTemplate()])}
+        />
       </div>
 
       <Fade in={invalidated}>
