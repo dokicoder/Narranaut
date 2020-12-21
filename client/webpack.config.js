@@ -67,7 +67,7 @@ module.exports = env => {
         }),
       ],
     },
-    devtool: 'inline-source-map',
+    devtool: env === 'production' ? false : 'cheap-module-source-map',
     devServer: {
       historyApiFallback: true,
     },

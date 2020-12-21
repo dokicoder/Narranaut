@@ -1,23 +1,16 @@
 import { EntityType } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
-import { useEffect, useContext, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useContext, useCallback, useMemo } from 'react';
 import { FirebaseContext } from '../firebase';
 import { useRecoilState, atom } from 'recoil';
 
 // semantics: null means "before initial load", will be set to undefined when reload with loading indication is intended
 const entityTypesState = atom<EntityType[]>({ key: 'ENTITY_TYPES', default: null });
-// stores array of unique ids representing the hook calls listening for firebase store updates - this is the only way I could think of to track when the last registration is unmounted and trigger an unsubscribe
-const registrationIdState = atom<number[]>({ key: 'ENTITY_TYPES_REGISTRATION_STATE', default: [] });
-
-let idCounter = 0;
 
 let unsubscribeCallback: () => void | undefined = undefined;
 
 export function useEntityTypeStore() {
-  const thisRegistrationIdRef = useRef<number>(++idCounter);
-
   const [types, updateEntityTypes] = useRecoilState(entityTypesState);
-  const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(() => {
     if (unsubscribeCallback) {
@@ -34,27 +27,6 @@ export function useEntityTypeStore() {
   });
   const { db } = useContext(FirebaseContext);
 
-  useEffect(
-    () => {
-      updateRegistrationIds(registrationIds => [...registrationIds, thisRegistrationIdRef.current]);
-
-      // this fixes the following warning:
-      // "The ref value 'thisRegistrationIdRef.current' will likely have changed by the time this effect cleanup function runs."
-      const saveRefValue = thisRegistrationIdRef.current;
-
-      // unsubscribe if last tracked listener of store unmounts
-      return () => {
-        updateRegistrationIds(registrationIds => registrationIds.filter(id => id !== saveRefValue));
-
-        if (registrationIds.length === 1 && saveRefValue === registrationIds[0]) {
-          unsubscribe();
-        }
-      };
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const typesMap = useMemo(
     () =>
       types?.reduce<Record<string, EntityType>>((acc, type) => {
@@ -67,7 +39,7 @@ export function useEntityTypeStore() {
 
   useEffect(
     () => {
-      if (user && !unsubscribeCallback && thisRegistrationIdRef.current === registrationIds[0]) {
+      if (user && !unsubscribeCallback) {
         console.log(`fetch entity types`);
         updateEntityTypes(undefined);
 

@@ -1,25 +1,21 @@
 import { atom } from 'recoil';
 import { ObjectEntity } from 'src/models';
 import { useFirebaseUser } from 'src/hooks';
-import { useEffect, useContext, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useContext, useCallback, useMemo } from 'react';
 import { FirebaseContext } from '../firebase';
 import { useRecoilState } from 'recoil';
+
+/*
+TODO: this redundantly stores all entities in another store that is kept in sync. We could also use this store to derive the other stores from it and keep every entity just once
+*/
 
 // semantics: null means "before initial load", will be set to undefined when reload with loading indication is intended
 const entityState = atom<ObjectEntity[]>({ key: 'ALL_ENTITIES', default: null });
 
-// stores array of unique ids representing the hook calls listening for firebase store updates - this is the only way I could think of to track when the last registration is unmounted and trigger an unsubscribe
-const registrationIdState = atom<number[]>({ key: 'ALL_ENTITIES_REGISTRATION_STATE', default: [] });
-
-let idCounter = 0;
-
 let unsubscribeCallback: () => void | undefined;
 
 export function useFullEntityStore() {
-  const thisRegistrationIdRef = useRef<number>(++idCounter);
-
   const [entities, updateEntities] = useRecoilState(entityState);
-  const [registrationIds, updateRegistrationIds] = useRecoilState(registrationIdState);
 
   const unsubscribe = useCallback(
     () => {
@@ -40,27 +36,6 @@ export function useFullEntityStore() {
   });
   const { db } = useContext(FirebaseContext);
 
-  useEffect(
-    () => {
-      updateRegistrationIds(registrationIds => [...registrationIds, thisRegistrationIdRef.current]);
-
-      // this fixes the following warning:
-      // "The ref value 'thisRegistrationIdRef.current' will likely have changed by the time this effect cleanup function runs."
-      const saveRefValue = thisRegistrationIdRef.current;
-
-      // unsubscribe if last tracked listener of store unmounts
-      return () => {
-        updateRegistrationIds(registrationIds => registrationIds.filter(id => id !== saveRefValue));
-
-        if (registrationIds.length === 1 && saveRefValue === registrationIds[0]) {
-          unsubscribe();
-        }
-      };
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const entityMap = useMemo(
     () =>
       entities?.reduce<Record<string, ObjectEntity>>((acc, relationship) => {
@@ -74,7 +49,7 @@ export function useFullEntityStore() {
   // this effect is only called for the first component registration. the store state is shared between instances with recoil (due to the entities === null part of the condition)
   useEffect(
     () => {
-      if (user && !unsubscribeCallback && thisRegistrationIdRef.current === registrationIds[0]) {
+      if (user && !unsubscribeCallback) {
         console.log(`fetch all entities`);
         updateEntities(undefined);
 
