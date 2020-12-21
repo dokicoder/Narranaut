@@ -3,12 +3,13 @@ import React, { useState, useRef } from 'react';
 import { css, jsx, SerializedStyles } from '@emotion/core';
 import { TextField, Button, Fade } from '@material-ui/core';
 import { ObjectEntity } from 'src/models';
-import { Icons, onChangeWrapper, MainTheme } from 'src/utils';
+import { onChangeWrapper, MainTheme } from 'src/utils';
 import { TagArea } from './TagArea';
 import { EditablePropertyList } from './EditablePropertyList';
 import { EntityDetailViewImageDropzone } from './EntityDetailViewImageDropzone';
 import { Replay as UndoIcon, Save as SaveIcon } from '@material-ui/icons';
 import { EditableRelationshipList } from './EditableRelationshipList';
+import { EntityIcon } from '../Reusable';
 
 interface Props {
   entity: ObjectEntity;
@@ -138,37 +139,13 @@ export const EntityDetailView: React.FC<Props> = props => {
               label="name"
               variant="outlined"
             />
-            <div
-              css={css`
-                background-color: ${type.color || '#eeeeee'};
-                border-radius: 6px;
-                padding: 8px;
-                font-size: 12px;
+            <EntityIcon
+              type={type}
+              size="large"
+              cCss={css`
                 margin-left: 15px;
-                width: 100px;
-                height: 100px;
               `}
-            >
-              {type.icon ? (
-                <img
-                  css={css`
-                    height: 70px;
-                    display: block;
-                    margin: auto;
-                  `}
-                  src={Icons[type.icon]}
-                />
-              ) : null}
-              <h3
-                css={css`
-              padding: 0 !important;
-              margin-top -5px !important;
-              text-align: center;
-            `}
-              >
-                {type.name}
-              </h3>
-            </div>
+            />
           </div>
 
           <TextField

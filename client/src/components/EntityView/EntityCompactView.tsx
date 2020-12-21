@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { css, jsx, SerializedStyles } from '@emotion/core';
 import { Delete as DeleteIcon, RestoreFromTrash as RestoreIcon } from '@material-ui/icons';
-import { Card, IconButton, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
+import { Card, CardActionArea, CardMedia, CardContent, Typography } from '@material-ui/core';
 import { ObjectEntity } from 'src/models';
 import { PropertyTable } from './PropertyTable';
-import { Icons, PlaceholderImages } from 'src/utils';
+import { PlaceholderImages } from 'src/utils';
 import { TagArea } from './TagArea';
 import { useImageUrl } from 'src/hooks';
+import { EntityIcon, HoverButton } from '../Reusable';
 
 interface Props {
   entity: ObjectEntity;
@@ -81,66 +82,24 @@ export const EntityCompactView: React.FC<Props> = ({ entity, cCss, onSelect, onD
           <PropertyTable properties={properties} />
         </CardContent>
       </CardActionArea>
-      <div
-        // TODO: do not hardcode the width somehow
-        css={css`
-          background-color: ${type.color || '#eeeeee'};
-          border-radius: 5px;
-          width: 53px;
-          padding-top: 7px;
-          padding-bottom: 7px;
-          font-size: 10px;
-          margin: 0 !important;
+      <EntityIcon
+        type={type}
+        cCss={css`
           position: absolute;
           top: 5px;
           left: 5px;
-          text-align: center;
         `}
-      >
-        {type.icon ? (
-          <img
-            css={css`
-              height: 28px;
-              display: block;
-              margin: auto;
-            `}
-            src={Icons[type.icon]}
-          />
-        ) : null}
-        {type.name}
-      </div>
+      />
 
       {onDelete && hovered && (
-        <IconButton
-          css={css`
-            position: absolute;
-            top: 5px;
-            right: 5px;
-          `}
-          aria-label={`delete ${type?.name}`}
-          onClick={e => {
-            e.preventDefault();
-            onDelete();
-          }}
-        >
+        <HoverButton position="top right" label={`delete ${type?.name}`} onClick={onDelete}>
           <DeleteIcon />
-        </IconButton>
+        </HoverButton>
       )}
       {onRestore && hovered && (
-        <IconButton
-          css={css`
-            position: absolute;
-            top: 55px;
-            right: 5px;
-          `}
-          aria-label={`delete ${type?.name}`}
-          onClick={e => {
-            e.preventDefault();
-            onRestore();
-          }}
-        >
+        <HoverButton position="top right" row={1} label={`restore deleted ${type?.name}`} onClick={onRestore}>
           <RestoreIcon />
-        </IconButton>
+        </HoverButton>
       )}
     </Card>
   );
